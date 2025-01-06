@@ -35,7 +35,10 @@ bool websocket_client_loop(int server_sock, const size_t client_buffer_size)
         client_sock = accept(server_sock, (struct sockaddr*)&client_addr, &addr_len);
         if (client_sock < 0) {
             if ((errno != EINTR)) {
-                log_error("accept() failed. The system will abort processing.\n");
+                log_error("accept() failed. err : ");
+                log_error(strerror(errno));
+                log_error("\n");
+                log_error("The system will abort processing.\n");
                 break;
             }
 
