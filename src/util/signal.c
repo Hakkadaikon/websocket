@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <signal.h>
 #include <stdatomic.h>
+#include <string.h>
+#include "./log.h"
 
 _Atomic static bool rise_signal = false;
 
@@ -23,6 +25,8 @@ void signal_init()
 
 static void signal_handler(int signum)
 {
+    stdout_print("rise signal\n");
+    fflush(stdout);
     rise_signal = true;
 }
 

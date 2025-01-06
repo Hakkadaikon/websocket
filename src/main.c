@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "util/signal.h"
+#include "util/log.h"
 #include "websocket/websocket.h"
 
 int main()
@@ -19,7 +20,6 @@ int main()
     websocket_client_loop(server_sock, client_buffer_size);
     websocket_server_close(server_sock);
 
-    //printf("websocket end...\n");
-    //fflush(stdout);
+    stdout_print("websocket end...\n");
     return 0;
 }
