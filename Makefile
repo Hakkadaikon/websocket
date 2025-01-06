@@ -33,9 +33,16 @@ DEPENDFILES  := $(OBJFILES:.o=.d)
 #------------------------------------------------------------------------------
 # Flags
 #------------------------------------------------------------------------------
-CFLAGS  := -O2
+CFLAGS  := -Ofast \
+           -march=native \
+           -mtune=native \
+           -flto \
+           -fno-stack-protector \
+           -fomit-frame-pointer \
+           -fno-asynchronous-unwind-tables \
+           -pthread
 LDLIBS  := -lssl -lcrypto -lpthread
-LDFLAGS := 
+LDFLAGS := -flto -pthread
 
 #------------------------------------------------------------------------------
 # Make rules
