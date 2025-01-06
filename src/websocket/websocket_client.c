@@ -1,6 +1,7 @@
 #include "websocket.h"
 #include "../http/http.h"
 #include "../util/log.h"
+#include "../util/signal.h"
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -8,6 +9,7 @@
 #include <stdlib.h>
 #include <alloca.h>
 #include <pthread.h>
+#include <errno.h>
 
 typedef struct {
     int    client_sock;
@@ -28,7 +30,19 @@ bool websocket_client_loop(int server_sock, const size_t client_buffer_size)
     struct sockaddr_in client_addr;
     socklen_t          addr_len = sizeof(client_addr);
 
-    while ((client_sock = accept(server_sock, (struct sockaddr*)&client_addr, &addr_len)) >= 0) {
+    while (1) {
+        client_sock = accept(server_sock, (struct sockaddr*)&client_addr, &addr_len);
+        if (client_sock < 0) {
+            if (errno == EINTR) {
+                if (is_rise_signal()) {
+                    break;
+                }
+
+                continue;
+            }
+
+            break;
+        }
         //printf("Client connected.\n");
 
         PThreadData data = (PThreadData)alloca(sizeof(ThreadData));
@@ -156,6 +170,10 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
             case 0xA:  // pong
             default:
                 break;
+        }
+
+        if (is_rise_signal()) {
+            break;
         }
     }
 }
