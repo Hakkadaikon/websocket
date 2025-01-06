@@ -33,7 +33,7 @@ bool websocket_client_loop(int server_sock, const size_t client_buffer_size)
 
         PThreadData data = (PThreadData)alloca(sizeof(ThreadData));
         if (!data) {
-            perror("Failed to allocate memory for client data");
+            fprintf(stderr, "Failed to allocate memory for client data\n");
             close(client_sock);
             continue;
         }
@@ -43,7 +43,7 @@ bool websocket_client_loop(int server_sock, const size_t client_buffer_size)
 
         pthread_t thread_id;
         if (pthread_create(&thread_id, NULL, client_handle_thread, data) != 0) {
-            perror("Failed to create thread");
+            fprintf(stderr, "Failed to create thread\n");
             close(client_sock);
             continue;
         }
@@ -98,19 +98,19 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
     }
 
     if (!is_valid_websocket_request(request)) {
-        fprintf(stderr, "Invalid WebSocket handshake request: Invalid parameter: [%s]\n", buffer);
+        fprintf(stderr, "Invalid WebSocket handshake request: Invalid parameter: \n%s\n", buffer);
         return;
     }
 
     char* client_key = select_websocket_client_key(request);
     if (client_key == NULL) {
-        perror("Invalid WebSocket handshake request: select websocket client key\n");
+        fprintf(stderr, "Invalid WebSocket handshake request: Invalid websocket client key\n");
         return;
     }
 
     char accept_key[HTTP_HEADER_VALUE_CAPACITY];
     if (!generate_websocket_acceptkey(client_key, sizeof(accept_key), accept_key)) {
-        perror("Invalid WebSocket handshake request: generate accept key\n");
+        fprintf(stderr, "Invalid WebSocket handshake request: generate accept key\n");
         return;
     }
 
