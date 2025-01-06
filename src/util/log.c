@@ -8,7 +8,7 @@
 #include <stdatomic.h>
 #include <stdbool.h>
 
-_Atomic static LOG_LEVEL current_level = LOGLEVEL_DEBUG;
+_Atomic static LOG_LEVEL current_level = LOG_LEVEL_DEBUG;
 
 static inline bool is_dump_log(LOG_LEVEL level)
 {
@@ -89,7 +89,7 @@ void log_dump(const int fd, const char* str)
 
 void log_debug(const char* restrict str)
 {
-    if (!is_dump_log(LOGLEVEL_DEBUG)) {
+    if (!is_dump_log(LOG_LEVEL_DEBUG)) {
         return;
     }
 
@@ -98,7 +98,7 @@ void log_debug(const char* restrict str)
 
 void log_info(const char* restrict str)
 {
-    if (!is_dump_log(LOGLEVEL_INFO)) {
+    if (!is_dump_log(LOG_LEVEL_INFO)) {
         return;
     }
 
@@ -107,7 +107,7 @@ void log_info(const char* restrict str)
 
 void log_error(const char* restrict str)
 {
-    if (!is_dump_log(LOGLEVEL_ERROR)) {
+    if (!is_dump_log(LOG_LEVEL_ERROR)) {
         return;
     }
 
@@ -128,7 +128,7 @@ void var_dump(const int fd, const char* restrict str, int value)
 
 void var_debug(const char* restrict str, int value)
 {
-    if (!is_dump_log(LOGLEVEL_DEBUG)) {
+    if (!is_dump_log(LOG_LEVEL_DEBUG)) {
         return;
     }
 
@@ -137,7 +137,7 @@ void var_debug(const char* restrict str, int value)
 
 void var_info(const char* restrict str, int value)
 {
-    if (!is_dump_log(LOGLEVEL_INFO)) {
+    if (!is_dump_log(LOG_LEVEL_INFO)) {
         return;
     }
 
@@ -146,7 +146,7 @@ void var_info(const char* restrict str, int value)
 
 void var_error(const char* restrict str, int value)
 {
-    if (!is_dump_log(LOGLEVEL_ERROR)) {
+    if (!is_dump_log(LOG_LEVEL_ERROR)) {
         return;
     }
 

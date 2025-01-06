@@ -6,6 +6,8 @@
 
 int main()
 {
+    set_log_level(LOG_LEVEL_ERROR);
+
     int    websocket_port_num = 8080;
     int    backlog            = 5;
     size_t client_buffer_size = 1024;

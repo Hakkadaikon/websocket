@@ -5,10 +5,10 @@
 #include <unistd.h>
 
 typedef enum {
-    LOGLEVEL_DEBUG   = 0,
-    LOGLEVEL_INFO    = 1,
-    LOGLEVEL_ERROR   = 2,
-    LOGLEVEL_NOTHING = 3
+    LOG_LEVEL_DEBUG   = 0,
+    LOG_LEVEL_INFO    = 1,
+    LOG_LEVEL_ERROR   = 2,
+    LOG_LEVEL_NOTHING = 3
 } LOG_LEVEL;
 
 void set_log_level(LOG_LEVEL level);
