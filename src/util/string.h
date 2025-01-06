@@ -4,11 +4,6 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-typedef struct {
-    char*  value;
-    size_t capacity;
-} String, *PString;
-
 static inline char char_value(const char* ptr)
 {
     return *ptr;
