@@ -33,15 +33,15 @@ bool websocket_client_loop(int server_sock, const size_t client_buffer_size)
     while (1) {
         client_sock = accept(server_sock, (struct sockaddr*)&client_addr, &addr_len);
         if (client_sock < 0) {
-            if (errno == EINTR) {
-                if (is_rise_signal()) {
-                    break;
-                }
-
-                continue;
+            if ((errno != EINTR)) {
+                break;
             }
 
-            break;
+            if (is_rise_signal()) {
+                break;
+            }
+
+            continue;
         }
         //printf("Client connected.\n");
 
