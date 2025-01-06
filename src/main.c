@@ -14,12 +14,13 @@ int main()
 
     int server_sock = websocket_server_init(websocket_port_num, backlog);
     if (server_sock == -1) {
+        log_error("websocket server init error.\n");
         return 1;
     }
 
     websocket_client_loop(server_sock, client_buffer_size);
     websocket_server_close(server_sock);
 
-    stdout_print("websocket end...\n");
+    log_info("websocket server end.\n");
     return 0;
 }

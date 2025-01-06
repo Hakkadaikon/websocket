@@ -1,4 +1,5 @@
 #include "websocket.h"
+#include "../util/log.h"
 #include "../http/http.h"
 #include "../crypt/base64.h"
 #include <stdbool.h>
@@ -15,7 +16,7 @@ static inline bool is_valid_upgrade(const char* restrict value)
         return true;
     }
 
-    fprintf(stderr, "Invalid Header: key: Upgrade value:%s\n", value);
+    log_error("Invalid websocket request header [Key: Upgrade] It's not \"websocket\".\n");
     return false;
 }
 
@@ -25,7 +26,7 @@ static inline bool is_valid_connection(const char* restrict value)
         return true;
     }
 
-    fprintf(stderr, "Invalid Header: key: Connection value:%s\n", value);
+    log_error("Invalid websocket request header [Key: Connection] It's not \"Upgrade\".\n");
     return false;
 }
 
@@ -35,19 +36,19 @@ static inline bool is_valid_version(const char* restrict value)
         return true;
     }
 
-    fprintf(stderr, "Invalid Header: key: Sec-WebSocket-Version value:%s\n", value);
+    log_error("Invalid websocket request header [Key: Sec-WebSocket-Version] It's not \"13\".\n");
     return false;
 }
 
 static inline bool is_valid_websocket_key(const char* restrict value)
 {
     if (strlen(value) < 16) {
-        fprintf(stderr, "Invalid Header: key: Sec-WebSocket-Key size<16\n");
+        log_error("Invalid websocket request header [Key: Sec-WebSocket-Key] Length is less than 16.\n");
         return false;
     }
 
     if (!is_base64(value)) {
-        fprintf(stderr, "Invalid Header: key: Sec-WebSocket-Key not base64\n");
+        log_error("Invalid websocket request header [Key: Sec-WebSocket-Key] Client key is not base64.\n");
         return false;
     }
 
@@ -57,17 +58,17 @@ static inline bool is_valid_websocket_key(const char* restrict value)
 static inline bool is_valid_websocket_request_line(PHTTPRequestLine restrict line)
 {
     if (strcmp(line->method, "GET") != 0) {
-        fprintf(stderr, "Invalid request line: method is not GET\n");
+        log_error("Invalid websocket request line: method is not GET\n");
         return false;
     }
 
     if (strlen(line->target) <= 0) {
-        fprintf(stderr, "Invalid request line: target.size <= 0\n");
+        log_error("Invalid websocket request line: target size is 0\n");
         return false;
     }
 
     if (strcmp(line->http_version, "HTTP/1.1") != 0) {
-        fprintf(stderr, "Invalid request line: Invalid HTTP version\n");
+        log_error("Invalid websocket request line: Invalid HTTP version(Not 1.1)\n");
         return false;
     }
 

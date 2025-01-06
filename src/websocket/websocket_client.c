@@ -31,23 +31,26 @@ bool websocket_client_loop(int server_sock, const size_t client_buffer_size)
     socklen_t          addr_len = sizeof(client_addr);
 
     while (1) {
+        log_debug("accept...\n");
         client_sock = accept(server_sock, (struct sockaddr*)&client_addr, &addr_len);
         if (client_sock < 0) {
             if ((errno != EINTR)) {
+                log_error("accept() failed. The system will abort processing.\n");
                 break;
             }
 
             if (is_rise_signal()) {
+                log_info("A signal was raised during accept(). The system will abort processing.\n");
                 break;
             }
 
             continue;
         }
-        //printf("Client connected.\n");
+        log_debug("Client connected.\n");
 
         PThreadData data = (PThreadData)alloca(sizeof(ThreadData));
         if (!data) {
-            fprintf(stderr, "Failed to allocate memory for client data\n");
+            log_error("Failed to allocate memory for client data\n");
             close(client_sock);
             continue;
         }
@@ -57,7 +60,7 @@ bool websocket_client_loop(int server_sock, const size_t client_buffer_size)
 
         pthread_t thread_id;
         if (pthread_create(&thread_id, NULL, client_handle_thread, data) != 0) {
-            fprintf(stderr, "Failed to create thread\n");
+            var_error("Failed to create thread. id :", thread_id);
             close(client_sock);
             continue;
         }
@@ -98,10 +101,12 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
     ssize_t bytes_read;
 
     if ((bytes_read = read_buffer(client_sock, sizeof(buffer), buffer)) == 0) {
-        fprintf(stderr, "Failed read buffer, sock[%d]\n", client_sock);
+        var_error("Failed read buffer, sock : ", client_sock);
         return;
     }
-    //printf("Received handshake request:\n%s\n", buffer);
+    log_debug("Received handshake request : ");
+    log_debug(buffer);
+    log_debug("\n");
 
     if (!extract_http_request(
             buffer,
@@ -112,39 +117,45 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
     }
 
     if (!is_valid_websocket_request(request)) {
-        fprintf(stderr, "Invalid WebSocket handshake request: Invalid parameter: \n%s\n", buffer);
+        log_error("Invalid WebSocket handshake request. Invalid parameter : ");
+        log_error(buffer);
+        log_error("\n");
         return;
     }
 
     char* client_key = select_websocket_client_key(request);
     if (client_key == NULL) {
-        fprintf(stderr, "Invalid WebSocket handshake request: Invalid websocket client key\n");
+        log_error("Invalid WebSocket handshake request. Invalid websocket client key\n");
         return;
     }
 
     char accept_key[HTTP_HEADER_VALUE_CAPACITY];
     if (!generate_websocket_acceptkey(client_key, sizeof(accept_key), accept_key)) {
-        fprintf(stderr, "Invalid WebSocket handshake request: generate accept key\n");
+        log_error("Invalid WebSocket handshake request. Failed generate accept key\n");
         return;
     }
 
     char response[buffer_capacity];
     if (!create_handshake_ok_flame(accept_key, sizeof(response), response)) {
+        log_error("Invalid WebSocket handshake request. Failed create OK flame.\n");
         return;
     }
+
     send(client_sock, response, strnlen(response, sizeof(response)), 0);
-    //printf("Sent handshake response. client_key:[%s] accept_key:[%s]\n", client_key, accept_key);
+    log_debug("Sent handshake response. \n");
+    log_debug("client key : ");
+    log_debug(client_key);
+    log_debug("\n");
+    log_debug("accept key : ");
+    log_debug(accept_key);
+    log_debug("\n");
 
     while ((bytes_read = read_buffer(client_sock, sizeof(buffer), buffer)) > 0) {
-        //printf("Received data: %ld bytes\n", bytes_read);
-        //printf("hex dump\n");
-        //hex_dump(buffer, bytes_read);
-
         WebsocketFrame frame;
         memset(&frame, 0x00, sizeof(frame));
         frame.payload = alloca(bytes_read);
         parseWebsocketFrame((uint8_t*)buffer, bytes_read, &frame);
-        //websocket_frame_dump(&frame);
+        websocket_frame_dump(&frame);
 
         // close frame
         if (frame.opcode == 0x8) {
@@ -160,9 +171,6 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
                     //printf("create frame error\n");
                     return;
                 }
-                //printf("send hex dump recv size: %ld send size:%ld\n", bytes_read, frame_size);
-                //hex_dump(response, frame_size);
-
                 send(client_sock, response, frame_size, 0);
                 break;
             case 0x2:  // binary frame
@@ -173,6 +181,7 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
         }
 
         if (is_rise_signal()) {
+            var_info("rise signal. sock : ", client_sock);
             break;
         }
     }

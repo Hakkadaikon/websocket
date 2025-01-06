@@ -1,15 +1,17 @@
 #include "websocket.h"
+#include "../util/log.h"
 
 void websocket_frame_dump(PWebsocketFrame restrict frame)
 {
-    printf("fin             : %d\n", frame->fin);
-    printf("rsv1            : %d\n", frame->rsv1);
-    printf("rsv2            : %d\n", frame->rsv2);
-    printf("rsv3            : %d\n", frame->rsv3);
-    printf("opcode          : %d\n", frame->opcode);
-    printf("mask            : %d\n", frame->mask);
-    printf("payload_len     : %d\n", frame->payload_len);
-    printf("ext_payload_len : %ld\n", frame->ext_payload_len);
-    printf("payload         : %s\n", frame->payload);
-    fflush(stdout);
+    var_debug("fin             : ", frame->fin);
+    var_debug("rsv1            : ", frame->rsv1);
+    var_debug("rsv2            : ", frame->rsv2);
+    var_debug("rsv3            : ", frame->rsv3);
+    var_debug("opcode          : ", frame->opcode);
+    var_debug("mask            : ", frame->mask);
+    var_debug("payload_len     : ", frame->payload_len);
+    var_debug("ext_payload_len : ", frame->ext_payload_len);
+    log_debug("payload         :\n");
+    log_debug(frame->payload);
+    log_debug("\n");
 }

@@ -25,8 +25,7 @@ void signal_init()
 
 static void signal_handler(int signum)
 {
-    stdout_print("rise signal\n");
-    fflush(stdout);
+    log_info("\nrise signal\n");
     rise_signal = true;
 }
 
