@@ -65,6 +65,7 @@ void set_log_level(LOG_LEVEL level)
 
 void hex_dump(const void* restrict data, size_t size)
 {
+    //TODO: I plan to prepare my own log (var_hex_info) and replace it with printf.
     const char* byte_data = (const char*)data;
 
     for (size_t i = 0; i < size; i++) {

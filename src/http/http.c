@@ -13,7 +13,6 @@ static inline size_t extract_keyword(
 {
     int keyword_length = skip_token(buffer, buffer_size, token);
     if (keyword_length == -1) {
-        perror("extract keyword");
         return -1;
     }
 
@@ -33,7 +32,6 @@ static inline bool extract_http_request_line(
     // method
     keyword_length = extract_keyword(buffer, remain_buffer_size, ' ', line->method);
     if (keyword_length == -1) {
-        perror("extract method");
         return false;
     }
     buffer += (keyword_length + 1);
@@ -42,7 +40,6 @@ static inline bool extract_http_request_line(
     // target
     keyword_length = extract_keyword(buffer, remain_buffer_size, ' ', line->target);
     if (keyword_length == -1) {
-        perror("extract target");
         return false;
     }
     buffer += (keyword_length + 1);
@@ -51,7 +48,6 @@ static inline bool extract_http_request_line(
     // HTTP version
     keyword_length = extract_keyword(buffer, remain_buffer_size, '\r', line->http_version);
     if (keyword_length == -1) {
-        perror("extract http version");
         return false;
     }
 
@@ -69,7 +65,6 @@ static inline bool extract_http_request_header_line(
     // Key
     keyword_length = extract_keyword(buffer, remain_buffer_size, ':', line->key);
     if (keyword_length == -1) {
-        perror("extract key");
         return false;
     }
     buffer += (keyword_length + 2);
@@ -78,7 +73,6 @@ static inline bool extract_http_request_header_line(
     // Value
     keyword_length = extract_keyword(buffer, remain_buffer_size, '\r', line->value);
     if (keyword_length == -1) {
-        perror("extract value");
         return false;
     }
 
@@ -101,7 +95,6 @@ bool extract_http_request_header(
         PHTTPRequestHeaderLine current_line   = &lines[header_pos];
 
         if (!extract_http_request_header_line(current_buffer, remain_buffer_size, current_line)) {
-            perror("extract header line");
             return false;
         }
 
@@ -109,9 +102,6 @@ bool extract_http_request_header(
         buffer_pos += new_pos;
         remain_buffer_size -= new_pos;
         header_pos++;
-
-        //printf("count %ld OK key:%s value:%s\n", header_pos, current_line->key, current_line->value);
-        //fflush(stdout);
 
         if (buffer_pos + 2 <= buffer_size) {
             if (buffer[buffer_pos] == '\r' && buffer[buffer_pos + 1] == '\n') {
@@ -121,7 +111,6 @@ bool extract_http_request_header(
     }
 
     if (header_pos <= 0) {
-        perror("next line");
         return false;
     }
 
@@ -140,7 +129,6 @@ bool extract_http_request(
         is_null((char*)request->headers) ||
         buffer_size <= 0 ||
         header_capacity <= 0) {
-        perror("invalid http request");
         return false;
     }
 
@@ -151,7 +139,6 @@ bool extract_http_request(
 
     size_t new_pos = skip_next_line(buffer, remain_buffer_size);
     if (new_pos == remain_buffer_size) {
-        perror("skip next line");
         return false;
     }
     remain_buffer_size -= new_pos;
@@ -162,19 +149,18 @@ bool extract_http_request(
             header_capacity,
             &request->header_size,
             request->headers)) {
-        perror("extract header");
         return false;
     }
 
     return true;
 }
 
-#include <alloca.h>
-#include <assert.h>
-
-void nothing(void* ptr)
-{
-}
+//#include <alloca.h>
+//#include <assert.h>
+//
+//void nothing(void* ptr)
+//{
+//}
 
 //int main(void)
 //{

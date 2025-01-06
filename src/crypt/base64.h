@@ -33,7 +33,6 @@ static inline bool is_base64(const char* str)
     size_t len = strlen(str);
 
     if (len == 0) {
-        fprintf(stderr, "base64 err: length is 0\n");
         return false;
     }
 
@@ -51,14 +50,12 @@ static inline bool is_base64(const char* str)
             !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) &&
             c != '+' &&
             c != '/') {
-            fprintf(stderr, "base64 err :%c value:%s\n", c, str);
             return false;
         }
     }
 
     for (size_t i = len - padding_count; i < len; i++) {
         if (str[i] != '=') {
-            fprintf(stderr, "base64 err : Invalid padding value:%s\n", str);
             return false;
         }
     }
