@@ -42,34 +42,34 @@ bool   parseWebsocketFrame(const uint8_t* raw, const size_t frame_size, PWebsock
 size_t createWebsocketFrame(PWebsocketFrame frame, const size_t capacity, uint8_t* raw);
 
 /*----------------------------------------------------------------------------*/
-/* websocket_crypto.c                                                         */
+/* websocket/crypto.c                                                         */
 /*----------------------------------------------------------------------------*/
 
 bool generate_websocket_acceptkey(const char* client_key, const size_t accept_key_size, char* accept_key);
 
 /*----------------------------------------------------------------------------*/
-/* websocket_server.c                                                         */
+/* websocket/server/init.c                                                    */
 /*----------------------------------------------------------------------------*/
 
 int websocket_server_init(const int port_num, const int backlog);
 int websocket_server_close(const int server_sock);
 
 /*----------------------------------------------------------------------------*/
-/* websocket_client.c                                                         */
+/* websocket/server/loop.c                                                    */
 /*----------------------------------------------------------------------------*/
 
-bool websocket_client_loop(int server_sock, const size_t client_buffer_size);
+bool websocket_server_loop(int server_sock, const size_t client_buffer_size);
 
 /*----------------------------------------------------------------------------*/
-/* websocket_handshake.c                                                      */
+/* websocket/handshake.c                                                      */
 /*----------------------------------------------------------------------------*/
 
 bool  is_valid_websocket_request(PHTTPRequest request);
 char* select_websocket_client_key(PHTTPRequest request);
-bool  create_handshake_ok_flame(const char* accept_key, const size_t capacity, char* buffer);
+bool  create_server_handshake_ok_frame(const char* accept_key, const size_t capacity, char* buffer);
 
 /*----------------------------------------------------------------------------*/
-/* websocket_log.c                                                            */
+/* websocket/log.c                                                            */
 /*----------------------------------------------------------------------------*/
 
 void websocket_frame_dump(PWebsocketFrame frame);

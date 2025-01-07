@@ -20,7 +20,7 @@ int main()
         return 1;
     }
 
-    websocket_client_loop(server_sock, client_buffer_size);
+    websocket_server_loop(server_sock, client_buffer_size);
     websocket_server_close(server_sock);
 
     log_info("websocket server end.\n");

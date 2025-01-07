@@ -1,7 +1,7 @@
-#include "websocket.h"
-#include "../util/log.h"
-#include "../http/http.h"
-#include "../crypt/base64.h"
+#include "../websocket.h"
+#include "../../util/log.h"
+#include "../../http/http.h"
+#include "../../crypt/base64.h"
 #include <stdbool.h>
 #include <string.h>
 
@@ -153,7 +153,7 @@ char* select_websocket_client_key(PHTTPRequest restrict request)
     return NULL;
 }
 
-bool create_handshake_ok_flame(const char* restrict accept_key, const size_t capacity, char* restrict buffer)
+bool create_server_handshake_ok_frame(const char* restrict accept_key, const size_t capacity, char* restrict buffer)
 {
     const char* ok_message =
         "HTTP/1.1 101 Switching Protocols\r\n"

@@ -1,7 +1,7 @@
-#include "websocket.h"
-#include "../http/http.h"
-#include "../util/log.h"
-#include "../util/signal.h"
+#include "../websocket.h"
+#include "../../http/http.h"
+#include "../../util/log.h"
+#include "../../util/signal.h"
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -24,7 +24,7 @@ static void nothing(void* ptr)
     // nothing...
 }
 
-bool websocket_client_loop(int server_sock, const size_t client_buffer_size)
+bool websocket_server_loop(int server_sock, const size_t client_buffer_size)
 {
     int                client_sock;
     struct sockaddr_in client_addr;
@@ -139,7 +139,7 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
     }
 
     char response[buffer_capacity];
-    if (!create_handshake_ok_flame(accept_key, sizeof(response), response)) {
+    if (!create_server_handshake_ok_frame(accept_key, sizeof(response), response)) {
         log_error("Invalid WebSocket handshake request. Failed create OK flame.\n");
         return;
     }
