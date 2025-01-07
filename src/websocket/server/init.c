@@ -41,9 +41,3 @@ int websocket_server_init(const int port_num, const int backlog)
     log_info("WebSocket server is listening...\n");
     return server_sock;
 }
-
-int websocket_server_close(const int server_sock)
-{
-    log_info("WebSocket server close...\n");
-    return close(server_sock);
-}

@@ -34,6 +34,8 @@ typedef struct _WebSocketFrame {
     char*           payload;
 } WebSocketFrame, *PWebSocketFrame;
 
+typedef void (*PWebSocketCallback)(const int client_sock, PWebSocketFrame frame, const size_t client_buffer_capacity);
+
 /*----------------------------------------------------------------------------*/
 /* websocket_parser.c                                                         */
 /*----------------------------------------------------------------------------*/
@@ -61,13 +63,19 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
 /*----------------------------------------------------------------------------*/
 
 int websocket_server_init(const int port_num, const int backlog);
+
+/*----------------------------------------------------------------------------*/
+/* websocket/server/func.c                                                    */
+/*----------------------------------------------------------------------------*/
+
 int websocket_server_close(const int server_sock);
+int websocket_server_send(const int client_sock, const char* buffer, const size_t buffer_size);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/server/loop.c                                                    */
 /*----------------------------------------------------------------------------*/
 
-bool websocket_server_loop(int server_sock, const size_t client_buffer_size);
+bool websocket_server_loop(int server_sock, const size_t client_buffer_size, PWebSocketCallback callback);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/handshake.c                                                      */

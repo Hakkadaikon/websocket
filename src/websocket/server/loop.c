@@ -13,79 +13,16 @@
 #include "../websocket.h"
 
 typedef struct {
-    int    client_sock;
-    size_t client_buffer_size;
+    int                client_sock;
+    size_t             client_buffer_capacity;
+    PWebSocketCallback callback;
 } ThreadData, *PThreadData;
 
 static void* client_handle_thread(void* arg);
-static void  client_handle(const int client_sock, const size_t buffer_capacity, PHTTPRequest request);
 
 static void nothing(void* ptr)
 {
     // nothing...
-}
-
-bool websocket_server_loop(int server_sock, const size_t client_buffer_size)
-{
-    int                client_sock;
-    struct sockaddr_in client_addr;
-    socklen_t          addr_len = sizeof(client_addr);
-
-    while (1) {
-        log_debug("accept...\n");
-        client_sock = accept(server_sock, (struct sockaddr*)&client_addr, &addr_len);
-        if (client_sock < 0) {
-            if ((errno != EINTR)) {
-                log_error("accept() failed. err : ");
-                log_error(strerror(errno));
-                log_error("\n");
-                log_error("The system will abort processing.\n");
-                break;
-            }
-
-            if (is_rise_signal()) {
-                log_info("A signal was raised during accept(). The system will abort processing.\n");
-                break;
-            }
-
-            continue;
-        }
-        log_debug("Client connected.\n");
-
-        PThreadData data = (PThreadData)alloca(sizeof(ThreadData));
-        if (!data) {
-            log_error("Failed to allocate memory for client data\n");
-            close(client_sock);
-            continue;
-        }
-
-        data->client_sock        = client_sock;
-        data->client_buffer_size = client_buffer_size;
-
-        pthread_t thread_id;
-        if (pthread_create(&thread_id, NULL, client_handle_thread, data) != 0) {
-            var_error("Failed to create thread. id :", thread_id);
-            close(client_sock);
-            continue;
-        }
-
-        pthread_detach(thread_id);
-    }
-
-    return true;
-}
-
-static void* client_handle_thread(void* restrict arg)
-{
-    PThreadData data = (PThreadData)arg;
-    HTTPRequest request;
-    ALLOCATE_HTTP_REQUEST(request, alloca);
-    //ALLOCATE_HTTP_REQUEST(request, malloc);
-    client_handle(data->client_sock, data->client_buffer_size, &request);
-    close(data->client_sock);
-    FREE_HTTP_REQUEST(request, nothing)
-    //FREE_HTTP_REQUEST(request, free)
-    return NULL;
 }
 
 static inline ssize_t read_buffer(const int client_sock, const size_t capacity, char* restrict buffer)
@@ -99,7 +36,7 @@ static inline ssize_t read_buffer(const int client_sock, const size_t capacity, 
     return bytes_read;
 }
 
-static void client_handle(const int client_sock, const size_t buffer_capacity, PHTTPRequest request)
+static void client_handle(const int client_sock, const size_t buffer_capacity, PHTTPRequest request, PWebSocketCallback callback)
 {
     char    buffer[buffer_capacity];
     ssize_t bytes_read;
@@ -168,16 +105,18 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
 
         switch (frame.opcode) {
             case WEBSOCKET_OP_CODE_TEXT: {
-                memset(response, 0x00, sizeof(response));
-                frame.mask        = 0;
-                size_t frame_size = create_websocket_frame(&frame, sizeof(response), (uint8_t*)&response[0]);
-                if (frame_size == 0) {
-                    log_error("Failed to create websocket frame.\n");
-                    return;
-                }
-                send(client_sock, response, frame_size, 0);
+                //memset(response, 0x00, sizeof(response));
+                //frame.mask        = 0;
+                //size_t frame_size = create_websocket_frame(&frame, sizeof(response), (uint8_t*)&response[0]);
+                //if (frame_size == 0) {
+                //    log_error("Failed to create websocket frame.\n");
+                //    return;
+                //}
+                //send(client_sock, response, frame_size, 0);
+                callback(client_sock, &frame, buffer_capacity);
             } break;
             case WEBSOCKET_OP_CODE_BINARY: {
+                callback(client_sock, &frame, buffer_capacity);
             } break;
             case WEBSOCKET_OP_CODE_PING: {
                 memset(response, 0x00, sizeof(response));
@@ -203,4 +142,68 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
             break;
         }
     }
+}
+
+static void* client_handle_thread(void* restrict arg)
+{
+    PThreadData data = (PThreadData)arg;
+    HTTPRequest request;
+    ALLOCATE_HTTP_REQUEST(request, alloca);
+    //ALLOCATE_HTTP_REQUEST(request, malloc);
+    client_handle(data->client_sock, data->client_buffer_capacity, &request, data->callback);
+    close(data->client_sock);
+    FREE_HTTP_REQUEST(request, nothing)
+    //FREE_HTTP_REQUEST(request, free)
+    return NULL;
+}
+
+bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity, PWebSocketCallback callback)
+{
+    int                client_sock;
+    struct sockaddr_in client_addr;
+    socklen_t          addr_len = sizeof(client_addr);
+
+    while (1) {
+        log_debug("accept...\n");
+        client_sock = accept(server_sock, (struct sockaddr*)&client_addr, &addr_len);
+        if (client_sock < 0) {
+            if ((errno != EINTR)) {
+                log_error("accept() failed. err : ");
+                log_error(strerror(errno));
+                log_error("\n");
+                log_error("The system will abort processing.\n");
+                break;
+            }
+
+            if (is_rise_signal()) {
+                log_info("A signal was raised during accept(). The system will abort processing.\n");
+                break;
+            }
+
+            continue;
+        }
+        log_debug("Client connected.\n");
+
+        PThreadData data = (PThreadData)alloca(sizeof(ThreadData));
+        if (!data) {
+            log_error("Failed to allocate memory for client data\n");
+            close(client_sock);
+            continue;
+        }
+
+        data->client_sock            = client_sock;
+        data->client_buffer_capacity = client_buffer_capacity;
+        data->callback               = callback;
+
+        pthread_t thread_id;
+        if (pthread_create(&thread_id, NULL, client_handle_thread, data) != 0) {
+            var_error("Failed to create thread. id :", thread_id);
+            close(client_sock);
+            continue;
+        }
+
+        pthread_detach(thread_id);
+    }
+
+    return true;
 }
