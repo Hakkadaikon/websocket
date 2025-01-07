@@ -44,20 +44,26 @@ static inline ssize_t read_buffer(const int client_sock, const size_t capacity, 
     return bytes_read;
 }
 
-static void client_handle(const int client_sock, const size_t buffer_capacity, char* restrict buffer, PHTTPRequest request, PWebSocketCallback callback)
+static void client_handle(
+    const int             client_sock,
+    const size_t          buffer_capacity,
+    char* restrict        request_buffer,
+    char* restrict        response_buffer,
+    PHTTPRequest restrict request,
+    PWebSocketCallback    callback)
 {
     //char    buffer[buffer_capacity];
     ssize_t bytes_read;
 
-    if ((bytes_read = read_buffer(client_sock, buffer_capacity, buffer)) == 0) {
+    if ((bytes_read = read_buffer(client_sock, buffer_capacity, request_buffer)) == 0) {
         return;
     }
     log_debug("Received handshake request : ");
-    log_debug(buffer);
+    log_debug(request_buffer);
     log_debug("\n");
 
     if (!extract_http_request(
-            buffer,
+            request_buffer,
             bytes_read,
             HTTP_HEADER_CAPACITY,
             request)) {
@@ -66,7 +72,7 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, c
 
     if (!is_valid_websocket_request(request)) {
         log_error("Invalid WebSocket handshake request. Invalid parameter : ");
-        log_error(buffer);
+        log_error(request_buffer);
         log_error("\n");
         return;
     }
@@ -83,13 +89,12 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, c
         return;
     }
 
-    char response[buffer_capacity];
-    if (!create_server_handshake_ok_frame(accept_key, sizeof(response), response)) {
+    if (!create_server_handshake_ok_frame(accept_key, buffer_capacity, response_buffer)) {
         log_error("Invalid WebSocket handshake request. Failed create OK flame.\n");
         return;
     }
 
-    send(client_sock, response, strnlen(response, sizeof(response)), 0);
+    send(client_sock, response_buffer, strnlen(response_buffer, buffer_capacity), 0);
     log_debug("Sent handshake response. \n");
     log_debug("client key : ");
     log_debug(client_key);
@@ -97,34 +102,35 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, c
     log_debug("accept key : ");
     log_debug(accept_key);
     log_debug("\n");
+    memset(response_buffer, 0x00, buffer_capacity);
 
-    while ((bytes_read = read_buffer(client_sock, buffer_capacity, buffer)) > 0) {
+    while ((bytes_read = read_buffer(client_sock, buffer_capacity, request_buffer)) > 0) {
         WebSocketFrame frame;
         memset(&frame, 0x00, sizeof(frame));
         frame.payload = alloca(bytes_read);
-        parse_websocket_frame((uint8_t*)buffer, bytes_read, &frame);
+        parse_websocket_frame((uint8_t*)request_buffer, bytes_read, &frame);
         websocket_frame_dump(&frame);
 
         switch (frame.opcode) {
             case WEBSOCKET_OP_CODE_TEXT:
-                callback(client_sock, &frame, buffer_capacity);
+                callback(client_sock, &frame, buffer_capacity, response_buffer);
                 break;
             case WEBSOCKET_OP_CODE_BINARY:
-                callback(client_sock, &frame, buffer_capacity);
+                callback(client_sock, &frame, buffer_capacity, response_buffer);
                 break;
             case WEBSOCKET_OP_CODE_CLOSE:
                 return;
             case WEBSOCKET_OP_CODE_PING:
-                memset(response, 0x00, sizeof(response));
                 frame.mask   = 0;
                 frame.opcode = WEBSOCKET_OP_CODE_PONG;
 
-                size_t frame_size = create_websocket_frame(&frame, sizeof(response), (uint8_t*)&response[0]);
+                size_t frame_size = create_websocket_frame(
+                    &frame, buffer_capacity, (uint8_t*)&response_buffer[0]);
                 if (frame_size == 0) {
                     log_error("Failed to create pong frame.\n");
                     return;
                 }
-                websocket_server_send(client_sock, response, frame_size);
+                websocket_server_send(client_sock, response_buffer, frame_size);
                 break;
             case WEBSOCKET_OP_CODE_PONG:
                 break;
@@ -147,8 +153,9 @@ static void* client_handle_thread(void* restrict arg)
     HTTPRequest request;
     ALLOCATE_HTTP_REQUEST(request, alloca);
     //ALLOCATE_HTTP_REQUEST(request, malloc);
-    char buffer[data->client_buffer_capacity];
-    client_handle(data->client_sock, data->client_buffer_capacity, buffer, &request, data->callback);
+    char request_buffer[data->client_buffer_capacity];
+    char response_buffer[data->client_buffer_capacity];
+    client_handle(data->client_sock, data->client_buffer_capacity, request_buffer, response_buffer, &request, data->callback);
     close(data->client_sock);
     FREE_HTTP_REQUEST(request, nothing)
     //FREE_HTTP_REQUEST(request, free)

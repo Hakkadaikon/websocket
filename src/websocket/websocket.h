@@ -34,7 +34,11 @@ typedef struct _WebSocketFrame {
     char*           payload;
 } WebSocketFrame, *PWebSocketFrame;
 
-typedef void (*PWebSocketCallback)(const int client_sock, PWebSocketFrame frame, const size_t client_buffer_capacity);
+typedef void (*PWebSocketCallback)(
+    const int       client_sock,
+    PWebSocketFrame frame,
+    const size_t    client_buffer_capacity,
+    char*           response_buffer);
 
 /*----------------------------------------------------------------------------*/
 /* websocket_parser.c                                                         */

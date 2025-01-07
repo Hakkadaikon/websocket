@@ -6,21 +6,18 @@
 #include "util/signal.h"
 #include "websocket/websocket.h"
 
-void websocket_callback(const int client_sock, PWebSocketFrame frame, const size_t client_buffer_capacity)
+void websocket_callback(const int client_sock, PWebSocketFrame frame, const size_t client_buffer_capacity, char* response_buffer)
 {
     switch (frame->opcode) {
         case WEBSOCKET_OP_CODE_TEXT: {
-            char buffer[client_buffer_capacity];
-            memset(buffer, 0x00, sizeof(buffer));
-
             frame->mask       = 0;
-            size_t frame_size = create_websocket_frame(frame, sizeof(buffer), (uint8_t*)&buffer[0]);
+            size_t frame_size = create_websocket_frame(frame, client_buffer_capacity, (uint8_t*)&response_buffer[0]);
             if (frame_size == 0) {
                 log_error("Failed to create websocket frame.\n");
                 return;
             }
 
-            websocket_server_send(client_sock, buffer, frame_size);
+            websocket_server_send(client_sock, response_buffer, frame_size);
         } break;
         default:
             break;
