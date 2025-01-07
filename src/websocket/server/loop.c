@@ -28,7 +28,15 @@ static void nothing(void* ptr)
 static inline ssize_t read_buffer(const int client_sock, const size_t capacity, char* restrict buffer)
 {
     ssize_t bytes_read = recv(client_sock, buffer, capacity - 1, 0);
-    if (bytes_read <= 0) {
+    if (bytes_read == 0) {
+        var_error("Socket was disconnected. socket : ", client_sock);
+        return 0;
+    } else if (bytes_read == -1) {
+        char* errmsg = strerror(errno);
+        log_error("Failed to recv errror. reason : ");
+        log_error(errmsg);
+        log_error("\n");
+        var_error("socket : ", client_sock);
         return 0;
     }
 
@@ -42,7 +50,6 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
     ssize_t bytes_read;
 
     if ((bytes_read = read_buffer(client_sock, sizeof(buffer), buffer)) == 0) {
-        var_error("Failed read buffer, sock : ", client_sock);
         return;
     }
     log_debug("Received handshake request : ");
@@ -98,19 +105,16 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
         parse_websocket_frame((uint8_t*)buffer, bytes_read, &frame);
         websocket_frame_dump(&frame);
 
-        // close frame
-        if (frame.opcode == WEBSOCKET_OP_CODE_CLOSE) {
-            break;
-        }
-
         switch (frame.opcode) {
-            case WEBSOCKET_OP_CODE_TEXT: {
+            case WEBSOCKET_OP_CODE_TEXT:
                 callback(client_sock, &frame, buffer_capacity);
-            } break;
-            case WEBSOCKET_OP_CODE_BINARY: {
+                break;
+            case WEBSOCKET_OP_CODE_BINARY:
                 callback(client_sock, &frame, buffer_capacity);
-            } break;
-            case WEBSOCKET_OP_CODE_PING: {
+                break;
+            case WEBSOCKET_OP_CODE_CLOSE:
+                return;
+            case WEBSOCKET_OP_CODE_PING:
                 memset(response, 0x00, sizeof(response));
                 frame.mask   = 0;
                 frame.opcode = WEBSOCKET_OP_CODE_PONG;
@@ -120,10 +124,10 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
                     log_error("Failed to create pong frame.\n");
                     return;
                 }
-                send(client_sock, response, frame_size, 0);
-            } break;
-            case WEBSOCKET_OP_CODE_PONG: {
-            } break;
+                websocket_server_send(client_sock, response, frame_size);
+                break;
+            case WEBSOCKET_OP_CODE_PONG:
+                break;
             default:
                 var_error("Unknown op code: ", frame.opcode);
                 break;
@@ -131,7 +135,7 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
 
         if (is_rise_signal()) {
             var_info("rise signal. sock : ", client_sock);
-            break;
+            return;
         }
     }
 }
