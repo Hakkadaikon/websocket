@@ -13,17 +13,25 @@
 
 #include "../http/http.h"
 
+typedef enum {
+    WEBSOCKET_OP_CODE_TEXT   = 0x1,
+    WEBSOCKET_OP_CODE_BINARY = 0x2,
+    WEBSOCKET_OP_CODE_CLOSE  = 0x8,
+    WEBSOCKET_OP_CODE_PING   = 0x9,
+    WEBSOCKET_OP_CODE_PONG   = 0xA,
+} WebSocketOpCode;
+
 typedef struct _WebsocketFrame {
-    uint8_t  fin;
-    uint8_t  rsv1;
-    uint8_t  rsv2;
-    uint8_t  rsv3;
-    uint8_t  opcode;
-    uint8_t  mask;
-    uint8_t  payload_len;
-    uint64_t ext_payload_len;
-    uint8_t  masking_key[4];
-    char*    payload;
+    uint8_t         fin;
+    uint8_t         rsv1;
+    uint8_t         rsv2;
+    uint8_t         rsv3;
+    WebSocketOpCode opcode;
+    uint8_t         mask;
+    uint8_t         payload_len;
+    uint64_t        ext_payload_len;
+    uint8_t         masking_key[4];
+    char*           payload;
 } WebSocketFrame, *PWebSocketFrame;
 
 /*----------------------------------------------------------------------------*/

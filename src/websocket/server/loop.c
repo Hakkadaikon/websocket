@@ -162,25 +162,39 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
         websocket_frame_dump(&frame);
 
         // close frame
-        if (frame.opcode == 0x8) {
+        if (frame.opcode == WEBSOCKET_OP_CODE_CLOSE) {
             break;
         }
 
         switch (frame.opcode) {
-            case 0x1:  // text frame
+            case WEBSOCKET_OP_CODE_TEXT: {
                 memset(response, 0x00, sizeof(response));
                 frame.mask        = 0;
                 size_t frame_size = create_websocket_frame(&frame, sizeof(response), (uint8_t*)&response[0]);
                 if (frame_size == 0) {
-                    //printf("create frame error\n");
+                    log_error("Failed to create websocket frame.\n");
                     return;
                 }
                 send(client_sock, response, frame_size, 0);
-                break;
-            case 0x2:  // binary frame
-            case 0x9:  // ping
-            case 0xA:  // pong
+            } break;
+            case WEBSOCKET_OP_CODE_BINARY: {
+            } break;
+            case WEBSOCKET_OP_CODE_PING: {
+                memset(response, 0x00, sizeof(response));
+                frame.mask   = 0;
+                frame.opcode = WEBSOCKET_OP_CODE_PONG;
+
+                size_t frame_size = create_websocket_frame(&frame, sizeof(response), (uint8_t*)&response[0]);
+                if (frame_size == 0) {
+                    log_error("Failed to create pong frame.\n");
+                    return;
+                }
+                send(client_sock, response, frame_size, 0);
+            } break;
+            case WEBSOCKET_OP_CODE_PONG: {
+            } break;
             default:
+                var_error("Unknown op code: ", frame.opcode);
                 break;
         }
 
