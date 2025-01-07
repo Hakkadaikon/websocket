@@ -157,7 +157,7 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
         WebsocketFrame frame;
         memset(&frame, 0x00, sizeof(frame));
         frame.payload = alloca(bytes_read);
-        parseWebsocketFrame((uint8_t*)buffer, bytes_read, &frame);
+        parse_websocket_frame((uint8_t*)buffer, bytes_read, &frame);
         websocket_frame_dump(&frame);
 
         // close frame
@@ -169,7 +169,7 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
             case 0x1:  // text frame
                 memset(response, 0x00, sizeof(response));
                 frame.mask        = 0;
-                size_t frame_size = createWebsocketFrame(&frame, sizeof(response), (uint8_t*)&response[0]);
+                size_t frame_size = create_websocket_frame(&frame, sizeof(response), (uint8_t*)&response[0]);
                 if (frame_size == 0) {
                     //printf("create frame error\n");
                     return;

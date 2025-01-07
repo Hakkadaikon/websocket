@@ -38,8 +38,8 @@ typedef struct _WebsocketFrame {
  *
  * @return true: Parse was successful / false: Failed parse
  */
-bool   parseWebsocketFrame(const uint8_t* raw, const size_t frame_size, PWebsocketFrame frame);
-size_t createWebsocketFrame(PWebsocketFrame frame, const size_t capacity, uint8_t* raw);
+bool   parse_websocket_frame(const uint8_t* raw, const size_t frame_size, PWebsocketFrame frame);
+size_t create_websocket_frame(PWebsocketFrame frame, const size_t capacity, uint8_t* raw);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/crypto.c                                                         */
