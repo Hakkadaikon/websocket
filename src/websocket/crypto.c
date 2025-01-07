@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../crypt/base64.h"
+#include "../crypto/base64.h"
 #include "../util/log.h"
 #include "websocket.h"
 

@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../../crypt/base64.h"
+#include "../../crypto/base64.h"
 #include "../../http/http.h"
 #include "../../util/log.h"
 #include "../websocket.h"
