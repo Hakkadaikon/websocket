@@ -149,16 +149,32 @@ static void client_handle(
 static void* client_handle_thread(void* restrict arg)
 {
     PThreadData data = (PThreadData)arg;
-
     HTTPRequest request;
-    ALLOCATE_HTTP_REQUEST(request, alloca);
-    //ALLOCATE_HTTP_REQUEST(request, malloc);
-    char request_buffer[data->client_buffer_capacity];
-    char response_buffer[data->client_buffer_capacity];
+    bool        is_allocate_stack = true;
+
+    char* request_buffer  = NULL;
+    char* response_buffer = NULL;
+    if (is_allocate_stack) {
+        ALLOCATE_HTTP_REQUEST(request, alloca);
+        request_buffer  = alloca(data->client_buffer_capacity);
+        response_buffer = alloca(data->client_buffer_capacity);
+    } else {
+        ALLOCATE_HTTP_REQUEST(request, malloc);
+        request_buffer  = malloc(data->client_buffer_capacity);
+        response_buffer = malloc(data->client_buffer_capacity);
+    }
+
     client_handle(data->client_sock, data->client_buffer_capacity, request_buffer, response_buffer, &request, data->callback);
     close(data->client_sock);
-    FREE_HTTP_REQUEST(request, nothing)
-    //FREE_HTTP_REQUEST(request, free)
+
+    if (is_allocate_stack) {
+        FREE_HTTP_REQUEST(request, nothing)
+    } else {
+        FREE_HTTP_REQUEST(request, free)
+        free(request_buffer);
+        free(response_buffer);
+    }
+
     return NULL;
 }
 
