@@ -8,7 +8,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "../util/log.h"
 #include "websocket.h"
 
 /**
@@ -221,7 +220,5 @@ size_t create_websocket_frame(PWebSocketFrame restrict frame, const size_t capac
     }
     offset += frame->ext_payload_len;
 
-    //printf("raw dump\n");
-    //hex_dump(raw, offset);
     return offset;
 }
