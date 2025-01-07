@@ -105,14 +105,6 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
 
         switch (frame.opcode) {
             case WEBSOCKET_OP_CODE_TEXT: {
-                //memset(response, 0x00, sizeof(response));
-                //frame.mask        = 0;
-                //size_t frame_size = create_websocket_frame(&frame, sizeof(response), (uint8_t*)&response[0]);
-                //if (frame_size == 0) {
-                //    log_error("Failed to create websocket frame.\n");
-                //    return;
-                //}
-                //send(client_sock, response, frame_size, 0);
                 callback(client_sock, &frame, buffer_capacity);
             } break;
             case WEBSOCKET_OP_CODE_BINARY: {
