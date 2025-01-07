@@ -21,7 +21,7 @@ typedef enum {
     WEBSOCKET_OP_CODE_PONG   = 0xA,
 } WebSocketOpCode;
 
-typedef struct _WebsocketFrame {
+typedef struct _WebSocketFrame {
     uint8_t         fin;
     uint8_t         rsv1;
     uint8_t         rsv2;
