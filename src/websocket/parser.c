@@ -20,7 +20,7 @@
  *
  * @return true: Parse was successful / false: Failed parse
  */
-bool parse_websocket_frame(const uint8_t* restrict raw, const size_t frame_size, PWebsocketFrame restrict frame)
+bool parse_websocket_frame(const uint8_t* restrict raw, const size_t frame_size, PWebSocketFrame restrict frame)
 {
     if (frame_size < 2) {
         return false;
@@ -143,7 +143,7 @@ bool parse_websocket_frame(const uint8_t* restrict raw, const size_t frame_size,
     return true;
 }
 
-size_t create_websocket_frame(PWebsocketFrame restrict frame, const size_t capacity, uint8_t* restrict raw)
+size_t create_websocket_frame(PWebSocketFrame restrict frame, const size_t capacity, uint8_t* restrict raw)
 {
     if (!frame || !raw || capacity < 2) {
         return 0;

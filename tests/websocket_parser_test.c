@@ -20,11 +20,11 @@ void websocket_parser_test()
 
     createTestFrame(ext_payload_len, frame);
 
-    WebsocketFrame out;
+    WebSocketFrame out;
     out.payload = (char*)alloca((size_t)(ext_payload_len + 1));
     //out.payload = (char*)malloc((size_t)(ext_payload_len + 1));
 
-    if (!parseWebsocketFrame((const uint8_t*)&frame, frame_size, &out)) {
+    if (!parse_websocket_frame((const uint8_t*)&frame, frame_size, &out)) {
         printf("Failed to parse websocket frame.\n");
         return;
     }

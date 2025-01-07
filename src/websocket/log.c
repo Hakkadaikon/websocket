@@ -2,7 +2,7 @@
 
 #include "websocket.h"
 
-void websocket_frame_dump(PWebsocketFrame restrict frame)
+void websocket_frame_dump(PWebSocketFrame restrict frame)
 {
     var_debug("fin             : ", frame->fin);
     var_debug("rsv1            : ", frame->rsv1);

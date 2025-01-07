@@ -24,7 +24,7 @@ typedef struct _WebsocketFrame {
     uint64_t ext_payload_len;
     uint8_t  masking_key[4];
     char*    payload;
-} WebsocketFrame, *PWebsocketFrame;
+} WebSocketFrame, *PWebSocketFrame;
 
 /*----------------------------------------------------------------------------*/
 /* websocket_parser.c                                                         */
@@ -39,8 +39,8 @@ typedef struct _WebsocketFrame {
  *
  * @return true: Parse was successful / false: Failed parse
  */
-bool   parse_websocket_frame(const uint8_t* raw, const size_t frame_size, PWebsocketFrame frame);
-size_t create_websocket_frame(PWebsocketFrame frame, const size_t capacity, uint8_t* raw);
+bool   parse_websocket_frame(const uint8_t* raw, const size_t frame_size, PWebSocketFrame frame);
+size_t create_websocket_frame(PWebSocketFrame frame, const size_t capacity, uint8_t* raw);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/crypto.c                                                         */
@@ -73,6 +73,6 @@ bool  create_server_handshake_ok_frame(const char* accept_key, const size_t capa
 /* websocket/log.c                                                            */
 /*----------------------------------------------------------------------------*/
 
-void websocket_frame_dump(PWebsocketFrame frame);
+void websocket_frame_dump(PWebSocketFrame frame);
 
 #endif

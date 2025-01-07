@@ -155,7 +155,7 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
     log_debug("\n");
 
     while ((bytes_read = read_buffer(client_sock, sizeof(buffer), buffer)) > 0) {
-        WebsocketFrame frame;
+        WebSocketFrame frame;
         memset(&frame, 0x00, sizeof(frame));
         frame.payload = alloca(bytes_read);
         parse_websocket_frame((uint8_t*)buffer, bytes_read, &frame);

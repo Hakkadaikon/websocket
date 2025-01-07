@@ -1,5 +1,5 @@
 # websocket
-RFC6455 (The Websocket Protocol) protocol stack.
+RFC6455 (The WebSocket Protocol) protocol stack.
 
 # Progress
 ...
