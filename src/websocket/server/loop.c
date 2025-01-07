@@ -44,12 +44,12 @@ static inline ssize_t read_buffer(const int client_sock, const size_t capacity, 
     return bytes_read;
 }
 
-static void client_handle(const int client_sock, const size_t buffer_capacity, PHTTPRequest request, PWebSocketCallback callback)
+static void client_handle(const int client_sock, const size_t buffer_capacity, char* restrict buffer, PHTTPRequest request, PWebSocketCallback callback)
 {
-    char    buffer[buffer_capacity];
+    //char    buffer[buffer_capacity];
     ssize_t bytes_read;
 
-    if ((bytes_read = read_buffer(client_sock, sizeof(buffer), buffer)) == 0) {
+    if ((bytes_read = read_buffer(client_sock, buffer_capacity, buffer)) == 0) {
         return;
     }
     log_debug("Received handshake request : ");
@@ -98,7 +98,7 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
     log_debug(accept_key);
     log_debug("\n");
 
-    while ((bytes_read = read_buffer(client_sock, sizeof(buffer), buffer)) > 0) {
+    while ((bytes_read = read_buffer(client_sock, buffer_capacity, buffer)) > 0) {
         WebSocketFrame frame;
         memset(&frame, 0x00, sizeof(frame));
         frame.payload = alloca(bytes_read);
@@ -143,10 +143,12 @@ static void client_handle(const int client_sock, const size_t buffer_capacity, P
 static void* client_handle_thread(void* restrict arg)
 {
     PThreadData data = (PThreadData)arg;
+
     HTTPRequest request;
     ALLOCATE_HTTP_REQUEST(request, alloca);
     //ALLOCATE_HTTP_REQUEST(request, malloc);
-    client_handle(data->client_sock, data->client_buffer_capacity, &request, data->callback);
+    char buffer[data->client_buffer_capacity];
+    client_handle(data->client_sock, data->client_buffer_capacity, buffer, &request, data->callback);
     close(data->client_sock);
     FREE_HTTP_REQUEST(request, nothing)
     //FREE_HTTP_REQUEST(request, free)
