@@ -1,5 +1,6 @@
-#include "websocket.h"
 #include "../util/log.h"
+
+#include "websocket.h"
 
 void websocket_frame_dump(PWebsocketFrame restrict frame)
 {

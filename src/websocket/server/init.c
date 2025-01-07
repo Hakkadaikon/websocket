@@ -1,9 +1,10 @@
-#include "../websocket.h"
-#include <string.h>
-#include <unistd.h>
 #include <arpa/inet.h>
 #include <stdint.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "../../util/log.h"
+#include "../websocket.h"
 
 int websocket_server_init(const int port_num, const int backlog)
 {

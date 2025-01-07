@@ -2,9 +2,10 @@
  * @file  websocket_parser_test.c
  */
 
-#include "../src/websocket/websocket.h"
-#include <string.h>
 #include <alloca.h>
+#include <string.h>
+
+#include "../src/websocket/websocket.h"
 
 size_t calcHeaderSize(const size_t ext_payload_len);
 void   createTestFrame(const size_t ext_payload_len, uint8_t* frame);

@@ -1,10 +1,11 @@
-#include "websocket.h"
-#include "../crypt/base64.h"
-#include "../util/log.h"
+#include <openssl/sha.h>  //sha1
 #include <stddef.h>
 #include <stdio.h>
 #include <string.h>
-#include <openssl/sha.h>  //sha1
+
+#include "../crypt/base64.h"
+#include "../util/log.h"
+#include "websocket.h"
 
 static void sha1(const char* input, const size_t input_len, uint8_t* output);
 

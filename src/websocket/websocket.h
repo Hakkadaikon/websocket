@@ -7,9 +7,10 @@
  * @brief Parses each parameter of a websocket frame stored in network byte order.
  * @see RFC6455 (https://datatracker.ietf.org/doc/html/rfc6455)
  */
-#include <stdio.h>
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+
 #include "../http/http.h"
 
 typedef struct _WebsocketFrame {

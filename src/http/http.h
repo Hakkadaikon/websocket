@@ -1,8 +1,8 @@
 #ifndef NOSTR_HTTP_H_
 #define NOSTR_HTTP_H_
 
-#include <stddef.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 enum {
     HTTP_METHOD_CAPACITY       = 16,

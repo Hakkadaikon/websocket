@@ -1,9 +1,10 @@
-#include "../websocket.h"
-#include "../../util/log.h"
-#include "../../http/http.h"
-#include "../../crypt/base64.h"
 #include <stdbool.h>
 #include <string.h>
+
+#include "../../crypt/base64.h"
+#include "../../http/http.h"
+#include "../../util/log.h"
+#include "../websocket.h"
 
 static inline bool is_valid_host(const char* restrict host)
 {

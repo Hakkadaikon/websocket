@@ -4,11 +4,12 @@
  * @brief Parses each parameter of a websocket frame stored in network byte order.
  * @see RFC6455 (https://datatracker.ietf.org/doc/html/rfc6455)
  */
-#include "websocket.h"
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
-#include <stdbool.h>
+
 #include "../util/log.h"
+#include "websocket.h"
 
 /**
  * @brief Parse raw data in network byte order into a websocket frame structure

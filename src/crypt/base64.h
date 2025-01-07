@@ -1,10 +1,11 @@
 #ifndef NOSTR_BASE64_H_
 #define NOSTR_BASE64_H_
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
 static inline void base64_encode(const uint8_t* input, size_t input_len, char* output, const size_t output_len)
 {

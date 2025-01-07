@@ -1,8 +1,8 @@
 #ifndef NOSTR_STRING_H_
 #define NOSTR_STRING_H_
 
-#include <stddef.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 static inline char char_value(const char* ptr)
 {

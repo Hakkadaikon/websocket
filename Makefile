@@ -71,7 +71,7 @@ format:
 			AllowShortFunctionsOnASingleLine: None,    \
 			AllowShortLoopsOnASingleLine: false,       \
 			BreakBeforeBraces: Linux,                  \
-			SortIncludes: false,                       \
+			SortIncludes: true,                        \
 			DerivePointerAlignment: false,             \
 			PointerAlignment: Left,                    \
 			AlignOperands: true,                       \

@@ -1,9 +1,11 @@
 #include "http.h"
-#include "../util/string.h"
-#include <stddef.h>
+
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "../util/string.h"
 
 static inline size_t extract_keyword(
     const char* restrict buffer,

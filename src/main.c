@@ -1,7 +1,8 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include "util/signal.h"
+
 #include "util/log.h"
+#include "util/signal.h"
 #include "websocket/websocket.h"
 
 int main()

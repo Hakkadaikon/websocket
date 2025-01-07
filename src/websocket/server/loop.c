@@ -1,15 +1,16 @@
-#include "../websocket.h"
+#include <alloca.h>
+#include <arpa/inet.h>
+#include <errno.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #include "../../http/http.h"
 #include "../../util/log.h"
 #include "../../util/signal.h"
-#include <arpa/inet.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
-#include <alloca.h>
-#include <pthread.h>
-#include <errno.h>
+#include "../websocket.h"
 
 typedef struct {
     int    client_sock;

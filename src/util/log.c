@@ -1,12 +1,13 @@
+#include "./log.h"
+
+#include <stdarg.h>
+#include <stdatomic.h>
+#include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdarg.h>
 #include <unistd.h>
-#include "./log.h"
-#include <stddef.h>
-#include <stdatomic.h>
-#include <stdbool.h>
 
 _Atomic static LOG_LEVEL current_level = LOG_LEVEL_DEBUG;
 
