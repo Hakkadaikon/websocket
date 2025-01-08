@@ -92,7 +92,12 @@ void log_dump(const int fd, const char* str)
         return;
     }
 
-    (void)write(fd, str, strlen(str));
+    size_t len = strlen(str);
+    if (len == 0) {
+        return;
+    }
+
+    (void)write(fd, str, len);
 }
 
 void log_debug(const char* restrict str)
@@ -128,7 +133,12 @@ void var_dump(const int fd, const char* restrict str, int value)
         return;
     }
 
-    (void)write(fd, str, strlen(str));
+    size_t len = strlen(str);
+    if (len == 0) {
+        return;
+    }
+
+    (void)write(fd, str, len);
 
     char   buffer[32];
     size_t buffer_size      = safe_itoa(value, buffer, sizeof(buffer));
