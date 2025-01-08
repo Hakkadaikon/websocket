@@ -1,6 +1,3 @@
-#include <alloca.h>
-#include <arpa/inet.h>
-#include <errno.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,25 +22,6 @@ static void nothing(void* ptr)
     // nothing...
 }
 
-static inline ssize_t read_buffer(const int client_sock, const size_t capacity, char* restrict buffer)
-{
-    ssize_t bytes_read = recv(client_sock, buffer, capacity - 1, 0);
-    if (bytes_read == 0) {
-        var_error("Socket was disconnected. socket : ", client_sock);
-        return 0;
-    } else if (bytes_read == -1) {
-        char* errmsg = strerror(errno);
-        log_error("Failed to recv errror. reason : ");
-        log_error(errmsg);
-        log_error("\n");
-        var_error("socket : ", client_sock);
-        return 0;
-    }
-
-    buffer[bytes_read] = '\0';
-    return bytes_read;
-}
-
 static void client_handle(
     const int             client_sock,
     const size_t          buffer_capacity,
@@ -52,12 +30,12 @@ static void client_handle(
     PHTTPRequest restrict request,
     PWebSocketCallback    callback)
 {
-    //char    buffer[buffer_capacity];
     ssize_t bytes_read;
 
-    if ((bytes_read = read_buffer(client_sock, buffer_capacity, request_buffer)) == 0) {
+    if ((bytes_read = websocket_server_recv(client_sock, buffer_capacity, request_buffer)) == 0) {
         return;
     }
+
     log_debug("Received handshake request : ");
     log_debug(request_buffer);
     log_debug("\n");
@@ -104,7 +82,7 @@ static void client_handle(
     log_debug("\n");
     memset(response_buffer, 0x00, buffer_capacity);
 
-    while ((bytes_read = read_buffer(client_sock, buffer_capacity, request_buffer)) > 0) {
+    while ((bytes_read = websocket_server_recv(client_sock, buffer_capacity, request_buffer)) > 0) {
         WebSocketFrame frame;
         memset(&frame, 0x00, sizeof(frame));
         frame.payload = alloca(bytes_read);
@@ -173,7 +151,7 @@ static void* client_handle_thread(void* restrict arg)
     client_handle(data->client_sock, data->client_buffer_capacity, request_buffer, response_buffer, &request, data->callback);
 
 FINALIZE:
-    close(data->client_sock);
+    websocket_server_close(data->client_sock);
 
     if (is_allocate_stack) {
         FREE_HTTP_REQUEST(request, nothing)
@@ -188,29 +166,18 @@ FINALIZE:
 
 bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity, PWebSocketCallback callback)
 {
-    int                client_sock;
-    struct sockaddr_in client_addr;
-    socklen_t          addr_len = sizeof(client_addr);
+    int client_sock;
 
     while (1) {
-        log_debug("accept...\n");
-        client_sock = accept(server_sock, (struct sockaddr*)&client_addr, &addr_len);
-        if (client_sock < 0) {
-            if ((errno != EINTR)) {
-                log_error("accept() failed. err : ");
-                log_error(strerror(errno));
-                log_error("\n");
-                log_error("The system will abort processing.\n");
-                break;
-            }
+        client_sock = websocket_server_accept(server_sock);
+        if (client_sock == -2) {
+            return false;
+        }
 
-            if (is_rise_signal()) {
-                log_info("A signal was raised during accept(). The system will abort processing.\n");
-                break;
-            }
-
+        if (client_sock == -1) {
             continue;
         }
+
         log_debug("Client connected.\n");
 
         PThreadData data = (PThreadData)alloca(sizeof(ThreadData));

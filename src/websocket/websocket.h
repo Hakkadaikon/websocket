@@ -72,8 +72,11 @@ int websocket_server_init(const int port_num, const int backlog);
 /* websocket/server/func.c                                                    */
 /*----------------------------------------------------------------------------*/
 
-int websocket_server_close(const int server_sock);
-int websocket_server_send(const int client_sock, const char* buffer, const size_t buffer_size);
+int     websocket_server_close(const int server_sock);
+int     websocket_server_send(const int client_sock, const char* buffer, const size_t buffer_size);
+ssize_t websocket_server_recv(const int client_sock, const size_t capacity, char* buffer);
+int     websocket_server_accept(const int server_sock);
+int     websocket_server_connect(const int port_num, const int backlog);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/server/loop.c                                                    */
