@@ -7,7 +7,7 @@
 #------------------------------------------------------------------------------
 # Program name
 #------------------------------------------------------------------------------
-PROGRAM  := test
+PROGRAM  := ws-server
 
 #------------------------------------------------------------------------------
 # Compiler name
@@ -33,7 +33,8 @@ DEPENDFILES  := $(OBJFILES:.o=.d)
 #------------------------------------------------------------------------------
 # Flags
 #------------------------------------------------------------------------------
-CFLAGS  := -Ofast \
+CFLAGS  := \
+           -Ofast \
            -march=native \
            -mtune=native \
            -flto \
@@ -43,6 +44,18 @@ CFLAGS  := -Ofast \
            -pthread
 LDLIBS  := -lssl -lcrypto -lpthread
 LDFLAGS := -flto -pthread
+
+# TEST
+#CFLAGS  := \
+#           -O0 \
+#           -march=native \
+#           -mtune=native \
+#           -flto \
+#           -fno-stack-protector \
+#           -fomit-frame-pointer \
+#           -fno-asynchronous-unwind-tables \
+#           -g \
+#           -pthread
 
 #------------------------------------------------------------------------------
 # Make rules
