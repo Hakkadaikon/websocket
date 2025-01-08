@@ -31,7 +31,7 @@ static inline void client_handle(
 {
     ssize_t bytes_read;
 
-    if ((bytes_read = websocket_server_recv(client_sock, buffer_capacity, request_buffer)) == 0) {
+    if ((bytes_read = websocket_server_recv(client_sock, buffer_capacity, request_buffer)) <= 0) {
         return;
     }
 
