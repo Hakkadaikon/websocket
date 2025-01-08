@@ -35,25 +35,22 @@ DEPENDFILES  := $(OBJFILES:.o=.d)
 #------------------------------------------------------------------------------
 CFLAGS  := \
            -Ofast \
-           -march=native \
            -mtune=native \
-           -flto \
+           -pthread \
            -fno-stack-protector \
            -fomit-frame-pointer \
-           -fno-asynchronous-unwind-tables \
-           -pthread
+           -flto \
+           -fno-asynchronous-unwind-tables
+
+# Performance has dropped.
+# -march=native
+
 LDLIBS  := -lssl -lcrypto -lpthread
 LDFLAGS := -flto -pthread
 
 # TEST
 #CFLAGS  := \
 #           -O0 \
-#           -march=native \
-#           -mtune=native \
-#           -flto \
-#           -fno-stack-protector \
-#           -fomit-frame-pointer \
-#           -fno-asynchronous-unwind-tables \
 #           -g \
 #           -pthread
 
