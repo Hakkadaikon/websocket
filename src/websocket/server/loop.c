@@ -94,7 +94,7 @@ static void client_handle(
         return;
     }
 
-    send(client_sock, response_buffer, strnlen(response_buffer, buffer_capacity), 0);
+    websocket_server_send(client_sock, response_buffer, strnlen(response_buffer, buffer_capacity));
     log_debug("Sent handshake response. \n");
     log_debug("client key : ");
     log_debug(client_key);
@@ -162,6 +162,12 @@ static void* client_handle_thread(void* restrict arg)
         ALLOCATE_HTTP_REQUEST(request, malloc);
         request_buffer  = malloc(data->client_buffer_capacity);
         response_buffer = malloc(data->client_buffer_capacity);
+    }
+
+    if (request_buffer == NULL || response_buffer == NULL) {
+        log_error("Failed to allocate request/response buffer.\n");
+        close(data->client_sock);
+        return NULL;
     }
 
     client_handle(data->client_sock, data->client_buffer_capacity, request_buffer, response_buffer, &request, data->callback);
