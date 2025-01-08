@@ -7,10 +7,16 @@
 #------------------------------------------------------------------------------
 # Build options
 #------------------------------------------------------------------------------
-.PHONY: build clean format
+.PHONY: build clean run format
 
 build:
 	nix-build
+
+clean:
+	nix store gc
+
+run: build
+	result/bin/ws-server
 
 # format (use clang)
 format:
@@ -31,5 +37,3 @@ format:
 		}"                                             \
 		$(shell find . -name '*.c' -o -name '*.h')
 
-clean:
-	nix store gc
