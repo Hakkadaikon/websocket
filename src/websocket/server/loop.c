@@ -154,6 +154,7 @@ static void* client_handle_thread(void* restrict arg)
 
     char* request_buffer  = NULL;
     char* response_buffer = NULL;
+
     if (is_allocate_stack) {
         ALLOCATE_HTTP_REQUEST(request, alloca);
         request_buffer  = alloca(data->client_buffer_capacity);
@@ -166,19 +167,20 @@ static void* client_handle_thread(void* restrict arg)
 
     if (request_buffer == NULL || response_buffer == NULL) {
         log_error("Failed to allocate request/response buffer.\n");
-        close(data->client_sock);
-        return NULL;
+        goto FINALIZE;
     }
 
     client_handle(data->client_sock, data->client_buffer_capacity, request_buffer, response_buffer, &request, data->callback);
+
+FINALIZE:
     close(data->client_sock);
 
     if (is_allocate_stack) {
         FREE_HTTP_REQUEST(request, nothing)
     } else {
         FREE_HTTP_REQUEST(request, free)
-        free(request_buffer);
-        free(response_buffer);
+        if (request_buffer != NULL) free(request_buffer);
+        if (response_buffer != NULL) free(response_buffer);
     }
 
     return NULL;
