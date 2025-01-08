@@ -9,6 +9,8 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "./string.h"
+
 _Atomic static LOG_LEVEL current_level = LOG_LEVEL_DEBUG;
 
 static inline bool is_dump_log(LOG_LEVEL level)
@@ -86,6 +88,10 @@ void hex_dump(const void* restrict data, size_t size)
 
 void log_dump(const int fd, const char* str)
 {
+    if (is_null(str) || fd <= 0) {
+        return;
+    }
+
     (void)write(fd, str, strlen(str));
 }
 
@@ -118,6 +124,10 @@ void log_error(const char* restrict str)
 
 void var_dump(const int fd, const char* restrict str, int value)
 {
+    if (is_null(str) || fd <= 0) {
+        return;
+    }
+
     (void)write(fd, str, strlen(str));
 
     char   buffer[32];
