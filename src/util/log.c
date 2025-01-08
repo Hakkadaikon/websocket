@@ -11,17 +11,6 @@
 
 #include "./string.h"
 
-_Atomic static LOG_LEVEL current_level = LOG_LEVEL_DEBUG;
-
-static inline bool is_dump_log(LOG_LEVEL level)
-{
-    if (level >= current_level) {
-        return true;
-    }
-
-    return false;
-}
-
 static inline int calc_digit(int value)
 {
     int is_negative = (value < 0);
@@ -61,12 +50,7 @@ static inline size_t safe_itoa(int value, char* restrict buffer, size_t buffer_c
     return end - (current + 1);
 }
 
-void set_log_level(LOG_LEVEL level)
-{
-    current_level = level;
-}
-
-void hex_dump(const void* restrict data, size_t size)
+void hex_dump_local(const void* restrict data, size_t size)
 {
     //TODO: I plan to prepare my own log (var_hex_info) and replace it with printf.
     const char* byte_data = (const char*)data;
@@ -86,7 +70,7 @@ void hex_dump(const void* restrict data, size_t size)
     fflush(stdout);
 }
 
-void log_dump(const int fd, const char* str)
+void log_dump_local(const int fd, const char* str)
 {
     if (is_null(str) || fd <= 0) {
         return;
@@ -100,34 +84,22 @@ void log_dump(const int fd, const char* str)
     (void)write(fd, str, len);
 }
 
-void log_debug(const char* restrict str)
+void log_debug_local(const char* restrict str)
 {
-    if (!is_dump_log(LOG_LEVEL_DEBUG)) {
-        return;
-    }
-
     log_dump(STDOUT_FILENO, str);
 }
 
-void log_info(const char* restrict str)
+void log_info_local(const char* restrict str)
 {
-    if (!is_dump_log(LOG_LEVEL_INFO)) {
-        return;
-    }
-
     log_dump(STDOUT_FILENO, str);
 }
 
-void log_error(const char* restrict str)
+void log_error_local(const char* restrict str)
 {
-    if (!is_dump_log(LOG_LEVEL_ERROR)) {
-        return;
-    }
-
     return log_dump(STDERR_FILENO, str);
 }
 
-void var_dump(const int fd, const char* restrict str, int value)
+void var_dump_local(const int fd, const char* restrict str, int value)
 {
     if (is_null(str) || fd <= 0) {
         return;
@@ -148,29 +120,17 @@ void var_dump(const int fd, const char* restrict str, int value)
     (void)write(fd, buffer, buffer_size + 1);
 }
 
-void var_debug(const char* restrict str, int value)
+void var_debug_local(const char* restrict str, int value)
 {
-    if (!is_dump_log(LOG_LEVEL_DEBUG)) {
-        return;
-    }
-
     var_dump(STDOUT_FILENO, str, value);
 }
 
-void var_info(const char* restrict str, int value)
+void var_info_local(const char* restrict str, int value)
 {
-    if (!is_dump_log(LOG_LEVEL_INFO)) {
-        return;
-    }
-
     var_dump(STDOUT_FILENO, str, value);
 }
 
-void var_error(const char* restrict str, int value)
+void var_error_local(const char* restrict str, int value)
 {
-    if (!is_dump_log(LOG_LEVEL_ERROR)) {
-        return;
-    }
-
     var_dump(STDERR_FILENO, str, value);
 }
