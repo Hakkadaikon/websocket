@@ -1,16 +1,15 @@
 { pkgs ? import <nixpkgs> {} }:
 
-let
-  openssl = pkgs.openssl;
+let 
 in pkgs.stdenv.mkDerivation {
   pname = "ws-server";
   version = "1.0.0";
 
   src = ./.;
 
-  buildInputs = [
-    pkgs.openssl
-  ];
+  #buildInputs = [
+  #  pkgs.openssl
+  #];
 
   CFLAGS = "
     -Ofast \
@@ -27,12 +26,23 @@ in pkgs.stdenv.mkDerivation {
     -flto \
     -pthread
   ";
-
   LDLIBS = "
-    -lpthread \
-    -lssl \
-    -lcrypto
+    -lpthread
   ";
+
+  # valgrind build
+  # CFLAGS = "
+  #   -O0 \
+  #   -pthread \
+  #    -static-libasan \
+  #   -g
+  # ";
+
+  #LDLIBS = "
+  #  -lpthread \
+  #  -lssl \
+  #  -lcrypto
+  #";
 
   buildPhase = ''
     mkdir -p build
@@ -64,7 +74,7 @@ in pkgs.stdenv.mkDerivation {
     description = "websocket server";
     homepage = "https://nostter.app/hakkadaikon@iris.to";
     license = licenses.mit;
-    maintainers = with maintainers; [ your_github_handle ];
+    maintainers = with maintainers; [ Hakkadaikon ];
   };
 }
 

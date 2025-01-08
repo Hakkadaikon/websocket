@@ -35,10 +35,16 @@ make run
 - Compression / Decode   : No  
 
 # Dependencies  
-[openssl/openssl](https://github.com/openssl/openssl) - SSL/TLS and crypto library  
+## Build  
 [NixOS/nix](https://github.com/NixOS/nix) - Package manager / OS  
+
+## develop  
 [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) - Nix installer  
 [clang-format](https://github.com/llvm/llvm-project/tree/main/clang/tools/clang-format) - Formatter  
+[valgrind](https://sourceware.org/git/valgrind.git) - building analysis tools  
+
+## Future  
+[openssl/openssl](https://github.com/openssl/openssl) - SSL/TLS and crypto library  (It may be used in the future for TLS communication.)
 
 # Author
 Hakkadaikon
