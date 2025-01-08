@@ -62,7 +62,7 @@ in pkgs.stdenv.mkDerivation {
 
   meta = with pkgs.lib; {
     description = "websocket server";
-    homepage = "https://example.com";
+    homepage = "https://nostter.app/hakkadaikon@iris.to";
     license = licenses.mit;
     maintainers = with maintainers; [ your_github_handle ];
   };
