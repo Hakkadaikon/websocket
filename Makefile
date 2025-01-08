@@ -39,6 +39,7 @@ CFLAGS  := \
            -pthread \
            -fno-stack-protector \
            -fomit-frame-pointer \
+           -funroll-loops \
            -flto \
            -fno-asynchronous-unwind-tables
 
