@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 #include "../../http/http.h"
 #include "../../util/log.h"
@@ -22,7 +21,7 @@ static void nothing(void* ptr)
     // nothing...
 }
 
-static void client_handle(
+static inline void client_handle(
     const int             client_sock,
     const size_t          buffer_capacity,
     char* restrict        request_buffer,
@@ -166,10 +165,8 @@ FINALIZE:
 
 bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity, PWebSocketCallback callback)
 {
-    int client_sock;
-
     while (1) {
-        client_sock = websocket_server_accept(server_sock);
+        int client_sock = websocket_server_accept(server_sock);
         if (client_sock == -2) {
             return false;
         }
@@ -183,7 +180,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
         PThreadData data = (PThreadData)alloca(sizeof(ThreadData));
         if (!data) {
             log_error("Failed to allocate memory for client data\n");
-            close(client_sock);
+            websocket_server_close(client_sock);
             continue;
         }
 
@@ -194,7 +191,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
         pthread_t thread_id;
         if (pthread_create(&thread_id, NULL, client_handle_thread, data) != 0) {
             var_error("Failed to create thread. id :", thread_id);
-            close(client_sock);
+            websocket_server_close(client_sock);
             continue;
         }
 
