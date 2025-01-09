@@ -22,16 +22,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Nix
-        if: runner.os != 'macOS' # Nix is supported natively on Linux; macOS requires special handling
         run: |
-          curl -L https://nixos.org/nix/install | sh
-          source ~/.nix-profile/etc/profile.d/nix.sh
-
-      - name: Install Nix (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          curl -L https://getnix.org | sh
-          source ~/.nix-profile/etc/profile.d/nix.sh
+          curl \
+            --proto '=https' \
+            --tlsv1.2 -sSf   \
+            -L https://install.determinate.systems/nix | \
+            sh -s -- install
+          export PATH="${PATH}:/nix/var/nix/profiles/default/bin"
 
       - name: Install Dependencies
         run: |
@@ -47,4 +44,3 @@ jobs:
       - name: Run tests
         run: |
           make test
-
