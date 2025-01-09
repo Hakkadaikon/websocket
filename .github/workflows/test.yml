@@ -32,7 +32,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          nix-env -iA nixpkgs.clang-format \
+          nix-env -iA nixpkgs.llvmPackages_19.clang-tools \
                     nixpkgs.gcc \
                     nixpkgs.g++ \
                     nixpkgs.googletest
