@@ -54,3 +54,4 @@ dkms.conf
 test
 ws-server
 result
+tmp/
