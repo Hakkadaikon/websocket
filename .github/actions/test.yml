@@ -1,0 +1,50 @@
+name: WebSocket Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-20.04
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - macos-13
+          - macos-15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Nix
+        if: runner.os != 'macOS' # Nix is supported natively on Linux; macOS requires special handling
+        run: |
+          curl -L https://nixos.org/nix/install | sh
+          source ~/.nix-profile/etc/profile.d/nix.sh
+
+      - name: Install Nix (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          curl -L https://getnix.org | sh
+          source ~/.nix-profile/etc/profile.d/nix.sh
+
+      - name: Install Dependencies
+        run: |
+          nix-env -iA nixpkgs.clang-format \
+                    nixpkgs.gcc \
+                    nixpkgs.g++ \
+                    nixpkgs.googletest
+
+      - name: Build project
+        run: |
+          make
+
+      - name: Run tests
+        run: |
+          make test
+
