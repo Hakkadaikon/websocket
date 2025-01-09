@@ -7,7 +7,7 @@
 #------------------------------------------------------------------------------
 # Build options
 #------------------------------------------------------------------------------
-.PHONY: build clean run valgrind-run format
+.PHONY: build clean run valgrind-run test format
 
 build:
 	nix-build
@@ -20,6 +20,10 @@ run: build
 
 valgrind-run: build
 	valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes -s result/bin/ws-server
+
+test:
+	cd tests && make clean && make &&  ./bin/test
+
 
 # format (use clang)
 format:

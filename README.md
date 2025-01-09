@@ -14,6 +14,12 @@ make build
 make format
 ```
 
+## Test  
+
+```shell  
+make test
+```
+
 ## Run  
 
 ```shell  
