@@ -1,5 +1,5 @@
 # websocket  
-![Websocket Tests](https://github.com/Hakkadaikon/websocket/actions/workflows/test.yml/badge.svg)
+![Websocket Tests](https://github.com/Hakkadaikon/websocket/actions/workflows/test.yml/badge.svg)  
 RFC6455 (The WebSocket Protocol) protocol stack.  
 
 # Usage  
