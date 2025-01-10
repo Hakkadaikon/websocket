@@ -26,6 +26,16 @@ jobs:
         with:
           repository: google/googletest
 
+      - name: Apt update
+        run: |
+          wget -O - \
+            https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | \
+            gpg --dearmor - | \
+            sudo tee /etc/apt/trusted.gpg.d/kitware.gpg > /dev/null
+          sudo apt-add-repository -y \
+            "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
+          sudo apt update
+
       - name: Install Nix
         run: |
           curl \
@@ -38,13 +48,6 @@ jobs:
       # TODO: Switching to nixpkgs installation
       - name: Install packages
         run: |
-          wget -O - \
-            https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | \
-            gpg --dearmor - | \
-            sudo tee /etc/apt/trusted.gpg.d/kitware.gpg > /dev/null
-          sudo apt-add-repository -y \
-            "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
-          sudo apt update
           : # Install packages
           sudo apt install -y \
             build-essential \
@@ -52,20 +55,6 @@ jobs:
             g++-9 \
             clang-tools \
             cmake
-          : # Install google test
-          cd googletest && \
-            mkdir build && \
-            cd build && \
-            cmake .. -DBUILD_GMOCK=OFF -DGOOGLETEST_VERSION=1.13.0 && \
-            make && \
-            sudo --preserve-env=PWD cp -r ../googletest/include /usr/local/include && \
-            sudo --preserve-env=PWD cp -r lib/*.a /usr/local/lib
-
-      #- name: Install Dependencies
-      #  run: |
-      #    nix-env -iA nixpkgs.llvmPackages_19.clang-tools
-      #    nix-env -iA nixpkgs.gccgo14
-      #    nix-env -iA nixpkgs.gtest
 
       - name: Build project
         run: |
