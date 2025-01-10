@@ -44,7 +44,7 @@ jobs:
             clang-tools \
             cmake
           cd googletest && \
-            make build && \
+            mkdir build && \
             cd build && \
             cmake && \
             make && \
