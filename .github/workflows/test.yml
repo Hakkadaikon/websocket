@@ -58,6 +58,7 @@ jobs:
             cd build && \
             cmake .. -DBUILD_GMOCK=OFF -DGOOGLETEST_VERSION=1.13.0 && \
             make && \
+            pwd && \
             sudo cp -r ../googletest/include /usr/local/include && \
             sudo cp -r lib/*.a /usr/local/lib
 
