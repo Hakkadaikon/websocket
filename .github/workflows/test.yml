@@ -55,7 +55,7 @@ jobs:
           cd googletest && \
             mkdir build && \
             cd build && \
-            cmake .. -DBUILD_GMOCK=OFF && \
+            cmake .. -DBUILD_GMOCK=OFF -DGOOGLETEST_VERSION=1.13.0 && \
             make && \
             make install
 
