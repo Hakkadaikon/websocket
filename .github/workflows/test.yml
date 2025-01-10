@@ -29,9 +29,9 @@ jobs:
             -L https://install.determinate.systems/nix | \
             sh -s -- install --no-confirm
           export PATH="${PATH}:/nix/var/nix/profiles/default/bin"
-          apt install gcc-9
-          apt install g++-9
-          apt install clang-tools
+          sudo apt install gcc-9
+          sudo apt install g++-9
+          sudo apt install clang-tools
       #- name: Install Dependencies
       #  run: |
       #    nix-env -iA nixpkgs.llvmPackages_19.clang-tools
