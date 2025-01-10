@@ -38,9 +38,15 @@ jobs:
       # TODO: Switching to nixpkgs installation
       - name: Install packages
         run: |
+          : # Add official cmake ppt
+          wget -O - \
+            https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | \
+            gpg --dearmor - | \
+            sudo tee /etc/apt/trusted.gpg.d/kitware.gpg > /dev/null
           sudo apt-add-repository -y \
-            ppa:kitware/cmake
+            "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
           sudo apt update
+         : # Install packages
           sudo apt install \
             gcc-9 \
             g++-9 \
