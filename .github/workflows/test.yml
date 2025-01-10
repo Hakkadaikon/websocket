@@ -46,7 +46,8 @@ jobs:
             "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
           sudo apt update
           : # Install packages
-          sudo apt install \
+          sudo apt install -y \
+            build-essential \
             gcc-9 \
             g++-9 \
             clang-tools \
