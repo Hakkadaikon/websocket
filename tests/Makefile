@@ -16,5 +16,5 @@ clean:
 format:
 	@clang-format -i $(shell find . -name '*.[ch]pp' -o -name '*.[ch]')
 
-test: clean format
+test: clean
 	cmake -S . -B build && cmake --build build && cd build && ctest

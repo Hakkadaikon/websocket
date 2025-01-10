@@ -8,28 +8,49 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-${{ matrix.version }}
     strategy:
       matrix:
-        os:
-          - ubuntu-20.04
-          - ubuntu-22.04
-          - ubuntu-24.04
-#         - macos-13
-#         - macos-15
+        include:
+          - os: ubuntu
+            version: 20.04
+          - os: ubuntu
+            version: 22.04
+          - os: macos
+            version: 13
+          - os: macos
+            version: 15
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Apt update
+      - name: Setup gcc
+          uses: Dup4/actions-setup-gcc@v1
+          with:
+          version: 9
+
+      - name: Install dependencies on ubuntu
+        if: matrix.os == 'ubuntu'
         run: |
-          wget -O - \
-            https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | \
-            gpg --dearmor - | \
-            sudo tee /etc/apt/trusted.gpg.d/kitware.gpg > /dev/null
-          sudo apt-add-repository -y \
-            "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
-          sudo apt update
+          sudo apt-get update
+          sudo apt-get install -y build-essential gcc cmake
+
+      - name: Install dependencies on macos
+        if: matrix.os == 'macos'
+        run: |
+          brew update
+          brew install gcc cmake
+
+      #- name: Apt update
+      #  run: |
+      #    wget -O - \
+      #      https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | \
+      #      gpg --dearmor - | \
+      #      sudo tee /etc/apt/trusted.gpg.d/kitware.gpg > /dev/null
+      #    sudo apt-add-repository -y \
+      #      "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
+      #    sudo apt update
 
       - name: Install Nix
         run: |
@@ -41,15 +62,24 @@ jobs:
           export PATH="${PATH}:/nix/var/nix/profiles/default/bin"
 
       # TODO: Switching to nixpkgs installation
-      - name: Install packages
-        run: |
-          : # Install packages
-          sudo apt install -y \
-            build-essential \
-            gcc-9 \
-            g++-9 \
-            clang-tools \
-            cmake
+      #- name: Install packages
+      #  run: |
+      #    : # Install packages
+      #    sudo apt install -y \
+      #      build-essential \
+      #      gcc-9 \
+      #      g++-9 \
+      #      clang-tools \
+      #      cmake
+      #- name: Install packages
+      #  run: |
+      #    : # Install packages
+      #    sudo apt install -y \
+      #      build-essential \
+      #      gcc-9 \
+      #      g++-9 \
+      #      clang-tools \
+      #      cmake
 
       - name: Build project
         run: |
