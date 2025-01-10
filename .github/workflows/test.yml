@@ -15,8 +15,8 @@ jobs:
           - ubuntu-20.04
           - ubuntu-22.04
           - ubuntu-24.04
-          - macos-13
-          - macos-15
+#         - macos-13
+#         - macos-15
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -29,12 +29,14 @@ jobs:
             -L https://install.determinate.systems/nix | \
             sh -s -- install --no-confirm
           export PATH="${PATH}:/nix/var/nix/profiles/default/bin"
-
-      - name: Install Dependencies
-        run: |
-          nix-env -iA nixpkgs.llvmPackages_19.clang-tools
-          nix-env -iA nixpkgs.gccgo14
-          nix-env -iA nixpkgs.gtest
+          apt install gcc-9
+          apt install g++-9
+          apt install clang-tools
+      #- name: Install Dependencies
+      #  run: |
+      #    nix-env -iA nixpkgs.llvmPackages_19.clang-tools
+      #    nix-env -iA nixpkgs.gccgo14
+      #    nix-env -iA nixpkgs.gtest
 
       - name: Build project
         run: |
