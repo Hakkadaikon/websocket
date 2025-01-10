@@ -1,9 +1,7 @@
 #include <pthread.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../http/http.h"
 #include "../../util/log.h"
 #include "../../util/signal.h"
 #include "../websocket.h"
@@ -21,6 +19,44 @@ static void nothing(void* ptr)
     // nothing...
 }
 
+static inline bool opcode_handle(
+    const int                client_sock,
+    const size_t             buffer_capacity,
+    char* restrict           response_buffer,
+    PWebSocketCallback       callback,
+    PWebSocketFrame restrict frame)
+{
+    switch (frame->opcode) {
+        case WEBSOCKET_OP_CODE_TEXT:
+            callback(client_sock, frame, buffer_capacity, response_buffer);
+            break;
+        case WEBSOCKET_OP_CODE_BINARY:
+            callback(client_sock, frame, buffer_capacity, response_buffer);
+            break;
+        case WEBSOCKET_OP_CODE_CLOSE:
+            return false;
+        case WEBSOCKET_OP_CODE_PING:
+            frame->mask   = 0;
+            frame->opcode = WEBSOCKET_OP_CODE_PONG;
+
+            size_t frame_size = create_websocket_frame(
+                frame, buffer_capacity, (uint8_t*)&response_buffer[0]);
+            if (frame_size == 0) {
+                log_error("Failed to create pong frame.\n");
+                return false;
+            }
+            websocket_server_send(client_sock, response_buffer, frame_size);
+            break;
+        case WEBSOCKET_OP_CODE_PONG:
+            break;
+        default:
+            var_error("Unknown op code: ", frame->opcode);
+            break;
+    }
+
+    return true;
+}
+
 static inline void client_handle(
     const int             client_sock,
     const size_t          buffer_capacity,
@@ -35,85 +71,25 @@ static inline void client_handle(
         return;
     }
 
-    log_debug("Received handshake request : ");
-    log_debug(request_buffer);
-    log_debug("\n");
-
-    if (!extract_http_request(
-            request_buffer,
-            bytes_read,
-            HTTP_HEADER_CAPACITY,
-            request)) {
-        return;
-    }
-
-    if (!is_valid_websocket_request(request)) {
-        log_error("Invalid WebSocket handshake request. Invalid parameter : ");
-        log_error(request_buffer);
-        log_error("\n");
-        return;
-    }
-
-    char* client_key = select_websocket_client_key(request);
-    if (client_key == NULL) {
-        log_error("Invalid WebSocket handshake request. Invalid websocket client key\n");
-        return;
-    }
-
-    char accept_key[HTTP_HEADER_VALUE_CAPACITY];
-    if (!generate_websocket_acceptkey(client_key, sizeof(accept_key), accept_key)) {
-        log_error("Invalid WebSocket handshake request. Failed generate accept key\n");
-        return;
-    }
-
-    if (!create_server_handshake_ok_frame(accept_key, buffer_capacity, response_buffer)) {
-        log_error("Invalid WebSocket handshake request. Failed create OK flame.\n");
-        return;
-    }
-
-    websocket_server_send(client_sock, response_buffer, strnlen(response_buffer, buffer_capacity));
-    log_debug("Sent handshake response. \n");
-    log_debug("client key : ");
-    log_debug(client_key);
-    log_debug("\n");
-    log_debug("accept key : ");
-    log_debug(accept_key);
-    log_debug("\n");
     memset(response_buffer, 0x00, buffer_capacity);
+
+    if (!client_handshake(client_sock, buffer_capacity, bytes_read, request_buffer, response_buffer, request)) {
+        return;
+    }
 
     while ((bytes_read = websocket_server_recv(client_sock, buffer_capacity, request_buffer)) > 0) {
         WebSocketFrame frame;
         memset(&frame, 0x00, sizeof(frame));
         frame.payload = alloca(bytes_read);
-        parse_websocket_frame((uint8_t*)request_buffer, bytes_read, &frame);
+
+        if (!parse_websocket_frame((uint8_t*)request_buffer, bytes_read, &frame)) {
+            continue;
+        }
+
         websocket_frame_dump(&frame);
 
-        switch (frame.opcode) {
-            case WEBSOCKET_OP_CODE_TEXT:
-                callback(client_sock, &frame, buffer_capacity, response_buffer);
-                break;
-            case WEBSOCKET_OP_CODE_BINARY:
-                callback(client_sock, &frame, buffer_capacity, response_buffer);
-                break;
-            case WEBSOCKET_OP_CODE_CLOSE:
-                return;
-            case WEBSOCKET_OP_CODE_PING:
-                frame.mask   = 0;
-                frame.opcode = WEBSOCKET_OP_CODE_PONG;
-
-                size_t frame_size = create_websocket_frame(
-                    &frame, buffer_capacity, (uint8_t*)&response_buffer[0]);
-                if (frame_size == 0) {
-                    log_error("Failed to create pong frame.\n");
-                    return;
-                }
-                websocket_server_send(client_sock, response_buffer, frame_size);
-                break;
-            case WEBSOCKET_OP_CODE_PONG:
-                break;
-            default:
-                var_error("Unknown op code: ", frame.opcode);
-                break;
+        if (!opcode_handle(client_sock, buffer_capacity, response_buffer, callback, &frame)) {
+            return;
         }
 
         if (is_rise_signal()) {

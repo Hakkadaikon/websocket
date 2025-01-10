@@ -88,9 +88,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_size, PWe
 /* websocket/handshake.c                                                      */
 /*----------------------------------------------------------------------------*/
 
-bool  is_valid_websocket_request(PHTTPRequest request);
-char* select_websocket_client_key(PHTTPRequest request);
-bool  create_server_handshake_ok_frame(const char* accept_key, const size_t capacity, char* buffer);
+bool client_handshake(const int client_sock, const size_t buffer_capacity, const size_t bytes_read, char* request_buffer, char* response_buffer, PHTTPRequest request);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/log.c                                                            */

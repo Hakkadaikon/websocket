@@ -4,19 +4,13 @@
 
 #include "../crypto/base64.h"
 #include "../crypto/sha1.h"
+#include "../util/log.h"
 #include "websocket.h"
 
 bool generate_websocket_acceptkey(const char* client_key, const size_t accept_key_size, char* accept_key)
 {
-    if (client_key == NULL) {
-        return false;
-    }
-
-    if (accept_key == NULL) {
-        return false;
-    }
-
-    if (accept_key_size < 128) {
+    if (client_key == NULL || accept_key == NULL || accept_key_size < 128) {
+        log_error("Invalid WebSocket handshake request. Failed generate accept key\n");
         return false;
     }
 
@@ -29,5 +23,13 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
     uint8_t sha1_result[SHA1_DIGEST_LENGTH];
     sha1(concatenated, strnlen(concatenated, sizeof(concatenated)), sha1_result);
     base64_encode(sha1_result, SHA1_DIGEST_LENGTH, accept_key, accept_key_size);
+
+    log_debug("client key : ");
+    log_debug(client_key);
+    log_debug("\n");
+    log_debug("accept key : ");
+    log_debug(accept_key);
+    log_debug("\n");
+
     return true;
 }

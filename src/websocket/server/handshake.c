@@ -119,7 +119,7 @@ static inline bool is_valid_websocket_request_header(PHTTPRequestHeaderLine rest
     return true;
 }
 
-bool is_valid_websocket_request(PHTTPRequest restrict request)
+static inline bool is_valid_websocket_request(PHTTPRequest restrict request)
 {
     // sample
     //   GET /chat HTTP/1.1\r\n"
@@ -142,7 +142,7 @@ bool is_valid_websocket_request(PHTTPRequest restrict request)
     return true;
 }
 
-char* select_websocket_client_key(PHTTPRequest restrict request)
+static inline char* select_websocket_client_key(PHTTPRequest restrict request)
 {
     for (size_t i = 0; i < request->header_size; i++) {
         PHTTPRequestHeaderLine line = &request->headers[i];
@@ -151,10 +151,11 @@ char* select_websocket_client_key(PHTTPRequest restrict request)
         }
     }
 
+    log_error("Invalid websocket client key\n");
     return NULL;
 }
 
-bool create_server_handshake_ok_frame(const char* restrict accept_key, const size_t capacity, char* restrict buffer)
+static inline bool create_server_handshake_ok_frame(const char* restrict accept_key, const size_t capacity, char* restrict buffer)
 {
     const char* ok_message =
         "HTTP/1.1 101 Switching Protocols\r\n"
@@ -176,5 +177,43 @@ bool create_server_handshake_ok_frame(const char* restrict accept_key, const siz
     memcpy(ptr, "\r\n\r\n\0", 5);
     ptr += 5;
 
+    return true;
+}
+
+bool client_handshake(
+    const int             client_sock,
+    const size_t          buffer_capacity,
+    const size_t          bytes_read,
+    char* restrict        request_buffer,
+    char* restrict        response_buffer,
+    PHTTPRequest restrict request)
+{
+    log_debug("Received handshake request : ");
+    log_debug(request_buffer);
+    log_debug("\n");
+
+    if (!extract_http_request(request_buffer, bytes_read, HTTP_HEADER_CAPACITY, request)) {
+        return false;
+    }
+
+    if (!is_valid_websocket_request(request)) {
+        return false;
+    }
+
+    char* client_key = select_websocket_client_key(request);
+    if (client_key == NULL) {
+        return false;
+    }
+
+    char accept_key[HTTP_HEADER_VALUE_CAPACITY];
+    if (!generate_websocket_acceptkey(client_key, sizeof(accept_key), accept_key)) {
+        return false;
+    }
+
+    if (!create_server_handshake_ok_frame(accept_key, buffer_capacity, response_buffer)) {
+        return false;
+    }
+
+    websocket_server_send(client_sock, response_buffer, strnlen(response_buffer, buffer_capacity));
     return true;
 }
