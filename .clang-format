@@ -1,0 +1,13 @@
+BasedOnStyle: Google
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+ColumnLimit: 0
+IndentWidth: 4
+AllowShortFunctionsOnASingleLine: None
+AllowShortLoopsOnASingleLine: false
+BreakBeforeBraces: Linux
+SortIncludes: true
+DerivePointerAlignment: false
+PointerAlignment: Left
+AlignOperands: true
+

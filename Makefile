@@ -24,23 +24,7 @@ valgrind-run: build
 test:
 	cd tests && make clean && make &&  ./bin/test
 
-
 # format (use clang)
 format:
-	@clang-format -i \
-		-style="{    \
-			BasedOnStyle: Google,                      \
-			AlignConsecutiveAssignments: true,         \
-			AlignConsecutiveDeclarations: true,        \
-			ColumnLimit: 0,                            \
-			IndentWidth: 4,                            \
-			AllowShortFunctionsOnASingleLine: None,    \
-			AllowShortLoopsOnASingleLine: false,       \
-			BreakBeforeBraces: Linux,                  \
-			SortIncludes: true,                        \
-			DerivePointerAlignment: false,             \
-			PointerAlignment: Left,                    \
-			AlignOperands: true,                       \
-		}"                                             \
-		$(shell find . -name '*.c' -o -name '*.h')
+	@clang-format -i $(shell find ./src -name '*.[ch]')
 
