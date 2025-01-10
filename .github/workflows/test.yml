@@ -38,17 +38,21 @@ jobs:
       # TODO: Switching to nixpkgs installation
       - name: Install packages
         run: |
+          sudo apt-add-repository -y \
+            ppa:kitware/cmake
+          sudo apt update
           sudo apt install \
             gcc-9 \
             g++-9 \
             clang-tools \
             cmake
+          : # Install google test
           cd googletest && \
             mkdir build && \
             cd build && \
-            cmake .. && \
+            cmake .. -DBUILD_GMOCK=OFF && \
             make && \
-            install
+            make install
 
       #- name: Install Dependencies
       #  run: |
