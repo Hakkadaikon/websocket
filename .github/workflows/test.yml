@@ -46,7 +46,7 @@ jobs:
           cd googletest && \
             mkdir build && \
             cd build && \
-            cmake && \
+            cmake .. && \
             make && \
             install
 
