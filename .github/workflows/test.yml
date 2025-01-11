@@ -48,13 +48,8 @@ jobs:
       #    sudo apt update
 
       - name: Install Nix
-        run: |
-          curl \
-            --proto '=https' \
-            --tlsv1.2 -sSf   \
-            -L https://install.determinate.systems/nix | \
-            sh -s -- install --no-confirm
-          export PATH="${PATH}:/nix/var/nix/profiles/default/bin"
+        uses: DeterminateSystems/nix-installer-action@main
+        with: github-token: ${{ secrets.GH_TOKEN }}
 
       # TODO: Switching to nixpkgs installation
       #- name: Install packages
@@ -77,7 +72,10 @@ jobs:
       #      cmake
 
       - name: Build project
+        env: github-token: ${{ secrets.GH_TOKEN }}
         run: |
+          mkdir -p ~/.config/nix
+          echo "access-tokens = github.com=${github-token}" >> ~/.config/nix/nix.conf
           make
 
       - name: Run tests
