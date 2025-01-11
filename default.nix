@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> {}, debug ? false }:
 
 let
   isLinux = pkgs.stdenv.isLinux;
@@ -24,37 +24,30 @@ in pkgs.stdenv.mkDerivation {
     compiler
   ];
 
-  CFLAGS = "
-    -Ofast \
-    -pthread \
-    -fno-stack-protector \
-    -fomit-frame-pointer \
-    -funroll-loops \
-    -flto \
-    -fno-asynchronous-unwind-tables
-  ";
+  CFLAGS =
+    if debug then ''
+      -O0
+      -pthread
+       -static-libasan
+      -g
+    '' else ''
+      -Ofast
+      -pthread
+      -fno-stac$-protector
+      -fomit-frame-pointer
+      -funroll-loops
+      -flto
+      -fno-asynchronous-unwind-tables
+    '';
 
-  LDFLAGS = "
-    -flto \
+  LDFLAGS = ''
+    -flto
     -pthread
-  ";
-  LDLIBS = "
+  '';
+
+  LDLIBS = ''
     -lpthread
-  ";
-
-  # valgrind build
-  # CFLAGS = "
-  #   -O0 \
-  #   -pthread \
-  #    -static-libasan \
-  #   -g
-  # ";
-
-  #LDLIBS = "
-  #  -lpthread \
-  #  -lssl \
-  #  -lcrypto
-  #";
+  '';
 
   buildPhase = ''
     mkdir -p build

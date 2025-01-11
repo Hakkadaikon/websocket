@@ -57,6 +57,40 @@ static inline bool opcode_handle(
     return true;
 }
 
+static int client_recv_func(
+    const int          client_sock,
+    const size_t       buffer_capacity,
+    const ssize_t      bytes_read,
+    char* restrict     request_buffer,
+    char* restrict     response_buffer,
+    PWebSocketCallback callback)
+{
+    WebSocketFrame frame;
+    memset(&frame, 0x00, sizeof(frame));
+
+    // CAUTION:
+    //   alloca() allocates memory in the calling stack frame,
+    //   so if you use it inside a while/for loop, memory will pile up.
+    frame.payload = alloca(bytes_read);
+
+    if (!parse_websocket_frame((uint8_t*)request_buffer, bytes_read, &frame)) {
+        return -1;
+    }
+
+    websocket_frame_dump(&frame);
+
+    if (!opcode_handle(client_sock, buffer_capacity, response_buffer, callback, &frame)) {
+        return -2;
+    }
+
+    if (is_rise_signal()) {
+        var_info("rise signal. sock : ", client_sock);
+        return -2;
+    }
+
+    return 0;
+}
+
 static inline void client_handle(
     const int             client_sock,
     const size_t          buffer_capacity,
@@ -78,22 +112,15 @@ static inline void client_handle(
     }
 
     while ((bytes_read = websocket_server_recv(client_sock, buffer_capacity, request_buffer)) > 0) {
-        WebSocketFrame frame;
-        memset(&frame, 0x00, sizeof(frame));
-        frame.payload = alloca(bytes_read);
+        int ret = client_recv_func(
+            client_sock,
+            buffer_capacity,
+            bytes_read,
+            request_buffer,
+            response_buffer,
+            callback);
 
-        if (!parse_websocket_frame((uint8_t*)request_buffer, bytes_read, &frame)) {
-            continue;
-        }
-
-        websocket_frame_dump(&frame);
-
-        if (!opcode_handle(client_sock, buffer_capacity, response_buffer, callback, &frame)) {
-            return;
-        }
-
-        if (is_rise_signal()) {
-            var_info("rise signal. sock : ", client_sock);
+        if (ret == -2) {
             return;
         }
     }

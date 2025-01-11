@@ -7,10 +7,13 @@
 #------------------------------------------------------------------------------
 # Build options
 #------------------------------------------------------------------------------
-.PHONY: build clean run valgrind-run test format
+.PHONY:  build debug-build clean run valgrind-run test format
 
 build:
 	nix-build
+
+debug-build:
+	nix-build --arg debug true
 
 clean:
 	nix store gc
@@ -19,8 +22,11 @@ clean:
 run: build
 	result/bin/ws-server
 
-valgrind-run: build
+memcheck-run: debug-build
 	valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes -s result/bin/ws-server
+
+helgrind-run: debug-build
+	valgrind --tool=helgrind --history-level=approx -s result/bin/ws-server
 
 # format (use clang)
 format:
