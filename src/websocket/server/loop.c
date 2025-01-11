@@ -166,7 +166,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
 
         pthread_t thread_id;
         if (pthread_create(&thread_id, NULL, client_handle_thread, data) != 0) {
-            var_error("Failed to create thread. id :", pthread_self());
+            log_error("Failed to create thread.\n");
             websocket_server_close(client_sock);
             continue;
         }
