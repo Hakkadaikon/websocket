@@ -49,7 +49,8 @@ jobs:
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
-        with: github-token: ${{ secrets.GH_TOKEN }}
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
 
       # TODO: Switching to nixpkgs installation
       #- name: Install packages
