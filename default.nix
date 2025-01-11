@@ -33,7 +33,7 @@ in pkgs.stdenv.mkDerivation {
     '' else ''
       -Ofast
       -pthread
-      -fno-stac$-protector
+      -fno-stack-protector
       -fomit-frame-pointer
       -funroll-loops
       -flto
