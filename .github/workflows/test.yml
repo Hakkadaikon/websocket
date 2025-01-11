@@ -73,7 +73,8 @@ jobs:
       #      cmake
 
       - name: Build project
-        env: github-token: ${{ secrets.GH_TOKEN }}
+        env:
+          github-token: ${{ secrets.GH_TOKEN }}
         run: |
           mkdir -p ~/.config/nix
           echo "access-tokens = github.com=${github-token}" >> ~/.config/nix/nix.conf
