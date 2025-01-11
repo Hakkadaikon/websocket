@@ -29,13 +29,13 @@ jobs:
         if: matrix.os == 'ubuntu'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential gcc cmake
+          sudo apt-get --reinstall install -y build-essential gcc cmake
 
       - name: Install dependencies on macos
         if: matrix.os == 'macos'
         run: |
           brew update
-          brew install gcc cmake
+          brew reinstall gcc cmake
 
       #- name: Apt update
       #  run: |

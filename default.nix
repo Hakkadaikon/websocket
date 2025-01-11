@@ -1,6 +1,16 @@
 { pkgs ? import <nixpkgs> {} }:
 
-let 
+let
+  isLinux = pkgs.stdenv.isLinux;
+  isDarwin = pkgs.stdenv.isDarwin;
+
+  compiler = 
+    if isLinux then 
+      pkgs.gcc 
+    else if isDarwin then 
+      pkgs.clang 
+    else 
+      pkgs.gcc;
 in pkgs.stdenv.mkDerivation {
   pname = "ws-server";
   version = "1.0.0";
@@ -10,10 +20,12 @@ in pkgs.stdenv.mkDerivation {
   #buildInputs = [
   #  pkgs.openssl
   #];
+  buildInputs = [
+    compiler
+  ];
 
   CFLAGS = "
     -Ofast \
-    -mtune=native \
     -pthread \
     -fno-stack-protector \
     -fomit-frame-pointer \
@@ -46,7 +58,7 @@ in pkgs.stdenv.mkDerivation {
 
   buildPhase = ''
     mkdir -p build
-    gcc $CFLAGS \
+    ${compiler}/bin/cc $CFLAGS \
       src/main.c \
       src/websocket/server/loop.c \
       src/websocket/server/init.c \
