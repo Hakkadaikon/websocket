@@ -37,40 +37,10 @@ jobs:
           brew update
           brew reinstall gcc cmake
 
-      #- name: Apt update
-      #  run: |
-      #    wget -O - \
-      #      https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | \
-      #      gpg --dearmor - | \
-      #      sudo tee /etc/apt/trusted.gpg.d/kitware.gpg > /dev/null
-      #    sudo apt-add-repository -y \
-      #      "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
-      #    sudo apt update
-
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
         with:
           github-token: ${{ secrets.GH_TOKEN }}
-
-      # TODO: Switching to nixpkgs installation
-      #- name: Install packages
-      #  run: |
-      #    : # Install packages
-      #    sudo apt install -y \
-      #      build-essential \
-      #      gcc-9 \
-      #      g++-9 \
-      #      clang-tools \
-      #      cmake
-      #- name: Install packages
-      #  run: |
-      #    : # Install packages
-      #    sudo apt install -y \
-      #      build-essential \
-      #      gcc-9 \
-      #      g++-9 \
-      #      clang-tools \
-      #      cmake
 
       - name: Build project
         run: |
