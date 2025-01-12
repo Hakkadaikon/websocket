@@ -38,7 +38,7 @@ ssize_t websocket_server_recv(const int client_sock, const size_t capacity, char
         return 0;
     } else if (bytes_read == -1) {
         char* errmsg = strerror(errno);
-        log_error("Failed to recv errror. reason : ");
+        log_error("Failed to recv error. reason : ");
         log_error(errmsg);
         log_error("\n");
         var_error("socket : ", client_sock);
