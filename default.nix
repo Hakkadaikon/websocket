@@ -28,7 +28,7 @@ in pkgs.stdenv.mkDerivation {
     if debug then ''
       -O0
       -pthread
-       -static-libasan
+      -static-libasan
       -g
     '' else ''
       -Ofast
