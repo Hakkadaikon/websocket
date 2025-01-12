@@ -184,6 +184,7 @@ static bool websocket_server_func(const int client_sock, const size_t client_buf
     if (pthread_create(&thread_id, NULL, client_handle_thread, data) != 0) {
         log_error("Failed to create thread.\n");
         websocket_server_close(client_sock);
+        free(data);
         return false;
     }
 
