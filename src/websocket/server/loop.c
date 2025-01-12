@@ -204,7 +204,8 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
 
         log_debug("Client connected.\n");
 
-        //TODO: Check in a long-time test whether the allocated area of ​​args is released and causes problems.
+        //TODO: Check in a long-time test whether the allocated area of
+        //      args is released and causes problems.
         if (!websocket_server_func(client_sock, client_buffer_capacity, callback)) {
             continue;
         }
