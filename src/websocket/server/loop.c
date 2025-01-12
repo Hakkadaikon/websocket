@@ -166,6 +166,30 @@ FINALIZE:
     return NULL;
 }
 
+static bool websocket_server_func(const int client_sock, const size_t client_buffer_capacity, PWebSocketCallback callback)
+{
+    PThreadData data = (PThreadData)alloca(sizeof(ThreadData));
+    if (!data) {
+        log_error("Failed to allocate memory for client data\n");
+        websocket_server_close(client_sock);
+        return false;
+    }
+
+    data->client_sock            = client_sock;
+    data->client_buffer_capacity = client_buffer_capacity;
+    data->callback               = callback;
+
+    pthread_t thread_id;
+    if (pthread_create(&thread_id, NULL, client_handle_thread, data) != 0) {
+        log_error("Failed to create thread.\n");
+        websocket_server_close(client_sock);
+        return false;
+    }
+
+    pthread_detach(thread_id);
+    return true;
+}
+
 bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity, PWebSocketCallback callback)
 {
     while (1) {
@@ -180,25 +204,10 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
 
         log_debug("Client connected.\n");
 
-        PThreadData data = (PThreadData)alloca(sizeof(ThreadData));
-        if (!data) {
-            log_error("Failed to allocate memory for client data\n");
-            websocket_server_close(client_sock);
+        //TODO: Check in a long-time test whether the allocated area of ​​args is released and causes problems.
+        if (!websocket_server_func(client_sock, client_buffer_capacity, callback)) {
             continue;
         }
-
-        data->client_sock            = client_sock;
-        data->client_buffer_capacity = client_buffer_capacity;
-        data->callback               = callback;
-
-        pthread_t thread_id;
-        if (pthread_create(&thread_id, NULL, client_handle_thread, data) != 0) {
-            log_error("Failed to create thread.\n");
-            websocket_server_close(client_sock);
-            continue;
-        }
-
-        pthread_detach(thread_id);
     }
 
     return true;
