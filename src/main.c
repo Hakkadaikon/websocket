@@ -26,9 +26,9 @@ void websocket_callback(const int client_sock, PWebSocketFrame frame, const size
 
 int main()
 {
-    int    websocket_port_num = 8080;
-    int    backlog            = 5;
-    size_t client_buffer_size = 1024;
+    int    websocket_port_num     = 8080;
+    int    backlog                = 5;
+    size_t client_buffer_capacity = 1024;
 
     signal_init();
 
@@ -38,7 +38,7 @@ int main()
         return 1;
     }
 
-    websocket_server_loop(server_sock, client_buffer_size, websocket_callback);
+    websocket_server_loop(server_sock, client_buffer_capacity, websocket_callback);
     websocket_server_close(server_sock);
 
     log_info("websocket server end.\n");
