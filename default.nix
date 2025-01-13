@@ -33,11 +33,13 @@ in pkgs.stdenv.mkDerivation {
     '' else ''
       -Ofast
       -pthread
-      -fno-stack-protector
-      -fomit-frame-pointer
-      -funroll-loops
-      -flto
-      -fno-asynchronous-unwind-tables
+      -mtune=native
+      -ffast-math
+      -fno-math-errno
+      -falign-functions
+      -fgraphite-identity
+      -floop-nest-optimize
+      -flto=auto
     '';
 
   LDFLAGS = ''
