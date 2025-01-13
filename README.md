@@ -30,14 +30,14 @@ make test
 ## Run  
 
 ```shell  
-# ./result/bin/ws-server
-make run
+# Run  
+./shell/run.sh
 
-# valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes -s result/bin/ws-server
-make valgrind-run
+# Debug run (use valgrind --tool memcheck)  
+./shell/memcheck_run.sh
 
-# valgrind --tool=helgrind --history-level=approx -s result/bin/ws-server
-make helgrind-run
+# Debug run (use valgrind --tool helgrind)  
+./shell/helgrind_run.sh
 ```
 
 # Support  
