@@ -15,14 +15,14 @@
 
 # Default by ubuntu 20.04
 ###################################################
-# net.core.somaxconn = 4096
-# net.core.rmem_max = 212992
-# net.core.wmem_max = 212992
-# net.ipv4.tcp_rmem = 4096 131072 6291456
-# net.ipv4.tcp_wmem = 4096 16384 4194304
-# net.ipv4.tcp_syncookies = 1
-# net.ipv4.tcp_mem = 9645 12862   19290
-# net.core.netdev_max_backlog = 1000
+# sysctl -w net.core.somaxconn=4096
+# sysctl -w net.core.rmem_max=212992
+# sysctl -w net.core.wmem_max=212992
+# sysctl -w net.ipv4.tcp_rmem="4096 131072 6291456"
+# sysctl -w net.ipv4.tcp_wmem="4096 16384 4194304"
+# sysctl -w net.ipv4.tcp_syncookies=1
+# sysctl -w net.ipv4.tcp_mem="9645 12862 19290"
+# sysctl -w net.core.netdev_max_backlog=1000
 ###################################################
 
 sysctl net.core.somaxconn
