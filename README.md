@@ -2,6 +2,8 @@
 ![Websocket Tests](https://github.com/Hakkadaikon/websocket/actions/workflows/test.yml/badge.svg)  
 Websocket server that complies with RFC6455.(The WebSocket Protocol)  
 
+![icon](https://github.com/user-attachments/assets/f4b92376-17db-4979-897a-b005ed421e22)
+
 # Usage  
 ## Build  
 
