@@ -31,14 +31,12 @@ in pkgs.stdenv.mkDerivation {
       -static-libasan
       -g
     '' else ''
-      -Ofast
+      -O3
       -pthread
       -mtune=native
       -ffast-math
       -fno-math-errno
       -falign-functions
-      -fgraphite-identity
-      -floop-nest-optimize
       -flto=auto
     '';
 
