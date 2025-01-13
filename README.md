@@ -1,12 +1,16 @@
 # websocket  
 ![Websocket Tests](https://github.com/Hakkadaikon/websocket/actions/workflows/test.yml/badge.svg)  
-RFC6455 (The WebSocket Protocol) protocol stack.  
+Websocket server that complies with RFC6455.(The WebSocket Protocol)  
 
 # Usage  
 ## Build  
 
 ```shell  
+# release build
 make build
+
+# debug build
+make debug-build
 ```
 
 ## Format  
@@ -26,6 +30,12 @@ make test
 ```shell  
 # ./result/bin/ws-server
 make run
+
+# valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes -s result/bin/ws-server
+make valgrind-run
+
+# valgrind --tool=helgrind --history-level=approx -s result/bin/ws-server
+make helgrind-run
 ```
 
 # Support  
@@ -49,12 +59,12 @@ make run
 [DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) - Nix installer  
 [clang-format](https://github.com/llvm/llvm-project/tree/main/clang/tools/clang-format) - Formatter  
 
-## Test
-[valgrind](https://sourceware.org/git/valgrind.git) - building analysis tools  
+## Test  
 [googletest](https://github.com/google/googletest) - Google Testing and Mocking Framework  
 
-## Future  
-[openssl/openssl](https://github.com/openssl/openssl) - SSL/TLS and crypto library  (It may be used in the future for TLS communication.)  
+## Performance measurement  
+[valgrind](https://sourceware.org/git/valgrind.git) - building analysis tools  
+[iperf3](https://github.com/esnet/iperf) - A TCP, UDP, and SCTP network bandwidth measurement tool  
 
 # Author
 Hakkadaikon
