@@ -34,10 +34,10 @@ make test
 ./shell/run.sh
 
 # Debug run (use valgrind --tool memcheck)  
-./shell/memcheck_run.sh
+./shell/run.sh memcheck
 
 # Debug run (use valgrind --tool helgrind)  
-./shell/helgrind_run.sh
+./shell/run.sh helgrind
 ```
 
 # Support  
