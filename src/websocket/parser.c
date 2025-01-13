@@ -172,17 +172,17 @@ size_t create_websocket_frame(PWebSocketFrame restrict frame, const size_t capac
     // |K|             |
     // +-+-------------+
     uint8_t mask = (frame->mask ? 0x80 : 0x00);
+
+    if (frame->ext_payload_len <= 125 && !frame->mask) {
+        raw[offset] = frame->ext_payload_len & 0x7F;
+        offset++;
+        memcpy(&raw[offset], frame->payload, frame->ext_payload_len);
+        return offset + frame->ext_payload_len;
+    }
+
     if (frame->ext_payload_len > 125 && frame->ext_payload_len <= 0xFFFF) {
         raw[offset] = mask | 126;  // Mask set + payload length 126
-    } else if (frame->ext_payload_len > 0xFFFF) {
-        raw[offset] = mask | 127;  // Mask set + payload length 127
-    } else {
-        raw[offset] = mask | frame->ext_payload_len;
-    }
-    offset++;
-
-    // Extended payload length (if needed)
-    if (frame->ext_payload_len > 125 && frame->ext_payload_len <= 0xFFFF) {
+        offset++;
         if (capacity < offset + 2) {
             return 0;
         }
@@ -190,15 +190,19 @@ size_t create_websocket_frame(PWebSocketFrame restrict frame, const size_t capac
         raw[offset + 1] = frame->ext_payload_len & 0xFF;
         offset += 2;
     } else if (frame->ext_payload_len > 0xFFFF) {
+        raw[offset] = mask | 127;  // Mask set + payload length 127
+        offset++;
         if (capacity < offset + 8) {
-            return false;
+            return 0;
         }
-
         for (int i = 7; i >= 0; i--) {
             raw[offset + i] = frame->ext_payload_len & 0xFF;
             frame->ext_payload_len >>= 8;
         }
         offset += 8;
+    } else {
+        raw[offset] = mask | frame->ext_payload_len;
+        offset++;
     }
 
     // Masking key (if mask is set)
@@ -215,9 +219,22 @@ size_t create_websocket_frame(PWebSocketFrame restrict frame, const size_t capac
         return 0;
     }
 
-    for (size_t i = 0; i < frame->ext_payload_len; i++) {
-        raw[offset + i] = frame->payload[i] ^ (frame->mask ? frame->masking_key[i % 4] : 0);
+    if (frame->mask) {
+        // use loop unroll
+        size_t i = 0;
+        for (; i + 4 <= frame->ext_payload_len; i += 4) {
+            raw[offset + i + 0] = frame->payload[i + 0] ^ frame->masking_key[0];
+            raw[offset + i + 1] = frame->payload[i + 1] ^ frame->masking_key[1];
+            raw[offset + i + 2] = frame->payload[i + 2] ^ frame->masking_key[2];
+            raw[offset + i + 3] = frame->payload[i + 3] ^ frame->masking_key[3];
+        }
+        for (; i < frame->ext_payload_len; i++) {
+            raw[offset + i] = frame->payload[i] ^ frame->masking_key[i % 4];
+        }
+    } else {
+        memcpy(&raw[offset], &frame->payload[0], frame->ext_payload_len);
     }
+
     offset += frame->ext_payload_len;
 
     return offset;
