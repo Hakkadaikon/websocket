@@ -11,6 +11,7 @@
 # sysctl -w net.ipv4.tcp_syncookies=1
 # sysctl -w net.ipv4.tcp_mem="50576 64768 98152"
 # sysctl -w net.core.netdev_max_backlog=2500
+# sysctl -w net.ipv4.tcp_fastopen=3
 ###################################################
 
 # Default by ubuntu 20.04

@@ -1,5 +1,6 @@
 #include <arpa/inet.h>
 #include <errno.h>
+#include <netinet/tcp.h>
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
@@ -73,6 +74,14 @@ int websocket_server_accept(const int server_sock)
         return -1;
     }
 
+    // Optimize socket option
+    int flag = 1;
+    setsockopt(client_sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag));
+    setsockopt(client_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag));
+#if defined(SO_REUSEPORT)
+    setsockopt(client_sock, SOL_SOCKET, SO_REUSEPORT, &flag, sizeof(flag));
+#endif
+
     return client_sock;
 }
 
@@ -103,6 +112,16 @@ int websocket_server_connect(const int port_num, const int backlog)
         close(server_sock);
         return -1;
     }
+
+    // Optimize socket option
+    int flag = 1;
+    setsockopt(server_sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag));
+    setsockopt(server_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag));
+#if defined(SO_REUSEPORT)
+    setsockopt(server_sock, SOL_SOCKET, SO_REUSEPORT, &flag, sizeof(flag));
+#endif
+    int qlen = 5;
+    setsockopt(server_sock, IPPROTO_TCP, TCP_FASTOPEN, &qlen, sizeof(qlen));
 
     return server_sock;
 }
