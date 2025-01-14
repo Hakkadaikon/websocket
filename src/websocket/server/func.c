@@ -1,8 +1,13 @@
 #include <arpa/inet.h>
 #include <errno.h>
+#include <linux/errno.h>
+#include <linux/in.h>
+#include <linux/net.h>
+#include <linux/socket.h>
 #include <netinet/tcp.h>
 #include <stdint.h>
 #include <string.h>
+#include <sys/syscall.h>
 #include <unistd.h>
 
 #include "../../util/log.h"
@@ -12,14 +17,14 @@
 int websocket_server_close(const int server_sock)
 {
     log_info("WebSocket server close...\n");
-    return close(server_sock);
+    return syscall(SYS_close, server_sock);
 }
 
 int websocket_server_send(const int client_sock, const char* restrict buffer, const size_t buffer_size)
 {
     log_debug("WebSocket server send\n");
 
-    int rtn = send(client_sock, buffer, buffer_size, 0);
+    ssize_t rtn = syscall(SYS_sendto, client_sock, buffer, buffer_size, 0, NULL, 0);
     if (rtn == -1) {
         char* reason = strerror(errno);
         log_error("Failed to send().\n");
@@ -28,12 +33,12 @@ int websocket_server_send(const int client_sock, const char* restrict buffer, co
         log_error("\n");
     }
 
-    return rtn;
+    return (int)rtn;
 }
 
 ssize_t websocket_server_recv(const int client_sock, const size_t capacity, char* restrict buffer)
 {
-    ssize_t bytes_read = recv(client_sock, buffer, capacity - 1, 0);
+    ssize_t bytes_read = syscall(SYS_recvfrom, client_sock, buffer, capacity - 1, 0, NULL, NULL);
     if (bytes_read == 0) {
         var_error("Socket was disconnected. socket : ", client_sock);
         return 0;
@@ -56,7 +61,7 @@ int websocket_server_accept(const int server_sock)
     socklen_t          addr_len = sizeof(client_addr);
 
     log_debug("accept...\n");
-    int client_sock = accept(server_sock, (struct sockaddr*)&client_addr, &addr_len);
+    int client_sock = syscall(SYS_accept, server_sock, (struct sockaddr*)&client_addr, &addr_len);
     if (client_sock < 0) {
         if ((errno != EINTR)) {
             log_error("accept() failed. err : ");
@@ -76,10 +81,10 @@ int websocket_server_accept(const int server_sock)
 
     // Optimize socket option
     int flag = 1;
-    setsockopt(client_sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag));
-    setsockopt(client_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag));
+    syscall(SYS_setsockopt, client_sock, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(flag));
+    syscall(SYS_setsockopt, client_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag));
 #if defined(SO_REUSEPORT)
-    setsockopt(client_sock, SOL_SOCKET, SO_REUSEPORT, &flag, sizeof(flag));
+    syscall(SYS_setsockopt, client_sock, SOL_SOCKET, SO_REUSEPORT, &flag, sizeof(flag));
 #endif
 
     return client_sock;
@@ -90,7 +95,7 @@ int websocket_server_connect(const int port_num, const int backlog)
     int                server_sock;
     struct sockaddr_in server_addr;
 
-    server_sock = socket(AF_INET, SOCK_STREAM, 0);
+    server_sock = syscall(SYS_socket, AF_INET, SOCK_STREAM, 0);
     if (server_sock < 0) {
         log_error("Failed to create socket.\n");
         return -1;
@@ -101,27 +106,27 @@ int websocket_server_connect(const int port_num, const int backlog)
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port        = htons(port_num);
 
-    if (bind(server_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+    if (syscall(SYS_bind, server_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
         log_error("Failed to bind.\n");
-        close(server_sock);
+        syscall(SYS_close, server_sock);
         return -1;
     }
 
-    if (listen(server_sock, backlog) < 0) {
+    if (syscall(SYS_listen, server_sock, backlog) < 0) {
         log_error("Failed to listen.\n");
-        close(server_sock);
+        syscall(SYS_close, server_sock);
         return -1;
     }
 
     // Optimize socket option
     int flag = 1;
-    setsockopt(server_sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag));
-    setsockopt(server_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag));
+    syscall(SYS_setsockopt, server_sock, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(flag));
+    syscall(SYS_setsockopt, server_sock, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag));
 #if defined(SO_REUSEPORT)
-    setsockopt(server_sock, SOL_SOCKET, SO_REUSEPORT, &flag, sizeof(flag));
+    syscall(SYS_setsockopt, server_sock, SOL_SOCKET, SO_REUSEPORT, &flag, sizeof(flag));
 #endif
     int qlen = 5;
-    setsockopt(server_sock, IPPROTO_TCP, TCP_FASTOPEN, &qlen, sizeof(qlen));
+    syscall(SYS_setsockopt, server_sock, IPPROTO_TCP, TCP_FASTOPEN, &qlen, sizeof(qlen));
 
     return server_sock;
 }
