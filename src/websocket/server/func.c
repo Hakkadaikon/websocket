@@ -1,24 +1,21 @@
 #include <errno.h>
-#include <linux/in.h>
-//#include <linux/net.h>
-//#include <linux/socket.h>
+#include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <stdint.h>
 #include <string.h>
 #include <sys/syscall.h>
-//#include <unistd.h>
 
 #include "../../util/log.h"
 #include "../../util/signal.h"
 #include "../websocket.h"
 
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define htons(x) ((((x)&0x00FF) << 8) | (((x)&0xFF00) >> 8))
-#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define htons(x) (x)
-#else
-#error "Unknown byte order"
-#endif
+//#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+//#define htons(x) ((((x)&0x00FF) << 8) | (((x)&0xFF00) >> 8))
+//#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+//#define htons(x) (x)
+//#else
+//#error "Unknown byte order"
+//#endif
 
 int websocket_server_close(const int server_sock)
 {
