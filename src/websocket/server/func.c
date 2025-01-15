@@ -9,14 +9,6 @@
 #include "../../util/signal.h"
 #include "../websocket.h"
 
-//#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-//#define htons(x) ((((x)&0x00FF) << 8) | (((x)&0xFF00) >> 8))
-//#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-//#define htons(x) (x)
-//#else
-//#error "Unknown byte order"
-//#endif
-
 int websocket_server_close(const int server_sock)
 {
     log_info("WebSocket server close...\n");
