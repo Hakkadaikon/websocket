@@ -39,6 +39,11 @@ jobs:
         with:
           github-token: ${{ secrets.GH_TOKEN }}
 
+      - name: Add coverity path
+        if: env.TOKEN
+        run: |
+          echo "$(pwd)/cov-scan/bin" >> $GITHUB_PATH
+
       - name: Build/scan websocket
         if: env.TOKEN
         run: |
