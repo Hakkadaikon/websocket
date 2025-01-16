@@ -58,6 +58,6 @@ jobs:
             --form file=@cov-scan.tgz \
             --form version="$(git rev-parse HEAD)" \
             --form description="Automatic GHA scan" \
-            'https://scan.coverity.com/builds?project=websocket'
+            'https://scan.coverity.com/builds?project=Hakkadaikon%2Fwebsocket'
         env:
           EMAIL: ${{ secrets.COVERITY_SCAN_EMAIL }}
