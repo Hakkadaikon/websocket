@@ -30,7 +30,7 @@ jobs:
       - name: Download coverity
         if: env.TOKEN
         run: |
-          wget -q https://scan.coverity.com/download/linux64 --post-data "token=$TOKEN%2Fwebsocket" -O coverity_tool.tgz
+          wget -q https://scan.coverity.com/download/linux64 --post-data "token=$TOKEN&project=Hakkadaikon%2Fwebsocket" -O coverity_tool.tgz
           mkdir cov-scan
           tar ax -f coverity_tool.tgz --strip-components=1 -C cov-scan
 
