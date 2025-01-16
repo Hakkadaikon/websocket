@@ -29,18 +29,15 @@ static inline bool is_null_or_empty(const char* str)
     return (is_null(str) || is_empty(str));
 }
 
-static inline bool is_compare_str(const char* s1, const char* s2, const size_t len)
+static inline bool is_compare_str(const char* str1, const char* str2, const size_t str1capacity, const size_t str2capacity)
 {
-    if (is_null_or_empty(s1) || is_null_or_empty(s2)) {
+    size_t capacity = (str1capacity > str2capacity) ? str2capacity : str1capacity;
+    if (capacity == 0) {
         return false;
     }
 
-    if (len <= 0) {
-        return false;
-    }
-
-    for (size_t i = 0; i < len; i++) {
-        if (s1[i] != s2[i]) {
+    for (size_t i = 0; i < capacity; i++) {
+        if (str1[i] != str2[i]) {
             return false;
         }
     }
@@ -59,7 +56,7 @@ static inline int search_str(const char* base, const size_t base_len, const char
     }
 
     for (size_t base_pos = 0; base_pos <= (base_len - target_len); base_pos++) {
-        if (is_compare_str(&base[base_pos], target, target_len)) {
+        if (is_compare_str(&base[base_pos], target, base_len, target_len)) {
             return base_pos;
         }
     }
