@@ -18,12 +18,14 @@ make debug-build
 ## Format  
 
 ```shell  
+# Formatting source code (use clang-format)
 make format
 ```
 
 ## Test  
 
 ```shell  
+cd tests
 make test
 ```
 
@@ -38,6 +40,9 @@ make test
 
 # Debug run (use valgrind --tool helgrind)  
 ./shell/run.sh helgrind
+
+# Static analysis (use clang-tidy)
+./shell/static_analysis.sh
 ```
 
 # Support  
