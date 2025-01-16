@@ -21,17 +21,18 @@ jobs:
         if: env.TOKEN
         uses: actions/checkout@v3
 
+      - name: Install dependencies on ubuntu
+        run: |
+          sudo apt-get update
+          sudo apt-get --reinstall install -y build-essential gcc cmake
+          sudo apt-get install -y gzip
+
       - name: Download coverity
         if: env.TOKEN
         run: |
           wget -q https://scan.coverity.com/download/cxx/linux64 --post-data "token=$TOKEN&project=websocket" -O coverity_tool.tgz
           mkdir cov-scan
           tar ax -f coverity_tool.tgz --strip-components=1 -C cov-scan
-
-      - name: Install dependencies on ubuntu
-        run: |
-          sudo apt-get update
-          sudo apt-get --reinstall install -y build-essential gcc cmake
 
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
