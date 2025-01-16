@@ -1,5 +1,10 @@
 # websocket  
-![Websocket Tests](https://github.com/Hakkadaikon/websocket/actions/workflows/test.yml/badge.svg)  
+![Tests](https://github.com/Hakkadaikon/websocket/actions/workflows/test.yml/badge.svg)  
+<a href="https://scan.coverity.com/projects/hakkadaikon-websocket">
+  <img alt="Coverity Scan Build Status"
+       src="https://scan.coverity.com/projects/31257/badge.svg"/>
+</a>
+
 Websocket server that complies with RFC6455.(The WebSocket Protocol)  
 
 ![icon](https://github.com/user-attachments/assets/f4b92376-17db-4979-897a-b005ed421e22)
