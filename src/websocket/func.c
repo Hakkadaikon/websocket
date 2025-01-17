@@ -15,8 +15,8 @@
 static inline int set_nonblocking(int fd)
 {
     long flags = syscall(SYS_fcntl, fd, F_GETFL);
-    if (flags == -1) {
-        return -1;  // Failed to get flags
+    if (flags == WEBSOCKET_SYSCALL_ERROR) {
+        return WEBSOCKET_SYSCALL_ERROR;  // Failed to get flags
     }
 
     return syscall(SYS_fcntl, fd, F_SETFL, flags | O_NONBLOCK);
@@ -33,7 +33,7 @@ int websocket_send(const int sock_fd, const char* restrict buffer, const size_t 
     log_debug("WebSocket server send\n");
 
     ssize_t rtn = syscall(SYS_sendto, sock_fd, buffer, buffer_size, 0, NULL, 0);
-    if (rtn == -1) {
+    if (rtn == WEBSOCKET_SYSCALL_ERROR) {
         char* reason = strerror(errno);
         log_error("Failed to send().\n");
         log_error("reason : ");
@@ -48,24 +48,24 @@ ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict 
 {
     if (is_rise_signal()) {
         log_info("A signal was raised during recv(). The system will abort processing.\n");
-        return -2;
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
     ssize_t bytes_read = syscall(SYS_recvfrom, sock_fd, buffer, capacity - 1, 0, NULL, NULL);
     if (bytes_read == 0) {
         var_error("Socket was disconnected. socket : ", sock_fd);
-        return 0;
-    } else if (bytes_read == -1) {
+        return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
+    } else if (bytes_read == WEBSOCKET_SYSCALL_ERROR) {
         if (errno != EINTR) {
             char* errmsg = strerror(errno);
             log_error("Failed to recv error. reason : ");
             log_error(errmsg);
             log_error("\n");
             var_error("socket : ", sock_fd);
-            return -1;
+            return WEBSOCKET_ERRORCODE_FATAL_ERROR;
         }
 
-        return -1;
+        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
     }
 
     buffer[bytes_read] = '\0';
@@ -79,7 +79,7 @@ int websocket_accept(const int sock_fd)
 
     if (is_rise_signal()) {
         log_info("A signal was raised during accept(). The system will abort processing.\n");
-        return -2;
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
     log_debug("accept...\n");
@@ -90,15 +90,15 @@ int websocket_accept(const int sock_fd)
             log_error(strerror(errno));
             log_error("\n");
             log_error("The system will abort processing.\n");
-            return -1;
+            return WEBSOCKET_ERRORCODE_FATAL_ERROR;
         }
 
-        return -1;
+        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
     }
 
-    if (set_nonblocking(sock_fd) == -1) {
+    if (set_nonblocking(sock_fd) == WEBSOCKET_SYSCALL_ERROR) {
         log_error("Failed to set client socket non-blocking\n");
-        return -2;
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
     // Optimize socket option
@@ -120,7 +120,7 @@ int websocket_connect(const int port_num, const int backlog)
     server_sock = syscall(SYS_socket, AF_INET, SOCK_STREAM, 0);
     if (server_sock < 0) {
         log_error("Failed to create socket.\n");
-        return -1;
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
     memset(&server_addr, 0, sizeof(server_addr));
@@ -142,7 +142,7 @@ int websocket_connect(const int port_num, const int backlog)
         goto FINALIZE;
     }
 
-    if (set_nonblocking(server_sock) == -1) {
+    if (set_nonblocking(server_sock) == WEBSOCKET_SYSCALL_ERROR) {
         log_error("Failed to set server socket non-blocking\n");
         err = true;
         goto FINALIZE;
@@ -161,7 +161,7 @@ int websocket_connect(const int port_num, const int backlog)
 FINALIZE:
     if (err) {
         syscall(SYS_close, server_sock);
-        return -1;
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
     return server_sock;
@@ -175,7 +175,7 @@ bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollE
     while (1) {
         if (is_rise_signal()) {
             log_info("A signal was raised during epoll_wait(). The system will abort processing.\n");
-            return -2;
+            return false;
         }
 
         if (syscall(SYS_epoll_ctl, epoll_fd, EPOLL_CTL_ADD, sock_fd, event) == 0) {
@@ -193,7 +193,7 @@ bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollE
 
 bool websocket_epoll_del(const int epoll_fd, const int sock_fd)
 {
-    if (syscall(SYS_epoll_ctl, epoll_fd, EPOLL_CTL_DEL, sock_fd, NULL) == -1) {
+    if (syscall(SYS_epoll_ctl, epoll_fd, EPOLL_CTL_DEL, sock_fd, NULL) == WEBSOCKET_SYSCALL_ERROR) {
         log_error("Failed to del client socket to epoll\n");
         return false;
     }
@@ -204,9 +204,9 @@ bool websocket_epoll_del(const int epoll_fd, const int sock_fd)
 int websocket_epoll_create()
 {
     int epoll_fd = syscall(SYS_epoll_create1, 0);
-    if (epoll_fd == -1) {
+    if (epoll_fd == WEBSOCKET_SYSCALL_ERROR) {
         log_error("Failed to create epoll instance\n");
-        return -1;
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
     return epoll_fd;
@@ -216,7 +216,7 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const 
 {
     if (is_rise_signal()) {
         log_info("A signal was raised during epoll_wait(). The system will abort processing.\n");
-        return -2;
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
     //int nfds = syscall(SYS_epoll_wait, epoll_fd, events, max_events, -1);  // blocking
@@ -228,10 +228,10 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const 
             log_debug(errmsg);
             log_debug("\n");
             log_debug("The system will abort processing.\n");
-            return -1;
+            return WEBSOCKET_ERRORCODE_FATAL_ERROR;
         }
 
-        return -1;
+        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
     }
 
     return nfds;

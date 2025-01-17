@@ -54,9 +54,9 @@ in pkgs.stdenv.mkDerivation {
       src/websocket/server/loop.c \
       src/websocket/server/init.c \
       src/websocket/server/handshake.c \
-      src/websocket/func.c \
       src/websocket/parser.c \
       src/websocket/crypto.c \
+      src/websocket/func.c \
       src/websocket/log.c \
       src/http/http.c \
       src/util/signal.c \

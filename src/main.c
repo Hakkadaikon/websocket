@@ -33,7 +33,7 @@ int main()
     signal_init();
 
     int server_sock = websocket_server_init(websocket_port_num, backlog);
-    if (server_sock == -1) {
+    if (server_sock < WEBSOCKET_ERRORCODE_NONE) {
         log_error("websocket server init error.\n");
         return 1;
     }

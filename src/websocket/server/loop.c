@@ -61,20 +61,20 @@ static inline int client_recv_func(
     int rtn = 0;
 
     if (!parse_websocket_frame((uint8_t*)request_buffer, bytes_read, &frame)) {
-        rtn = -1;
+        rtn = WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
         goto FINALIZE;
     }
 
     websocket_frame_dump(&frame);
 
     if (!opcode_handle(client_sock, buffer_capacity, response_buffer, callback, &frame)) {
-        rtn = -3;
+        rtn = WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
         goto FINALIZE;
     }
 
     if (is_rise_signal()) {
         var_info("rise signal. sock : ", client_sock);
-        rtn = -2;
+        rtn = WEBSOCKET_ERRORCODE_FATAL_ERROR;
         goto FINALIZE;
     }
 
@@ -97,7 +97,7 @@ static inline bool server_accept_func(
     bool err         = false;
     int  client_sock = websocket_accept(server_sock);
     if (client_sock <= 0) {
-        if (client_sock == -2) {
+        if (client_sock == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
             err = true;
         }
 
@@ -111,7 +111,7 @@ static inline bool server_accept_func(
 
     ssize_t bytes_read = websocket_recv(client_sock, buffer_capacity, request_buffer);
     if (bytes_read <= 0) {
-        if (client_sock == -2) {
+        if (client_sock == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
             err = true;
         }
 
@@ -173,7 +173,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
     while (1) {
         int nfds = websocket_epoll_wait(epoll_fd, events, MAX_EVENTS);
         if (nfds <= 0) {
-            if (nfds != -2) {
+            if (nfds != WEBSOCKET_ERRORCODE_FATAL_ERROR) {
                 continue;
             }
 
@@ -218,7 +218,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
 
                 ssize_t bytes_read = websocket_recv(client_sock, client_buffer_capacity, request_buffer);
                 if (bytes_read <= 0) {
-                    if (bytes_read == -2) {
+                    if (bytes_read == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
                         websocket_epoll_del(epoll_fd, client_sock);
                         websocket_close(client_sock);
                     }
@@ -228,11 +228,11 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
 
                 int ret = client_recv_func(client_sock, client_buffer_capacity, bytes_read, request_buffer, response_buffer, callback);
                 switch (ret) {
-                    case -2:
+                    case WEBSOCKET_ERRORCODE_FATAL_ERROR:
                         websocket_epoll_del(epoll_fd, client_sock);
                         websocket_close(client_sock);
                         goto FINALIZE;
-                    case -3:
+                    case WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR:
                         websocket_epoll_del(epoll_fd, client_sock);
                         websocket_close(client_sock);
                         break;

@@ -23,6 +23,17 @@ typedef enum {
     WEBSOCKET_OP_CODE_PONG   = 0xA,
 } WebSocketOpCode;
 
+typedef enum {
+    WEBSOCKET_ERRORCODE_FATAL_ERROR        = -3,
+    WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR = -2,
+    WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR  = -1,
+    WEBSOCKET_ERRORCODE_NONE               = 0,
+} WebSocketErrorCode;
+
+typedef enum {
+    WEBSOCKET_SYSCALL_ERROR = -1
+} WebSocketSysCallErrorCode;
+
 typedef struct _WebSocketFrame {
     uint8_t         fin;
     uint8_t         rsv1;
