@@ -62,7 +62,7 @@ ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict 
             log_error(errmsg);
             log_error("\n");
             var_error("socket : ", sock_fd);
-            return -2;
+            return -1;
         }
 
         return -1;
@@ -90,7 +90,7 @@ int websocket_accept(const int sock_fd)
             log_error(strerror(errno));
             log_error("\n");
             log_error("The system will abort processing.\n");
-            return -2;
+            return -1;
         }
 
         return -1;
@@ -161,9 +161,14 @@ int websocket_connect(const int port_num, const int backlog)
 bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event)
 {
     event->data.fd = sock_fd;
-    event->events  = EPOLLIN;
+    event->events  = EPOLLIN | EPOLLHUP | EPOLLERR | EPOLLRDHUP;
 
     while (1) {
+        if (is_rise_signal()) {
+            log_info("A signal was raised during epoll_wait(). The system will abort processing.\n");
+            return -2;
+        }
+
         if (syscall(SYS_epoll_ctl, epoll_fd, EPOLL_CTL_ADD, sock_fd, event) == 0) {
             break;
         }
@@ -214,7 +219,7 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const 
             log_debug(errmsg);
             log_debug("\n");
             log_debug("The system will abort processing.\n");
-            return -2;
+            return -1;
         }
 
         return -1;

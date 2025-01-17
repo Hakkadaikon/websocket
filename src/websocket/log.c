@@ -1,5 +1,7 @@
 #include "../util/log.h"
 
+#include <sys/epoll.h>
+
 #include "websocket.h"
 
 void websocket_frame_dump(PWebSocketFrame restrict frame)
@@ -14,5 +16,32 @@ void websocket_frame_dump(PWebSocketFrame restrict frame)
     var_debug("ext_payload_len : ", frame->ext_payload_len);
     log_debug("payload         :\n");
     log_debug(frame->payload);
+    log_debug("\n");
+}
+
+void websocket_epoll_event_dump(const int events)
+{
+    log_debug("epoll events: ");
+
+    if (events & EPOLLIN) {
+        log_debug("EPOLLIN ");
+    }
+
+    if (events & EPOLLERR) {
+        log_debug("EPOLLIERR ");
+    }
+
+    if (events & EPOLLHUP) {
+        log_debug("EPOLLHUP ");
+    }
+
+    if (events & EPOLLOUT) {
+        log_debug("EPOLLOUT ");
+    }
+
+    if (events & EPOLLRDHUP) {
+        log_debug("EPOLLRDHUP ");
+    }
+
     log_debug("\n");
 }

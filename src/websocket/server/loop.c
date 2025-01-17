@@ -103,12 +103,12 @@ static inline bool server_accept_func(
             err = true;
         }
 
-        goto FINALIZE;
+        goto FINALIZE_FREE;
     }
 
     if (!websocket_epoll_add(epoll_fd, client_sock, event)) {
         err = true;
-        goto FINALIZE;
+        goto FINALIZE_FREE;
     }
 
     ssize_t bytes_read = websocket_recv(client_sock, buffer_capacity, request_buffer);
@@ -117,18 +117,21 @@ static inline bool server_accept_func(
             err = true;
         }
 
-        goto FINALIZE;
+        goto FINALIZE_EPOLL_DELETE;
     }
 
     if (!client_handshake(client_sock, buffer_capacity, bytes_read, request_buffer, response_buffer, &request)) {
-        goto FINALIZE;
+        goto FINALIZE_EPOLL_DELETE;
     }
 
-FINALIZE:
+FINALIZE_EPOLL_DELETE:
+    websocket_epoll_del(epoll_fd, client_sock);
+
+FINALIZE_FREE:
     FREE_HTTP_REQUEST(request, websocket_free);
 
     if (client_sock <= 0 || err) {
-        log_debug("websocket_accept error. finalize...");
+        log_debug("websocket_accept error. finalize...\n");
         websocket_close(client_sock);
         return false;
     }
@@ -184,6 +187,14 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
 
         for (int i = 0; i < nfds; ++i) {
             if (events[i].data.fd == server_sock) {
+                if (events[i].events & (EPOLLHUP | EPOLLERR | EPOLLRDHUP)) {
+                    goto FINALIZE;
+                }
+
+                if (!(events[i].events & (EPOLLIN))) {
+                    continue;
+                }
+
                 if (!server_accept_func(
                         epoll_fd,
                         server_sock,
@@ -195,14 +206,23 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
                 }
             } else {
                 int client_sock = events[i].data.fd;
+                if (events[i].events & (EPOLLHUP | EPOLLERR | EPOLLRDHUP)) {
+                    websocket_epoll_event_dump(events[i].events);
+                    var_error("Client disconnected. : ", client_sock);
+                    websocket_epoll_del(epoll_fd, client_sock);
+                    websocket_close(client_sock);
+                    continue;
+                }
+
+                if (!(events[i].events & (EPOLLIN))) {
+                    continue;
+                }
 
                 ssize_t bytes_read = websocket_recv(client_sock, client_buffer_capacity, request_buffer);
                 if (bytes_read <= 0) {
                     if (bytes_read == -2) {
-                        log_debug("Client disconnected or error.\n");
                         websocket_epoll_del(epoll_fd, client_sock);
                         websocket_close(client_sock);
-                        goto FINALIZE;
                     }
 
                     continue;

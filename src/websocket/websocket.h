@@ -101,5 +101,6 @@ bool client_handshake(const int client_sock, const size_t buffer_capacity, const
 /*----------------------------------------------------------------------------*/
 
 void websocket_frame_dump(PWebSocketFrame frame);
+void websocket_epoll_event_dump(const int events);
 
 #endif
