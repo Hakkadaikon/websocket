@@ -46,17 +46,26 @@ int websocket_send(const int sock_fd, const char* restrict buffer, const size_t 
 
 ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict buffer)
 {
+    if (is_rise_signal()) {
+        log_info("A signal was raised during recv(). The system will abort processing.\n");
+        return -2;
+    }
+
     ssize_t bytes_read = syscall(SYS_recvfrom, sock_fd, buffer, capacity - 1, 0, NULL, NULL);
     if (bytes_read == 0) {
         var_error("Socket was disconnected. socket : ", sock_fd);
         return 0;
     } else if (bytes_read == -1) {
-        char* errmsg = strerror(errno);
-        log_error("Failed to recv error. reason : ");
-        log_error(errmsg);
-        log_error("\n");
-        var_error("socket : ", sock_fd);
-        return 0;
+        if (errno != EINTR) {
+            char* errmsg = strerror(errno);
+            log_error("Failed to recv error. reason : ");
+            log_error(errmsg);
+            log_error("\n");
+            var_error("socket : ", sock_fd);
+            return -2;
+        }
+
+        return -1;
     }
 
     buffer[bytes_read] = '\0';
@@ -68,6 +77,11 @@ int websocket_accept(const int sock_fd)
     struct sockaddr_in client_addr;
     socklen_t          addr_len = sizeof(client_addr);
 
+    if (is_rise_signal()) {
+        log_info("A signal was raised during accept(). The system will abort processing.\n");
+        return -2;
+    }
+
     log_debug("accept...\n");
     int client_sock = syscall(SYS_accept, sock_fd, (struct sockaddr*)&client_addr, &addr_len);
     if (client_sock < 0) {
@@ -76,11 +90,6 @@ int websocket_accept(const int sock_fd)
             log_error(strerror(errno));
             log_error("\n");
             log_error("The system will abort processing.\n");
-            return -2;
-        }
-
-        if (is_rise_signal()) {
-            log_info("A signal was raised during accept(). The system will abort processing.\n");
             return -2;
         }
 
@@ -133,7 +142,7 @@ int websocket_connect(const int port_num, const int backlog)
 
     if (set_nonblocking(server_sock) == -1) {
         log_error("Failed to set server socket non-blocking\n");
-        return -2;
+        return -1;
     }
 
     // Optimize socket option
@@ -163,11 +172,6 @@ bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollE
             log_error("Failed to add client socket to epoll\n");
             return false;
         }
-
-        if (is_rise_signal()) {
-            log_info("A signal was raised during accept(). The system will abort processing.\n");
-            return false;
-        }
     }
 
     return true;
@@ -194,20 +198,22 @@ int websocket_epoll_create()
     return epoll_fd;
 }
 
-bool websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const int max_events)
+int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const int max_events)
 {
-    //int nfds = syscall(SYS_epoll_wait, epoll_fd, events, max_events, -1);
-    int nfds = syscall(SYS_epoll_wait, epoll_fd, events, max_events, 0);
+    if (is_rise_signal()) {
+        log_info("A signal was raised during epoll_wait(). The system will abort processing.\n");
+        return -2;
+    }
+
+    //int nfds = syscall(SYS_epoll_wait, epoll_fd, events, max_events, -1);  // blocking
+    int nfds = syscall(SYS_epoll_wait, epoll_fd, events, max_events, 0);  // non blocking
     if (nfds < 0) {
         if (errno != EINTR) {
-            log_error("Failed to create epoll instance. err : ");
-            log_error(strerror(errno));
-            log_error("\n");
-            log_error("The system will abort processing.\n");
-            return -2;
-        }
-        if (is_rise_signal()) {
-            log_info("A signal was raised during accept(). The system will abort processing.\n");
+            char* errmsg = strerror(errno);
+            log_debug("Failed to create epoll instance. err : ");
+            log_debug(errmsg);
+            log_debug("\n");
+            log_debug("The system will abort processing.\n");
             return -2;
         }
 

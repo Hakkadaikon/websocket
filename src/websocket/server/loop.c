@@ -94,6 +94,8 @@ static inline bool server_accept_func(
     HTTPRequest request;
     ALLOCATE_HTTP_REQUEST(request, websocket_alloc);
 
+    log_debug("accept...\n");
+
     bool err         = false;
     int  client_sock = websocket_accept(server_sock);
     if (client_sock <= 0) {
@@ -111,12 +113,14 @@ static inline bool server_accept_func(
 
     ssize_t bytes_read = websocket_recv(client_sock, buffer_capacity, request_buffer);
     if (bytes_read <= 0) {
-        err = true;
+        if (client_sock == -2) {
+            err = true;
+        }
+
         goto FINALIZE;
     }
 
     if (!client_handshake(client_sock, buffer_capacity, bytes_read, request_buffer, response_buffer, &request)) {
-        err = true;
         goto FINALIZE;
     }
 
@@ -194,9 +198,13 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
 
                 ssize_t bytes_read = websocket_recv(client_sock, client_buffer_capacity, request_buffer);
                 if (bytes_read <= 0) {
-                    log_debug("Client disconnected or error.\n");
-                    websocket_epoll_del(epoll_fd, client_sock);
-                    websocket_close(client_sock);
+                    if (bytes_read == -2) {
+                        log_debug("Client disconnected or error.\n");
+                        websocket_epoll_del(epoll_fd, client_sock);
+                        websocket_close(client_sock);
+                        goto FINALIZE;
+                    }
+
                     continue;
                 }
 
