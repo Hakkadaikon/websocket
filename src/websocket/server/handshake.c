@@ -28,7 +28,7 @@ static inline bool is_valid_upgrade(const char* restrict value)
 static inline bool is_valid_connection(const char* restrict value)
 {
     if (!IS_VALID_KEY(value, "Upgrade")) {
-        log_error("Invalid websocket request header [Key: Connection] It's not \"Upgrade\".\n");
+        log_error("Invalid websocket request header [Key: Connection] It's not \"upgrade\".\n");
         return false;
     }
 
@@ -256,7 +256,12 @@ FINALIZE:
         return false;
     }
 
-    if (!websocket_server_send(client_sock, response_buffer, strnlen(response_buffer, buffer_capacity))) {
+    size_t response_len = strnlen(response_buffer, buffer_capacity);
+    if (response_len == 0) {
+        return false;
+    }
+
+    if (!websocket_send(client_sock, response_buffer, response_len)) {
         log_error("Failed to send OK frame.");
         return false;
     }

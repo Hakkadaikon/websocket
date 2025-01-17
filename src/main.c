@@ -17,7 +17,7 @@ void websocket_callback(const int client_sock, PWebSocketFrame frame, const size
                 return;
             }
 
-            websocket_server_send(client_sock, response_buffer, frame_size);
+            websocket_send(client_sock, response_buffer, frame_size);
         } break;
         default:
             break;
@@ -39,7 +39,7 @@ int main()
     }
 
     websocket_server_loop(server_sock, client_buffer_capacity, websocket_callback);
-    websocket_server_close(server_sock);
+    websocket_close(server_sock);
 
     log_info("websocket server end.\n");
     return 0;

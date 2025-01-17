@@ -13,6 +13,8 @@
 
 #include "../http/http.h"
 
+typedef struct epoll_event WebSocketEpollEvent, *PWebSocketEpollEvent;
+
 typedef enum {
     WEBSOCKET_OP_CODE_TEXT   = 0x1,
     WEBSOCKET_OP_CODE_BINARY = 0x2,
@@ -69,14 +71,18 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
 int websocket_server_init(const int port_num, const int backlog);
 
 /*----------------------------------------------------------------------------*/
-/* websocket/server/func.c                                                    */
+/* websocket/func.c                                                           */
 /*----------------------------------------------------------------------------*/
 
-int     websocket_server_close(const int server_sock);
-int     websocket_server_send(const int client_sock, const char* buffer, const size_t buffer_size);
-ssize_t websocket_server_recv(const int client_sock, const size_t capacity, char* buffer);
-int     websocket_server_accept(const int server_sock);
-int     websocket_server_connect(const int port_num, const int backlog);
+int     websocket_close(const int sock_fd);
+int     websocket_send(const int sock_fd, const char* buffer, const size_t buffer_size);
+ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* buffer);
+int     websocket_accept(const int sock_fd);
+int     websocket_connect(const int port_num, const int backlog);
+bool    websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event);
+bool    websocket_epoll_del(const int epoll_fd, const int sock_fd);
+int     websocket_epoll_create();
+bool    websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const int max_events);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/server/loop.c                                                    */
