@@ -6,6 +6,7 @@
 #include <string.h>
 #include <sys/epoll.h>
 #include <sys/syscall.h>
+#include <unistd.h>
 
 #include "../util/log.h"
 #include "../util/signal.h"
@@ -167,6 +168,8 @@ bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollE
             log_info("A signal was raised during accept(). The system will abort processing.\n");
             return false;
         }
+
+        usleep(1);
     }
 
     return true;

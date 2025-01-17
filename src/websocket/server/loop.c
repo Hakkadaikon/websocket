@@ -68,7 +68,7 @@ static inline int client_recv_func(
     websocket_frame_dump(&frame);
 
     if (!opcode_handle(client_sock, buffer_capacity, response_buffer, callback, &frame)) {
-        rtn = -2;
+        rtn = -3;
         goto FINALIZE;
     }
 
@@ -167,11 +167,10 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
     memset(response_buffer, 0x00, client_buffer_capacity);
 
     while (1) {
-        log_debug("loop.\n");
-
         int nfds = websocket_epoll_wait(epoll_fd, events, MAX_EVENTS);
         if (nfds <= 0) {
             if (nfds != -2) {
+                usleep(1);
                 continue;
             }
 
@@ -203,10 +202,17 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
                 }
 
                 int ret = client_recv_func(client_sock, client_buffer_capacity, bytes_read, request_buffer, response_buffer, callback);
-                if (ret == -2) {
-                    websocket_epoll_del(epoll_fd, client_sock);
-                    websocket_close(client_sock);
-                    goto FINALIZE;
+                switch (ret) {
+                    case -2:
+                        websocket_epoll_del(epoll_fd, client_sock);
+                        websocket_close(client_sock);
+                        goto FINALIZE;
+                    case -3:
+                        websocket_epoll_del(epoll_fd, client_sock);
+                        websocket_close(client_sock);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
