@@ -128,21 +128,24 @@ int websocket_connect(const int port_num, const int backlog)
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port        = htons(port_num);
 
+    bool err = false;
+
     if (syscall(SYS_bind, server_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
         log_error("Failed to bind.\n");
-        syscall(SYS_close, server_sock);
-        return -1;
+        err = true;
+        goto FINALIZE;
     }
 
     if (syscall(SYS_listen, server_sock, backlog) < 0) {
         log_error("Failed to listen.\n");
-        syscall(SYS_close, server_sock);
-        return -1;
+        err = true;
+        goto FINALIZE;
     }
 
     if (set_nonblocking(server_sock) == -1) {
         log_error("Failed to set server socket non-blocking\n");
-        return -1;
+        err = true;
+        goto FINALIZE;
     }
 
     // Optimize socket option
@@ -154,6 +157,12 @@ int websocket_connect(const int port_num, const int backlog)
 #endif
     int qlen = 5;
     syscall(SYS_setsockopt, server_sock, IPPROTO_TCP, TCP_FASTOPEN, &qlen, sizeof(qlen));
+
+FINALIZE:
+    if (err) {
+        syscall(SYS_close, server_sock);
+        return -1;
+    }
 
     return server_sock;
 }
