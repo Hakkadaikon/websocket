@@ -34,15 +34,14 @@ DEPENDFILES  := $(OBJFILES:.o=.d)
 CFLAGS := \
 	-O3 \
 	-fno-lto \
-	-pthread \
 	-mtune=native \
 	-ffast-math \
 	-fno-math-errno \
 	-falign-functions \
 	-flto=auto
 
-LDLIBS  := -lpthread
-LDFLAGS := -flto -pthread
+LDLIBS  :=
+LDFLAGS := -flto
 
 #------------------------------------------------------------------------------
 # Make rules

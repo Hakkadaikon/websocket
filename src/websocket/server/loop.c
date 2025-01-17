@@ -163,6 +163,9 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
         return false;
     }
 
+    memset(request_buffer, 0x00, sizeof(client_buffer_capacity));
+    memset(response_buffer, 0x00, sizeof(client_buffer_capacity));
+
     while (1) {
         log_debug("loop.\n");
 

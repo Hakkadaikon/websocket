@@ -27,12 +27,10 @@ in pkgs.stdenv.mkDerivation {
   CFLAGS =
     if debug then ''
       -O0
-      -pthread
       -static-libasan
       -g
     '' else ''
       -O3
-      -pthread
       -mtune=native
       -ffast-math
       -fno-math-errno
@@ -42,11 +40,9 @@ in pkgs.stdenv.mkDerivation {
 
   LDFLAGS = ''
     -flto
-    -pthread
   '';
 
   LDLIBS = ''
-    -lpthread
   '';
 
   buildPhase = ''
@@ -56,7 +52,7 @@ in pkgs.stdenv.mkDerivation {
       src/websocket/server/loop.c \
       src/websocket/server/init.c \
       src/websocket/server/handshake.c \
-      src/websocket/server/func.c \
+      src/websocket/func.c \
       src/websocket/parser.c \
       src/websocket/crypto.c \
       src/websocket/log.c \
