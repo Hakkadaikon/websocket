@@ -168,8 +168,6 @@ bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollE
             log_info("A signal was raised during accept(). The system will abort processing.\n");
             return false;
         }
-
-        usleep(1);
     }
 
     return true;

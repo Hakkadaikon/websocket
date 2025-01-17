@@ -170,7 +170,6 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
         int nfds = websocket_epoll_wait(epoll_fd, events, MAX_EVENTS);
         if (nfds <= 0) {
             if (nfds != -2) {
-                usleep(1);
                 continue;
             }
 
@@ -198,7 +197,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
                     log_debug("Client disconnected or error.\n");
                     websocket_epoll_del(epoll_fd, client_sock);
                     websocket_close(client_sock);
-                    goto FINALIZE;
+                    continue;
                 }
 
                 int ret = client_recv_func(client_sock, client_buffer_capacity, bytes_read, request_buffer, response_buffer, callback);
