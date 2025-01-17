@@ -15,7 +15,13 @@ void var_debug_local(const char* str, int value);
 void var_info_local(const char* str, int value);
 void var_error_local(const char* str, int value);
 
+//#define LOG_LEVEL_DEBUG
+//#define LOG_LEVEL_INFO
+//#define LOG_LEVEL_ERROR
+
+#if !defined(LOG_LEVEL_DEBUG) && !defined(LOG_LEVEL_INFO) && !defined(LOG_LEVEL_ERROR)
 #define LOG_LEVEL_ERROR
+#endif
 
 #ifdef LOG_LEVEL_DEBUG
 #define hex_dump(data, size) hex_dump_local(data, size)

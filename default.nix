@@ -29,6 +29,7 @@ in pkgs.stdenv.mkDerivation {
       -O0
       -static-libasan
       -g
+      -DLOG_LEVEL_DEBUG
     '' else ''
       -O3
       -mtune=native
@@ -36,6 +37,7 @@ in pkgs.stdenv.mkDerivation {
       -fno-math-errno
       -falign-functions
       -flto=auto
+      -DLOG_LEVEL_ERROR
     '';
 
   LDFLAGS = ''
