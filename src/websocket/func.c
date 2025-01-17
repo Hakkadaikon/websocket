@@ -195,10 +195,11 @@ int websocket_epoll_create()
 
 bool websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const int max_events)
 {
-    int nfds = syscall(SYS_epoll_wait, epoll_fd, events, max_events, -1);
-    if (nfds <= 0) {
+    //int nfds = syscall(SYS_epoll_wait, epoll_fd, events, max_events, -1);
+    int nfds = syscall(SYS_epoll_wait, epoll_fd, events, max_events, 0);
+    if (nfds < 0) {
         if (errno != EINTR) {
-            log_error("Failed to create epoll instance. err : \n");
+            log_error("Failed to create epoll instance. err : ");
             log_error(strerror(errno));
             log_error("\n");
             log_error("The system will abort processing.\n");

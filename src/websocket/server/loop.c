@@ -171,7 +171,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
 
         int nfds = websocket_epoll_wait(epoll_fd, events, MAX_EVENTS);
         if (nfds <= 0) {
-            if (nfds == -1) {
+            if (nfds != -2) {
                 continue;
             }
 
