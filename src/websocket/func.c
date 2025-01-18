@@ -51,11 +51,13 @@ ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict 
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
-    ssize_t bytes_read = syscall(SYS_recvfrom, sock_fd, buffer, capacity - 1, 0, NULL, NULL);
+    ssize_t bytes_read = syscall(SYS_recvfrom, sock_fd, buffer, capacity - 1, MSG_DONTWAIT, NULL, NULL);
     if (bytes_read == 0) {
         var_error("Socket was disconnected. socket : ", sock_fd);
         return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
-    } else if (bytes_read == WEBSOCKET_SYSCALL_ERROR) {
+    }
+
+    if (bytes_read == WEBSOCKET_SYSCALL_ERROR) {
         if (errno != EINTR) {
             char* errmsg = strerror(errno);
             log_error("Failed to recv error. reason : ");
@@ -170,7 +172,7 @@ FINALIZE:
 bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event)
 {
     event->data.fd = sock_fd;
-    event->events  = EPOLLIN | EPOLLHUP | EPOLLERR | EPOLLRDHUP;
+    event->events  = EPOLLIN | EPOLLHUP | EPOLLERR | EPOLLRDHUP | EPOLLET;
 
     while (1) {
         if (is_rise_signal()) {
