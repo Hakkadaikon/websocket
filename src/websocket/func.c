@@ -5,9 +5,11 @@
 #include <stdint.h>
 #include <string.h>
 #include <sys/epoll.h>
+#include <sys/socket.h>
 #include <sys/syscall.h>
 #include <unistd.h>
 
+#include "../util/allocator.h"
 #include "../util/log.h"
 #include "../util/signal.h"
 #include "websocket.h"
@@ -42,6 +44,33 @@ int websocket_send(const int sock_fd, const char* restrict buffer, const size_t 
     }
 
     return (int)rtn;
+}
+
+ssize_t websocket_recvmsg(const int sock_fd, const size_t capacity, char** restrict buffers, const int num_of_buffer)
+{
+    struct msghdr header;
+
+    header.msg_flags      = MSG_EOR | MSG_TRUNC | MSG_CTRUNC | MSG_OOB | MSG_ERRQUEUE;
+    header.msg_name       = NULL;
+    header.msg_namelen    = 0;
+    header.msg_control    = NULL;
+    header.msg_controllen = 0;
+
+    header.msg_iov    = websocket_alloc(sizeof(struct iovec) * num_of_buffer);
+    header.msg_iovlen = num_of_buffer;
+
+    for (int i = 0; i < num_of_buffer; i++) {
+        header.msg_iov[i].iov_len  = capacity;
+        header.msg_iov[i].iov_base = buffers[i];
+    }
+
+    ssize_t bytes_read = syscall(SYS_recvmmsg, sock_fd, &header, MSG_DONTWAIT);
+    if (bytes_read < 0) {
+        //TODO: errno
+        return -1;
+    }
+
+    return 0;
 }
 
 ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict buffer)
