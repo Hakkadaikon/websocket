@@ -56,7 +56,12 @@ in pkgs.stdenv.mkDerivation {
       src/websocket/server/handshake.c \
       src/websocket/parser.c \
       src/websocket/crypto.c \
-      src/websocket/func.c \
+      src/websocket/socket/accept.c \
+      src/websocket/socket/listen.c \
+      src/websocket/socket/recv.c \
+      src/websocket/socket/send.c \
+      src/websocket/socket/epoll.c \
+      src/websocket/socket/close.c \
       src/websocket/log.c \
       src/http/http.c \
       src/util/signal.c \
