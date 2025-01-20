@@ -12,7 +12,7 @@
 #include "../websocket.h"
 #include "optimize_socket.h"
 
-int websocket_connect(const int port_num, const int backlog)
+int websocket_listen(const int port_num, const int backlog)
 {
     int                server_sock;
     struct sockaddr_in server_addr;

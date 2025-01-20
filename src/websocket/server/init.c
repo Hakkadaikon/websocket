@@ -7,7 +7,7 @@ int websocket_server_init(const int port_num, const int backlog)
     var_info("port    : ", port_num);
     var_info("backlog : ", backlog);
 
-    int server_sock = websocket_connect(port_num, backlog);
+    int server_sock = websocket_listen(port_num, backlog);
     if (server_sock < 0) {
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
