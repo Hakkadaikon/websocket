@@ -51,6 +51,12 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Perf
+perf.data
+perf.data.old
+
+# Other
+tests/build
 test
 ws-server
 result
