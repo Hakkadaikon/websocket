@@ -5,7 +5,7 @@
 #include "../../../util/log.h"
 #include "../../websocket.h"
 
-static inline bool server_accept_func(
+static inline bool server_accept_handle(
     const int            epoll_fd,
     const int            server_sock,
     const size_t         buffer_capacity,

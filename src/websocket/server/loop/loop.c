@@ -1,8 +1,8 @@
 #include "../../../util/allocator.h"
 #include "../../../util/log.h"
 #include "../../websocket.h"
-#include "accept.h"
-#include "receive.h"
+#include "accept_handle.h"
+#include "receive_handle.h"
 
 bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity, PWebSocketCallback callback)
 {
@@ -75,7 +75,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
                     continue;
                 }
 
-                if (!server_accept_func(
+                if (!server_accept_handle(
                         epoll_fd,
                         server_sock,
                         client_buffer_capacity,
@@ -117,7 +117,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
                 size_t client_buffer_length = strnlen(request_buffers[i], client_buffer_capacity);
 
                 for (int i = 0; i < read_count; i++) {
-                    int ret = client_recv_func(
+                    int ret = server_receive_handle(
                         client_sock,
                         client_buffer_length,
                         request_buffers[i],
