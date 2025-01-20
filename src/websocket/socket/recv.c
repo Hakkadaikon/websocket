@@ -16,7 +16,7 @@ ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** rest
 {
     const int           iov_capacity = 1;
     WebSocketMmsgHeader headers[num_of_buffer];
-    struct iovec        iov[iov_capacity][num_of_buffer];
+    struct iovec        iov[num_of_buffer][iov_capacity];
 
     memset(&headers, 0x00, sizeof(headers));
 
