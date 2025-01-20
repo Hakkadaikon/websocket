@@ -70,7 +70,7 @@ void hex_dump_local(const void* restrict data, size_t size)
     fflush(stdout);
 }
 
-void log_dump_local(const int fd, const char* str)
+void log_dump_local(const int fd, const char* restrict str)
 {
     if (is_null(str) || fd <= 0) {
         return;
@@ -82,21 +82,6 @@ void log_dump_local(const int fd, const char* str)
     }
 
     (void)write(fd, str, len);
-}
-
-void log_debug_local(const char* restrict str)
-{
-    log_dump(STDOUT_FILENO, str);
-}
-
-void log_info_local(const char* restrict str)
-{
-    log_dump(STDOUT_FILENO, str);
-}
-
-void log_error_local(const char* restrict str)
-{
-    return log_dump(STDERR_FILENO, str);
 }
 
 void var_dump_local(const int fd, const char* restrict str, int value)
@@ -118,19 +103,4 @@ void var_dump_local(const int fd, const char* restrict str, int value)
     buffer[buffer_size + 1] = '\0';
 
     (void)write(fd, buffer, buffer_size + 1);
-}
-
-void var_debug_local(const char* restrict str, int value)
-{
-    var_dump(STDOUT_FILENO, str, value);
-}
-
-void var_info_local(const char* restrict str, int value)
-{
-    var_dump(STDOUT_FILENO, str, value);
-}
-
-void var_error_local(const char* restrict str, int value)
-{
-    var_dump(STDERR_FILENO, str, value);
 }
