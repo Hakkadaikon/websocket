@@ -90,7 +90,7 @@ int websocket_server_init(const int port_num, const int backlog);
 
 int     websocket_close(const int sock_fd);
 int     websocket_send(const int sock_fd, const char* buffer, const size_t buffer_size);
-ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* buffer);
+ssize_t websocket_recvfrom(const int sock_fd, const size_t capacity, char* buffer);
 ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** buffers, const int num_of_buffer);
 int     websocket_accept(const int sock_fd);
 int     websocket_listen(const int port_num, const int backlog);

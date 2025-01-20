@@ -35,7 +35,7 @@ ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** rest
     if (read_count < 0) {
         if (errno != EINTR) {
             char* errmsg = strerror(errno);
-            log_error("Failed to recvmsg error. reason : ");
+            log_error("Failed to recvmmsg error. reason : ");
             log_error(errmsg);
             log_error("\n");
             var_error("socket : ", sock_fd);
@@ -48,7 +48,7 @@ ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** rest
     return read_count;
 }
 
-ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict buffer)
+ssize_t websocket_recvfrom(const int sock_fd, const size_t capacity, char* restrict buffer)
 {
     if (is_rise_signal()) {
         log_info("A signal was raised during recv(). The system will abort processing.\n");

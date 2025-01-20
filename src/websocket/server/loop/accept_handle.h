@@ -33,7 +33,7 @@ static inline bool server_accept_handle(
         goto FINALIZE;
     }
 
-    bytes_read = websocket_recv(client_sock, buffer_capacity, request_buffer);
+    bytes_read = websocket_recvfrom(client_sock, buffer_capacity, request_buffer);
     if (bytes_read <= 0) {
         if (client_sock == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
             err = true;
