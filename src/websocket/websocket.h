@@ -13,6 +13,9 @@
 
 #include "../http/http.h"
 
+#define WEBSOCKET_EPOLL_ERR (EPOLLHUP | EPOLLERR | EPOLLRDHUP)
+#define WEBSOCKET_EPOLL_IN (EPOLLIN)
+
 typedef struct epoll_event WebSocketEpollEvent, *PWebSocketEpollEvent;
 
 typedef enum {
@@ -88,6 +91,7 @@ int websocket_server_init(const int port_num, const int backlog);
 int     websocket_close(const int sock_fd);
 int     websocket_send(const int sock_fd, const char* buffer, const size_t buffer_size);
 ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* buffer);
+ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** buffers, const int num_of_buffer);
 int     websocket_accept(const int sock_fd);
 int     websocket_connect(const int port_num, const int backlog);
 bool    websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event);

@@ -9,10 +9,14 @@
 #include <sys/syscall.h>
 #include <unistd.h>
 
-#include "../util/allocator.h"
 #include "../util/log.h"
 #include "../util/signal.h"
 #include "websocket.h"
+
+typedef struct {
+    struct msghdr msg_hdr;
+    unsigned int  msg_len;
+} WebSocketMmsgHeader, *PWebSocketMmsgHeader;
 
 static inline int set_nonblocking(int fd)
 {
@@ -46,31 +50,40 @@ int websocket_send(const int sock_fd, const char* restrict buffer, const size_t 
     return (int)rtn;
 }
 
-ssize_t websocket_recvmsg(const int sock_fd, const size_t capacity, char** restrict buffers, const int num_of_buffer)
+ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** restrict buffers, const int num_of_buffer)
 {
-    struct msghdr header;
+    const int           iov_capacity = 1;
+    WebSocketMmsgHeader headers[num_of_buffer];
+    struct iovec        iov[iov_capacity][num_of_buffer];
 
-    header.msg_flags      = MSG_EOR | MSG_TRUNC | MSG_CTRUNC | MSG_OOB | MSG_ERRQUEUE;
-    header.msg_name       = NULL;
-    header.msg_namelen    = 0;
-    header.msg_control    = NULL;
-    header.msg_controllen = 0;
-
-    header.msg_iov    = websocket_alloc(sizeof(struct iovec) * num_of_buffer);
-    header.msg_iovlen = num_of_buffer;
+    memset(&headers, 0x00, sizeof(headers));
 
     for (int i = 0; i < num_of_buffer; i++) {
-        header.msg_iov[i].iov_len  = capacity;
-        header.msg_iov[i].iov_base = buffers[i];
+        headers[i].msg_hdr.msg_name            = NULL;
+        headers[i].msg_hdr.msg_namelen         = 0;
+        headers[i].msg_hdr.msg_control         = NULL;
+        headers[i].msg_hdr.msg_controllen      = 0;
+        headers[i].msg_hdr.msg_iov             = iov[i];
+        headers[i].msg_hdr.msg_iovlen          = 1;
+        headers[i].msg_hdr.msg_iov[0].iov_len  = capacity;
+        headers[i].msg_hdr.msg_iov[0].iov_base = buffers[i];
     }
 
-    ssize_t bytes_read = syscall(SYS_recvmmsg, sock_fd, &header, MSG_DONTWAIT);
-    if (bytes_read < 0) {
-        //TODO: errno
-        return -1;
+    ssize_t read_count = syscall(SYS_recvmmsg, sock_fd, &headers, num_of_buffer, MSG_DONTWAIT, NULL);
+    if (read_count < 0) {
+        if (errno != EINTR) {
+            char* errmsg = strerror(errno);
+            log_error("Failed to recvmsg error. reason : ");
+            log_error(errmsg);
+            log_error("\n");
+            var_error("socket : ", sock_fd);
+            return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+        }
+
+        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
     }
 
-    return 0;
+    return read_count;
 }
 
 ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict buffer)

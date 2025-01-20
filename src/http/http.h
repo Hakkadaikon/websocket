@@ -26,7 +26,7 @@ typedef struct {
 
 typedef struct {
     HTTPRequestLine        line;
-    HTTPRequestHeaderLine* headers;
+    PHTTPRequestHeaderLine headers;
     size_t                 header_size;
 } HTTPRequest, *PHTTPRequest;
 
@@ -41,7 +41,7 @@ bool extract_http_request(
     HEADER_LINE.value = ALLOCATOR(HTTP_HEADER_VALUE_CAPACITY);
 
 #define ALLOCATE_HTTP_REQUEST(REQUEST, ALLOCATOR) \
-    REQUEST.headers = ALLOCATOR(sizeof(HTTPRequestHeaderLine) * HTTP_HEADER_CAPACITY);
+    REQUEST.headers = (PHTTPRequestHeaderLine)ALLOCATOR(sizeof(HTTPRequestHeaderLine) * HTTP_HEADER_CAPACITY);
 
 #define FREE_HTTP_HEADER_LINE(HEADER_LINE, FREE) \
     FREE(HEADER_LINE.key);                       \

@@ -51,7 +51,7 @@ in pkgs.stdenv.mkDerivation {
     mkdir -p build
     ${compiler}/bin/cc $CFLAGS \
       src/main.c \
-      src/websocket/server/loop.c \
+      src/websocket/server/loop/loop.c \
       src/websocket/server/init.c \
       src/websocket/server/handshake.c \
       src/websocket/parser.c \
