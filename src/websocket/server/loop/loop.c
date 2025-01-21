@@ -145,7 +145,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
             goto FINALIZE;
         }
 
-        var_debug("Escaped from epoll wait. nfds: ", nfds);
+        var_debug("Escaped from epoll wait. num of events: ", num_of_events);
 
         for (int i = 0; i < num_of_events; ++i) {
             websocket_epoll_event_dump(epoll_events[i].events);
