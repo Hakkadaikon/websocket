@@ -1,5 +1,6 @@
 #include "../../../util/allocator.h"
 #include "../../../util/log.h"
+#include "../../../util/string.h"
 #include "../../websocket.h"
 #include "accept_handle.h"
 #include "receive_handle.h"
@@ -33,7 +34,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
     for (int i = 0; i < num_of_buffer; i++) {
         request_buffers[i] = websocket_alloc(client_buffer_capacity);
 
-        if (request_buffers[i] == NULL) {
+        if (is_null(request_buffers[i])) {
             alloc_error = true;
             break;
         }

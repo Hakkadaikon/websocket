@@ -233,7 +233,7 @@ bool client_handshake(
     }
 
     char* client_key = select_websocket_client_key(request);
-    if (client_key == NULL) {
+    if (is_null(client_key)) {
         has_error = true;
         goto FINALIZE;
     }

@@ -4,29 +4,26 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-static inline char char_value(const char* ptr)
-{
-    return *ptr;
-}
+#define ptr_value(ptr) (*ptr)
+#define is_null(str) (str == NULL)
+#define is_empty_value(c) (c == '\0')
+#define is_empty(str) (is_empty_value(ptr_value(str)))
+#define is_null_or_empty(str) (is_null(str) || is_empty(str))
+#define is_line_break(c) ((c == '\r') || (c == '\n'))
+#define is_white_space(c) \
+    ((c == ' ') ||        \
+     (c == '\t') ||       \
+     (c == '\r') ||       \
+     (c == '\n') ||       \
+     (c == '\v') ||       \
+     (c == '\f'))
 
-static inline bool is_null(const char* str)
+static inline bool is_utf8_white_space(const char* str)
 {
-    return (str == NULL);
-}
-
-static inline bool is_empty_value(const char c)
-{
-    return (c == '\0');
-}
-
-static inline bool is_empty(const char* str)
-{
-    return is_empty_value(char_value(str));
-}
-
-static inline bool is_null_or_empty(const char* str)
-{
-    return (is_null(str) || is_empty(str));
+    // UTF-8: 0xE3 0x80 0x80
+    return (str[0] == '\xE3') &&
+           (str[1] == '\x80') &&
+           (str[2] == '\x80');
 }
 
 static inline bool is_compare_str(const char* str1, const char* str2, const size_t str1capacity, const size_t str2capacity)
@@ -69,39 +66,15 @@ static inline bool is_contain_str(const char* base, const size_t base_len, const
     return (search_str(base, base_len, target, target_len) != -1);
 }
 
-static inline bool is_white_space(const char c)
-{
-    return (c == ' ') ||
-           (c == '\t') ||
-           (c == '\r') ||
-           (c == '\n') ||
-           (c == '\v') ||
-           (c == '\f');
-}
-
-static inline bool is_line_break(const char c)
-{
-    return (c == '\r') ||
-           (c == '\n');
-}
-
-static inline bool is_utf8_white_space(const char* str)
-{
-    // UTF-8: 0xE3 0x80 0x80
-    return (str[0] == '\xE3') &&
-           (str[1] == '\x80') &&
-           (str[2] == '\x80');
-}
-
 static inline int skip_white_space(const char* buffer, const size_t buffer_size)
 {
-    if (buffer == NULL | buffer_size <= 0) {
+    if (is_null(buffer) || buffer_size <= 0) {
         return -1;
     }
 
     size_t pos = 0;
     while (!is_empty(&buffer[pos]) && pos < buffer_size) {
-        char current = char_value(&buffer[pos]);
+        char current = ptr_value(&buffer[pos]);
         if (is_white_space(current)) {
             pos++;
             continue;
@@ -145,7 +118,7 @@ static inline int skip_word(const char* buffer, const size_t buffer_size)
 
 static inline int skip_next_line(const char* buffer, const size_t buffer_len)
 {
-    if (buffer == NULL || buffer_len < 2) {
+    if (is_null(buffer) || buffer_len < 2) {
         return 0;
     }
 
@@ -153,10 +126,6 @@ static inline int skip_next_line(const char* buffer, const size_t buffer_len)
     while (buffer[buffer_pos] != '\0' && buffer_pos < buffer_len - 1) {
         char current = buffer[buffer_pos];
         char next    = buffer[buffer_pos + 1];
-
-        if (current == '\r' && next == '\n') {
-            return buffer_pos + 2;
-        }
 
         if (current == '\n') {
             return buffer_pos + 1;

@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "../util/string.h"
 #include "websocket.h"
 
 /**
@@ -25,11 +26,11 @@ bool parse_websocket_frame(const uint8_t* restrict raw, const size_t frame_size,
         return false;
     }
 
-    if (frame == NULL) {
+    if (is_null(frame)) {
         return false;
     }
 
-    if (frame->payload == NULL) {
+    if (is_null(frame->payload)) {
         return false;
     }
 
