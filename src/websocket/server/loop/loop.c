@@ -151,49 +151,38 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
             websocket_epoll_event_dump(epoll_events[i].events);
 
             if (epoll_events[i].data.fd == server_sock) {
-                int ret = server_epoll_loop(
-                    &epoll_events[i],
-                    epoll_fd,
-                    server_sock,
-                    client_buffer_capacity,
-                    request_buffers[0],
-                    response_buffer,
-                    &register_event);
-
-                if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
+                if (server_epoll_loop(
+                        &epoll_events[i],
+                        epoll_fd,
+                        server_sock,
+                        client_buffer_capacity,
+                        request_buffers[0],
+                        response_buffer,
+                        &register_event) == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
                     goto FINALIZE;
                 }
 
-                if (ret == WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR) {
-                    continue;
-                }
-            } else {
-                int client_sock = epoll_events->data.fd;
+                continue;
+            }
 
-                int ret = client_epoll_loop(
-                    epoll_events,
-                    epoll_fd,
-                    client_buffer_capacity,
-                    request_buffers,
-                    num_of_buffer,
-                    response_buffer,
-                    callback);
+            int client_sock = epoll_events->data.fd;
 
-                if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
-                    websocket_epoll_del(epoll_fd, client_sock);
-                    websocket_close(client_sock);
-                    goto FINALIZE;
-                }
+            int ret = client_epoll_loop(
+                epoll_events,
+                epoll_fd,
+                client_buffer_capacity,
+                request_buffers,
+                num_of_buffer,
+                response_buffer,
+                callback);
 
-                if (ret == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
-                    websocket_epoll_del(epoll_fd, client_sock);
-                    websocket_close(client_sock);
-                    continue;
-                }
+            if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR || ret == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
+                websocket_epoll_del(epoll_fd, client_sock);
+                websocket_close(client_sock);
+            }
 
-                if (ret == WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR) {
-                    continue;
-                }
+            if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
+                goto FINALIZE;
             }
         }
     }
