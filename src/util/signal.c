@@ -22,6 +22,7 @@ void signal_init()
 
     sigaction(SIGHUP, &sa, NULL);
     sigaction(SIGINT, &sa, NULL);
+    sigaction(SIGTERM, &sa, NULL);
 }
 
 static void signal_handler(int signum)
