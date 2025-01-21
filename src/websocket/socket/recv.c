@@ -33,6 +33,10 @@ ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** rest
 
     ssize_t read_count = syscall(SYS_recvmmsg, sock_fd, &headers, num_of_buffer, MSG_DONTWAIT, NULL);
     if (read_count < 0) {
+        if (errno == EAGAIN) {
+            return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+        }
+
         if (errno != EINTR) {
             char* errmsg = strerror(errno);
             log_error("Failed to recvmmsg error. reason : ");
@@ -63,6 +67,10 @@ ssize_t websocket_recvfrom(const int sock_fd, const size_t capacity, char* restr
 
     if (bytes_read == WEBSOCKET_SYSCALL_ERROR) {
         if (errno != EINTR) {
+            if (errno == EAGAIN) {
+                return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+            }
+
             char* errmsg = strerror(errno);
             log_error("Failed to recv error. reason : ");
             log_error(errmsg);
