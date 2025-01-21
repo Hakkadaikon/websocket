@@ -5,7 +5,7 @@
 #include "accept_handle.h"
 #include "receive_handle.h"
 
-int server_epoll_handle(
+int server_epoll_loop(
     const PWebSocketEpollEvent restrict epoll_events,
     const int                           epoll_fd,
     const int                           server_sock,
@@ -35,7 +35,7 @@ int server_epoll_handle(
     return WEBSOCKET_ERRORCODE_NONE;
 }
 
-int client_epoll_handle(
+int client_epoll_loop(
     const PWebSocketEpollEvent restrict epoll_events,
     const int                           epoll_fd,
     const int                           client_buffer_capacity,
@@ -151,7 +151,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
             websocket_epoll_event_dump(epoll_events[i].events);
 
             if (epoll_events[i].data.fd == server_sock) {
-                int ret = server_epoll_handle(
+                int ret = server_epoll_loop(
                     &epoll_events[i],
                     epoll_fd,
                     server_sock,
@@ -170,7 +170,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
             } else {
                 int client_sock = epoll_events->data.fd;
 
-                int ret = client_epoll_handle(
+                int ret = client_epoll_loop(
                     epoll_events,
                     epoll_fd,
                     client_buffer_capacity,
