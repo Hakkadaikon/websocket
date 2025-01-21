@@ -24,12 +24,5 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
     sha1(concatenated, strnlen(concatenated, sizeof(concatenated)), sha1_result);
     base64_encode(sha1_result, SHA1_DIGEST_LENGTH, accept_key, accept_key_size);
 
-    log_debug("client key : ");
-    log_debug(client_key);
-    log_debug("\n");
-    log_debug("accept key : ");
-    log_debug(accept_key);
-    log_debug("\n");
-
     return true;
 }

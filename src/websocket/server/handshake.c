@@ -18,7 +18,7 @@ static inline bool is_valid_host(const char* restrict host)
 static inline bool is_valid_upgrade(const char* restrict value)
 {
     if (!IS_VALID_KEY(value, "websocket")) {
-        log_error("Invalid websocket request header [Key: Upgrade] It's not \"websocket\".\n");
+        str_error("Invalid websocket request header [Key: Upgrade] : ", value);
         return false;
     }
 
@@ -28,7 +28,7 @@ static inline bool is_valid_upgrade(const char* restrict value)
 static inline bool is_valid_connection(const char* restrict value)
 {
     if (!IS_VALID_KEY(value, "Upgrade")) {
-        log_error("Invalid websocket request header [Key: Connection] It's not \"upgrade\".\n");
+        str_error("Invalid websocket request header [Key: Connection] : ", value);
         return false;
     }
 
@@ -38,7 +38,7 @@ static inline bool is_valid_connection(const char* restrict value)
 static inline bool is_valid_version(const char* restrict value)
 {
     if (!IS_VALID_KEY(value, "13")) {
-        log_error("Invalid websocket request header [Key: Sec-WebSocket-Version] It's not \"13\".\n");
+        str_error("Invalid websocket request header [Key: Sec-WebSocket-Version] : ", value);
         return false;
     }
 
@@ -63,6 +63,7 @@ static inline bool is_valid_websocket_key(const char* restrict value)
 static inline bool is_valid_method(char* value)
 {
     if (!is_compare_str(value, "GET", HTTP_METHOD_CAPACITY, sizeof("GET"))) {
+        log_error("Invalid websocket request line: method is not GET\n");
         return false;
     }
 
@@ -72,6 +73,7 @@ static inline bool is_valid_method(char* value)
 static inline bool is_valid_target(char* value)
 {
     if (strnlen(value, HTTP_TARGET_CAPACITY) <= 0) {
+        log_error("Invalid websocket request line: target size is 0\n");
         return false;
     }
 
@@ -95,12 +97,10 @@ static inline bool is_valid_http_version(char* value)
 static inline bool is_valid_request_line(PHTTPRequestLine restrict line)
 {
     if (!is_valid_method(line->method)) {
-        log_error("Invalid websocket request line: method is not GET\n");
         return false;
     }
 
     if (!is_valid_target(line->target)) {
-        log_error("Invalid websocket request line: target size is 0\n");
         return false;
     }
 
@@ -176,7 +176,7 @@ static inline char* select_websocket_client_key(PHTTPRequest restrict request)
         }
     }
 
-    log_error("Invalid websocket client key\n");
+    log_error("WebSocket client key is not found.\n");
     return NULL;
 }
 
@@ -246,9 +246,7 @@ bool client_handshake(
 
 FINALIZE:
     if (has_error) {
-        log_error("Invalid handshake request : ");
-        log_error(request_buffer);
-        log_error("\n");
+        str_error("Invalid handshake request : ", request_buffer);
         return false;
     }
 

@@ -21,15 +21,13 @@ int websocket_accept(const int sock_fd)
     log_debug("accept...\n");
     int client_sock = syscall(SYS_accept, sock_fd, (struct sockaddr*)&client_addr, &addr_len);
     if (client_sock < 0) {
-        if ((errno != EINTR)) {
-            log_error("accept() failed. err : ");
-            log_error(strerror(errno));
-            log_error("\n");
-            log_error("The system will abort processing.\n");
-            return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+        if (errno == EINTR || errno == EAGAIN) {
+            return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
         }
 
-        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+        str_error("accept() failed. reason : ", strerror(errno));
+        log_error("The system will abort processing.\n");
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
     if (optimize_client_socket(client_sock) == WEBSOCKET_ERRORCODE_FATAL_ERROR) {

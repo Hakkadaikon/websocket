@@ -14,9 +14,7 @@ void websocket_frame_dump(PWebSocketFrame restrict frame)
     var_debug("mask            : ", frame->mask);
     var_debug("payload_len     : ", frame->payload_len);
     var_debug("ext_payload_len : ", frame->ext_payload_len);
-    log_debug("payload         :\n");
-    log_debug(frame->payload);
-    log_debug("\n");
+    str_debug("payload         : ", frame->payload);
 }
 
 void websocket_epoll_event_dump(const int events)

@@ -104,3 +104,14 @@ void var_dump_local(const int fd, const char* restrict str, int value)
 
     (void)write(fd, buffer, buffer_size + 1);
 }
+
+void str_dump_local(const int fd, const char* restrict str, const char* restrict value)
+{
+    if (is_null(str) || is_null(value) || fd <= 0) {
+        return;
+    }
+
+    log_dump(fd, str);
+    log_dump(fd, value);
+    log_dump(fd, "\n");
+}

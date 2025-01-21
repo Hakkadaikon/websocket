@@ -1,12 +1,7 @@
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
+#include <errno.h>
 #include <stdint.h>
 #include <string.h>
-#include <sys/epoll.h>
-#include <sys/socket.h>
 #include <sys/syscall.h>
-#include <unistd.h>
 
 #include "../../util/log.h"
 #include "../websocket.h"
@@ -19,7 +14,7 @@ int websocket_listen(const int port_num, const int backlog)
 
     server_sock = syscall(SYS_socket, AF_INET, SOCK_STREAM, 0);
     if (server_sock < 0) {
-        log_error("Failed to create socket.\n");
+        str_error("Failed to socket(). reason : ", strerror(errno));
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
@@ -31,13 +26,13 @@ int websocket_listen(const int port_num, const int backlog)
     bool err = false;
 
     if (syscall(SYS_bind, server_sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
-        log_error("Failed to bind.\n");
+        str_error("Failed to bind(). reason : ", strerror(errno));
         err = true;
         goto FINALIZE;
     }
 
     if (syscall(SYS_listen, server_sock, backlog) < 0) {
-        log_error("Failed to listen.\n");
+        str_error("Failed to listen(). reason : ", strerror(errno));
         err = true;
         goto FINALIZE;
     }

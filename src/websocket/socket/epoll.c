@@ -29,7 +29,7 @@ bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollE
         }
 
         if (errno != EINTR) {
-            log_error("Failed to add client socket to epoll\n");
+            str_error("Failed to epoll_ctl(CTL_ADD). reason : ", strerror(errno));
             return false;
         }
     }
@@ -40,7 +40,7 @@ bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollE
 bool websocket_epoll_del(const int epoll_fd, const int sock_fd)
 {
     if (syscall(SYS_epoll_ctl, epoll_fd, EPOLL_CTL_DEL, sock_fd, NULL) == WEBSOCKET_SYSCALL_ERROR) {
-        log_error("Failed to del client socket to epoll\n");
+        str_error("Failed to epoll_ctl(CTL_DEL). reason : ", strerror(errno));
         return false;
     }
 
@@ -51,7 +51,7 @@ int websocket_epoll_create()
 {
     int epoll_fd = syscall(SYS_epoll_create1, 0);
     if (epoll_fd == WEBSOCKET_SYSCALL_ERROR) {
-        log_error("Failed to create epoll instance\n");
+        str_error("Failed to epoll_create1(). reason : ", strerror(errno));
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
@@ -68,16 +68,13 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const 
     //int nfds = syscall(SYS_epoll_wait, epoll_fd, events, max_events, -1);  // blocking
     int nfds = syscall(SYS_epoll_wait, epoll_fd, events, max_events, 0);  // non blocking
     if (nfds < 0) {
-        if (errno != EINTR) {
-            char* errmsg = strerror(errno);
-            log_debug("Failed to create epoll instance. err : ");
-            log_debug(errmsg);
-            log_debug("\n");
-            log_debug("The system will abort processing.\n");
-            return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+        if (errno == EINTR || errno == EAGAIN) {
+            return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
         }
 
-        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+        str_error("Failed to epoll_wait(). reason : ", strerror(errno));
+        log_error("The system will abort processing.\n");
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
     return nfds;

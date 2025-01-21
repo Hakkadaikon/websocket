@@ -11,6 +11,7 @@
 //
 void log_dump_local(const int fd, const char* str);
 void var_dump_local(const int fd, const char* str, int value);
+void str_dump_local(const int fd, const char* str, const char* value);
 
 #if !defined(LOG_LEVEL_DEBUG) && !defined(LOG_LEVEL_INFO) && !defined(LOG_LEVEL_ERROR)
 #define LOG_LEVEL_ERROR
@@ -27,6 +28,9 @@ void var_dump_local(const int fd, const char* str, int value);
 #define var_debug(str, value) var_dump(STDOUT_FILENO, str, value)
 #define var_info(str, value) var_dump(STDOUT_FILENO, str, value)
 #define var_error(str, value) var_dump(STDERR_FILENO, str, value)
+#define str_debug(str, value) str_dump_local(STDOUT_FILENO, str, value)
+#define str_info(str, value) str_dump_local(STDOUT_FILENO, str, value)
+#define str_error(str, value) str_dump_local(STDERR_FILENO, str, value)
 
 #elif defined(LOG_LEVEL_INFO)
 #define hex_dump(data, size) hex_dump_local(data, size)
@@ -38,6 +42,9 @@ void var_dump_local(const int fd, const char* str, int value);
 #define var_debug(str, value)
 #define var_info(str, value) var_dump(STDOUT_FILENO, str, value)
 #define var_error(str, value) var_dump(STDERR_FILENO, str, value)
+#define str_debug(str, value)
+#define str_info(str, value) str_dump_local(STDOUT_FILENO, str, value)
+#define str_error(str, value) str_dump_local(STDERR_FILENO, str, value)
 
 #elif defined(LOG_LEVEL_ERROR)
 #define hex_dump(data, size) hex_dump_local(data, size)
@@ -49,6 +56,9 @@ void var_dump_local(const int fd, const char* str, int value);
 #define var_debug(str, value)
 #define var_info(str, value)
 #define var_error(str, value) var_dump(STDERR_FILENO, str, value)
+#define str_debug(str, value)
+#define str_info(str, value)
+#define str_error(str, value) str_dump_local(STDERR_FILENO, str, value)
 
 #elif
 #define hex_dump(data, size)
@@ -60,6 +70,9 @@ void var_dump_local(const int fd, const char* str, int value);
 #define var_debug(str, value)
 #define var_info(str, value)
 #define var_error(str, value)
+#define str_debug(str, value)
+#define str_info(str, value)
+#define str_error(str, value)
 #endif
 
 #endif

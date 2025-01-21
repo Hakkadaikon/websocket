@@ -32,21 +32,19 @@ ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** rest
     }
 
     ssize_t read_count = syscall(SYS_recvmmsg, sock_fd, &headers, num_of_buffer, MSG_DONTWAIT, NULL);
+    if (read_count == 0) {
+        var_error("Socket was disconnected. socket : ", sock_fd);
+        return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
+    }
+
     if (read_count < 0) {
-        if (errno == EAGAIN) {
+        if (errno == EINTR || errno == EAGAIN) {
             return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
         }
 
-        if (errno != EINTR) {
-            char* errmsg = strerror(errno);
-            log_error("Failed to recvmmsg error. reason : ");
-            log_error(errmsg);
-            log_error("\n");
-            var_error("socket : ", sock_fd);
-            return WEBSOCKET_ERRORCODE_FATAL_ERROR;
-        }
-
-        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+        str_error("Failed to recvmmsg error. reason : ", strerror(errno));
+        var_error("socket : ", sock_fd);
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
     return read_count;
@@ -66,20 +64,13 @@ ssize_t websocket_recvfrom(const int sock_fd, const size_t capacity, char* restr
     }
 
     if (bytes_read == WEBSOCKET_SYSCALL_ERROR) {
-        if (errno != EINTR) {
-            if (errno == EAGAIN) {
-                return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
-            }
-
-            char* errmsg = strerror(errno);
-            log_error("Failed to recv error. reason : ");
-            log_error(errmsg);
-            log_error("\n");
-            var_error("socket : ", sock_fd);
-            return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+        if (errno == EINTR || errno == EAGAIN) {
+            return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
         }
 
-        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+        str_error("Failed to recvfrom(). reason : ", strerror(errno));
+        var_error("socket : ", sock_fd);
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
     buffer[bytes_read] = '\0';
