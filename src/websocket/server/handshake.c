@@ -9,6 +9,8 @@
 
 #define IS_VALID_KEY(value, expected) is_compare_str(value, expected, HTTP_HEADER_KEY_CAPACITY, sizeof(expected))
 #define IS_VALID_VALUE(value, expected) is_compare_str(value, expected, HTTP_HEADER_VALUE_CAPACITY, sizeof(expected))
+#define IS_VALID_HTTP_VERSION(value, expected) is_compare_str(value, expected, HTTP_VERSION_CAPACITY, sizeof(expected))
+#define IS_VALID_HTTP_METHOD(value, expected) is_compare_str(value, expected, HTTP_METHOD_CAPACITY, sizeof(expected))
 
 static inline bool is_valid_host(const char* restrict host)
 {
@@ -62,7 +64,7 @@ static inline bool is_valid_websocket_key(const char* restrict value)
 
 static inline bool is_valid_method(char* value)
 {
-    if (!is_compare_str(value, "GET", HTTP_METHOD_CAPACITY, sizeof("GET"))) {
+    if (!IS_VALID_HTTP_METHOD(value, "GET")) {
         log_error("Invalid websocket request line: method is not GET\n");
         return false;
     }
@@ -84,9 +86,9 @@ static inline bool is_valid_http_version(char* value)
 {
     bool has_error = false;
 
-    if (!is_compare_str(value, "HTTP/1.1", HTTP_VERSION_CAPACITY, sizeof("HTTP/x.x")) &&
-        !is_compare_str(value, "HTTP/2.0", HTTP_VERSION_CAPACITY, sizeof("HTTP/x.x")) &&
-        !is_compare_str(value, "HTTP/3.0", HTTP_VERSION_CAPACITY, sizeof("HTTP/x.x"))) {
+    if (!IS_VALID_HTTP_VERSION(value, "HTTP/1.1") &&
+        !IS_VALID_HTTP_VERSION(value, "HTTP/2.0") &&
+        !IS_VALID_HTTP_VERSION(value, "HTTP/3.0")) {
         log_error("Invalid websocket request line: Invalid HTTP version(Not 1.1/2.0/3.0)\n");
         return false;
     }

@@ -5,6 +5,89 @@
 #include "accept_handle.h"
 #include "receive_handle.h"
 
+int server_epoll_handle(
+    const PWebSocketEpollEvent restrict epoll_events,
+    const int                           epoll_fd,
+    const int                           server_sock,
+    const size_t                        client_buffer_capacity,
+    char* restrict                      request_buffer,
+    char* restrict                      response_buffer,
+    const PWebSocketEpollEvent restrict register_event)
+{
+    if (epoll_events->events & WEBSOCKET_EPOLL_ERR) {
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+    }
+
+    if (!(epoll_events->events & WEBSOCKET_EPOLL_IN)) {
+        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+    }
+
+    if (!server_accept_handle(
+            epoll_fd,
+            server_sock,
+            client_buffer_capacity,
+            request_buffer,
+            response_buffer,
+            register_event)) {
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+    }
+
+    return WEBSOCKET_ERRORCODE_NONE;
+}
+
+int client_epoll_handle(
+    const PWebSocketEpollEvent restrict epoll_events,
+    const int                           epoll_fd,
+    const int                           client_buffer_capacity,
+    char** restrict                     request_buffers,
+    const int                           num_of_buffer,
+    char* restrict                      response_buffer,
+    PWebSocketCallback                  callback)
+{
+    int client_sock = epoll_events->data.fd;
+    if (epoll_events->events & (WEBSOCKET_EPOLL_ERR)) {
+        var_error("Client disconnected. : ", client_sock);
+        return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
+    }
+
+    if (!(epoll_events->events & WEBSOCKET_EPOLL_IN)) {
+        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+    }
+
+    ssize_t read_count = websocket_recvmmsg(
+        client_sock,
+        client_buffer_capacity,
+        request_buffers,
+        num_of_buffer);
+
+    if (read_count <= 0) {
+        if (read_count == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
+            return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
+        }
+
+        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+    }
+
+    var_debug("read count : ", read_count);
+
+    for (int i = 0; i < read_count; i++) {
+        size_t client_buffer_length = strnlen(request_buffers[i], client_buffer_capacity);
+
+        int ret = server_receive_handle(
+            client_sock,
+            client_buffer_length,
+            request_buffers[i],
+            response_buffer,
+            callback);
+
+        if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR || ret == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
+            return ret;
+        }
+    }
+
+    return WEBSOCKET_ERRORCODE_NONE;
+}
+
 bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity, PWebSocketCallback callback)
 {
     int epoll_fd = websocket_epoll_create();
@@ -14,10 +97,10 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
 
     const size_t        MAX_EVENTS = 16384;
     WebSocketEpollEvent register_event;
-    WebSocketEpollEvent events[MAX_EVENTS];
+    WebSocketEpollEvent epoll_events[MAX_EVENTS];
 
     memset(&register_event, 0x00, sizeof(register_event));
-    memset(events, 0x00, sizeof(events));
+    memset(epoll_events, 0x00, sizeof(epoll_events));
 
     if (!websocket_epoll_add(epoll_fd, server_sock, &register_event)) {
         websocket_close(epoll_fd);
@@ -53,9 +136,9 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
     memset(response_buffer, 0x00, client_buffer_capacity);
 
     while (1) {
-        int nfds = websocket_epoll_wait(epoll_fd, events, MAX_EVENTS);
-        if (nfds <= 0) {
-            if (nfds != WEBSOCKET_ERRORCODE_FATAL_ERROR) {
+        int num_of_events = websocket_epoll_wait(epoll_fd, epoll_events, MAX_EVENTS);
+        if (num_of_events <= 0) {
+            if (num_of_events != WEBSOCKET_ERRORCODE_FATAL_ERROR) {
                 continue;
             }
 
@@ -64,79 +147,52 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
 
         var_debug("Escaped from epoll wait. nfds: ", nfds);
 
-        for (int i = 0; i < nfds; ++i) {
-            websocket_epoll_event_dump(events[i].events);
+        for (int i = 0; i < num_of_events; ++i) {
+            websocket_epoll_event_dump(epoll_events[i].events);
 
-            if (events[i].data.fd == server_sock) {
-                if (events[i].events & WEBSOCKET_EPOLL_ERR) {
+            if (epoll_events[i].data.fd == server_sock) {
+                int ret = server_epoll_handle(
+                    &epoll_events[i],
+                    epoll_fd,
+                    server_sock,
+                    client_buffer_capacity,
+                    request_buffers[0],
+                    response_buffer,
+                    &register_event);
+
+                if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
                     goto FINALIZE;
                 }
 
-                if (!(events[i].events & WEBSOCKET_EPOLL_IN)) {
+                if (ret == WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR) {
                     continue;
                 }
+            } else {
+                int client_sock = epoll_events->data.fd;
 
-                if (!server_accept_handle(
-                        epoll_fd,
-                        server_sock,
-                        client_buffer_capacity,
-                        request_buffers[0],
-                        response_buffer,
-                        &register_event)) {
+                int ret = client_epoll_handle(
+                    epoll_events,
+                    epoll_fd,
+                    client_buffer_capacity,
+                    request_buffers,
+                    num_of_buffer,
+                    response_buffer,
+                    callback);
+
+                if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
+                    websocket_epoll_del(epoll_fd, client_sock);
+                    websocket_close(client_sock);
                     goto FINALIZE;
                 }
-            } else {
-                int client_sock = events[i].data.fd;
-                if (events[i].events & (WEBSOCKET_EPOLL_ERR)) {
-                    var_error("Client disconnected. : ", client_sock);
+
+                if (ret == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
                     websocket_epoll_del(epoll_fd, client_sock);
                     websocket_close(client_sock);
                     continue;
                 }
 
-                if (!(events[i].events & WEBSOCKET_EPOLL_IN)) {
+                if (ret == WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR) {
                     continue;
-                }
-
-                ssize_t read_count = websocket_recvmmsg(
-                    client_sock,
-                    client_buffer_capacity,
-                    request_buffers,
-                    num_of_buffer);
-
-                if (read_count <= 0) {
-                    if (read_count == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
-                        websocket_epoll_del(epoll_fd, client_sock);
-                        websocket_close(client_sock);
-                    }
-
-                    continue;
-                }
-
-                var_debug("read count : ", read_count);
-
-                size_t client_buffer_length = strnlen(request_buffers[i], client_buffer_capacity);
-
-                for (int i = 0; i < read_count; i++) {
-                    int ret = server_receive_handle(
-                        client_sock,
-                        client_buffer_length,
-                        request_buffers[i],
-                        response_buffer,
-                        callback);
-
-                    switch (ret) {
-                        case WEBSOCKET_ERRORCODE_FATAL_ERROR:
-                            websocket_epoll_del(epoll_fd, client_sock);
-                            websocket_close(client_sock);
-                            goto FINALIZE;
-                        case WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR:
-                            websocket_epoll_del(epoll_fd, client_sock);
-                            websocket_close(client_sock);
-                            break;
-                        default:
-                            break;
-                    }
                 }
             }
         }
