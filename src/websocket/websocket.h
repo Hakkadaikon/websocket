@@ -85,7 +85,7 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
 int websocket_server_init(const int port_num, const int backlog);
 
 /*----------------------------------------------------------------------------*/
-/* websocket/func.c                                                           */
+/* websocket/socket/                                                          */
 /*----------------------------------------------------------------------------*/
 
 int     websocket_close(const int sock_fd);

@@ -41,6 +41,6 @@ int main()
     websocket_server_loop(server_sock, client_buffer_capacity, websocket_callback);
     websocket_close(server_sock);
 
-    log_info("websocket server end.\n");
+    log_error("websocket server end.\n");
     return 0;
 }

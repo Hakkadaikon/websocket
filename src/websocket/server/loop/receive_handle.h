@@ -28,8 +28,8 @@ static inline int server_receive_handle(
 
     websocket_frame_dump(&frame);
 
-    if (!opcode_handle(client_sock, buffer_capacity, response_buffer, callback, &frame)) {
-        rtn = WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
+    rtn = opcode_handle(client_sock, buffer_capacity, response_buffer, callback, &frame);
+    if (rtn != WEBSOCKET_ERRORCODE_NONE) {
         goto FINALIZE;
     }
 
