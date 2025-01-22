@@ -45,7 +45,7 @@ static inline int epoll_receive(
     for (int i = 0; i < read_count; i++) {
         size_t client_buffer_length = strnlen(request_buffers[i], client_buffer_capacity);
 
-        int ret = server_receive_handle(
+        int ret = receive_handle(
             client_sock,
             client_buffer_length,
             request_buffers[i],

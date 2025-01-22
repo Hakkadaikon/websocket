@@ -8,15 +8,16 @@
 #include "../../util/signal.h"
 #include "../websocket.h"
 
-//typedef struct {
-//    struct msghdr msg_hdr;
-//    unsigned int  msg_len;
-//} WebSocketMmsgHeader, *PWebSocketMmsgHeader;
 typedef struct mmsghdr  WebSocketMmsgHeader, *PWebSocketMmsgHeader;
 typedef struct timespec WebSocketTimeSpec, *PWebSocketTimeSpec;
 
 ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** restrict buffers, const int num_of_buffer)
 {
+    if (is_rise_signal()) {
+        log_info("A signal was raised during recvmmsg(). The system will abort processing.\n");
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+    }
+
     const int           iov_capacity = 1;
     WebSocketMmsgHeader headers[num_of_buffer];
     struct iovec        iov[num_of_buffer][iov_capacity];
@@ -62,7 +63,7 @@ ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** rest
 ssize_t websocket_recvfrom(const int sock_fd, const size_t capacity, char* restrict buffer)
 {
     if (is_rise_signal()) {
-        log_info("A signal was raised during recv(). The system will abort processing.\n");
+        log_info("A signal was raised during recvfrom(). The system will abort processing.\n");
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 

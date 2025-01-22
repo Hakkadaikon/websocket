@@ -7,7 +7,7 @@
 #include "../../../websocket.h"
 #include "opcode_handle.h"
 
-static inline int server_receive_handle(
+static inline int receive_handle(
     const int          client_sock,
     const size_t       buffer_capacity,
     char*              request_buffer,

@@ -22,7 +22,7 @@ static inline int epoll_accept(
         return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
     }
 
-    if (!server_accept_handle(
+    if (!accept_handle(
             epoll_fd,
             server_sock,
             client_buffer_capacity,
