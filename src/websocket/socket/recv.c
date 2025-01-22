@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <errno.h>
 #include <string.h>
 #include <sys/socket.h>
@@ -7,10 +8,12 @@
 #include "../../util/signal.h"
 #include "../websocket.h"
 
-typedef struct {
-    struct msghdr msg_hdr;
-    unsigned int  msg_len;
-} WebSocketMmsgHeader, *PWebSocketMmsgHeader;
+//typedef struct {
+//    struct msghdr msg_hdr;
+//    unsigned int  msg_len;
+//} WebSocketMmsgHeader, *PWebSocketMmsgHeader;
+typedef struct mmsghdr  WebSocketMmsgHeader, *PWebSocketMmsgHeader;
+typedef struct timespec WebSocketTimeSpec, *PWebSocketTimeSpec;
 
 ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** restrict buffers, const int num_of_buffer)
 {
@@ -31,7 +34,13 @@ ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** rest
         headers[i].msg_hdr.msg_iov[0].iov_base = buffers[i];
     }
 
+    //WebSocketTimeSpec time;
+    //time.tv_sec  = 0;
+    //time.tv_nsec = 0;
+
     ssize_t read_count = syscall(SYS_recvmmsg, sock_fd, &headers, num_of_buffer, MSG_DONTWAIT, NULL);
+    //ssize_t read_count = recvmmsg(sock_fd, headers, num_of_buffer, MSG_DONTWAIT, &time);
+
     if (read_count == 0) {
         var_error("Socket was disconnected. socket : ", sock_fd);
         return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
