@@ -1,10 +1,10 @@
-#ifndef NOSTR_SERVER_LOOP_RECEIVE_H_
-#define NOSTR_SERVER_LOOP_RECEIVE_H_
+#ifndef NOSTR_SERVER_LOOP_RECEIVE_HANDLE_H_
+#define NOSTR_SERVER_LOOP_RECEIVE_HANDLE_H_
 
-#include "../../../util/allocator.h"
-#include "../../../util/log.h"
-#include "../../../util/signal.h"
-#include "../../websocket.h"
+#include "../../../../util/allocator.h"
+#include "../../../../util/log.h"
+#include "../../../../util/signal.h"
+#include "../../../websocket.h"
 #include "opcode_handle.h"
 
 static inline int server_receive_handle(
