@@ -110,7 +110,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
     var_debug("websocket server fd : ", server_sock);
     var_debug("websocket epoll  fd : ", epoll_fd);
 
-    const int num_of_buffer = 64;
+    const int num_of_buffer = 1;
     char*     request_buffers[num_of_buffer];
     bool      alloc_error = false;
 
