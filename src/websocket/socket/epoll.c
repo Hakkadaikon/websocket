@@ -7,6 +7,7 @@
 #include "../../util/log.h"
 #include "../../util/signal.h"
 #include "../websocket.h"
+#include "optimize_socket.h"
 
 typedef struct {
     struct msghdr msg_hdr;
@@ -52,6 +53,11 @@ int websocket_epoll_create()
     int epoll_fd = syscall(SYS_epoll_create1, 0);
     if (epoll_fd == WEBSOCKET_SYSCALL_ERROR) {
         str_error("Failed to epoll_create1(). reason : ", strerror(errno));
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+    }
+
+    if (set_nonblocking(epoll_fd) == WEBSOCKET_SYSCALL_ERROR) {
+        str_error("Failed to fnctl - epoll_create1(). reason : ", strerror(errno));
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
