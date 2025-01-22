@@ -65,9 +65,9 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const 
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
-    //int nfds = syscall(SYS_epoll_wait, epoll_fd, events, max_events, -1);  // blocking
-    int nfds = syscall(SYS_epoll_wait, epoll_fd, events, max_events, 0);  // non blocking
-    if (nfds < 0) {
+    //int num_of_event = syscall(SYS_epoll_wait, epoll_fd, events, max_events, -1);  // blocking
+    int num_of_event = syscall(SYS_epoll_wait, epoll_fd, events, max_events, 0);  // non blocking
+    if (num_of_event < 0) {
         if (errno == EINTR || errno == EAGAIN) {
             return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
         }
@@ -77,5 +77,5 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const 
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
-    return nfds;
+    return num_of_event;
 }
