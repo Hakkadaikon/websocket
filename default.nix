@@ -17,9 +17,6 @@ in pkgs.stdenv.mkDerivation {
 
   src = ./.;
 
-  #buildInputs = [
-  #  pkgs.openssl
-  #];
   buildInputs = [
     compiler
   ];
