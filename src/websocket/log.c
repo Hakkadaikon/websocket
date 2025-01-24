@@ -1,6 +1,8 @@
 #include "../util/log.h"
 
+#ifndef __APPLE__
 #include <sys/epoll.h>
+#endif
 
 #include "websocket.h"
 
@@ -19,6 +21,7 @@ void websocket_frame_dump(PWebSocketFrame restrict frame)
 
 void websocket_epoll_event_dump(const int events)
 {
+#ifndef __APPLE__
     log_debug("epoll events: ");
 
     if (events & EPOLLIN) {
@@ -42,4 +45,5 @@ void websocket_epoll_event_dump(const int events)
     }
 
     log_debug("\n");
+#endif
 }

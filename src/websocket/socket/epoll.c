@@ -1,3 +1,5 @@
+#ifndef __APPLE__
+
 #include <errno.h>
 #include <netinet/in.h>
 #include <string.h>
@@ -8,11 +10,6 @@
 #include "../../util/signal.h"
 #include "../websocket.h"
 #include "optimize_socket.h"
-
-typedef struct {
-    struct msghdr msg_hdr;
-    unsigned int  msg_len;
-} WebSocketMmsgHeader, *PWebSocketMmsgHeader;
 
 bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event)
 {
@@ -71,7 +68,7 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const 
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
-    //int num_of_event = syscall(SYS_epoll_wait, epoll_fd, events, max_events, -1);  // blocking
+    // int num_of_event = syscall(SYS_epoll_wait, epoll_fd, events, max_events, -1);  // blocking
     int num_of_event = syscall(SYS_epoll_wait, epoll_fd, events, max_events, 0);  // non blocking
     if (num_of_event < 0) {
         if (errno == EINTR || errno == EAGAIN) {
@@ -85,3 +82,5 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const 
 
     return num_of_event;
 }
+
+#endif

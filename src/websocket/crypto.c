@@ -18,7 +18,7 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
     const char* websocket_accept_guid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
     char        concatenated[256];
 
-    //TODO: snprintf consumes a lot of stack space, so switch to a different algorithm.
+    // TODO: snprintf consumes a lot of stack space, so switch to a different algorithm.
     snprintf(concatenated, sizeof(concatenated), "%s%s", client_key, websocket_accept_guid);
 
     uint8_t sha1_result[SHA1_DIGEST_LENGTH];

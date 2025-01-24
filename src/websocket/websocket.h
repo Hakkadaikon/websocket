@@ -10,14 +10,19 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
+#ifndef __APPLE__
 #include <sys/epoll.h>
-
-#include "../http/http.h"
-
 #define WEBSOCKET_EPOLL_ERR (EPOLLHUP | EPOLLERR | EPOLLRDHUP)
 #define WEBSOCKET_EPOLL_IN (EPOLLIN)
 
 typedef struct epoll_event WebSocketEpollEvent, *PWebSocketEpollEvent;
+#else
+#include <sys/event.h>
+
+typedef struct kevent WebSocketEpollEvent, *PWebSocketEpollEvent;
+#endif
+
+#include "../http/http.h"
 
 typedef enum {
     WEBSOCKET_OP_CODE_TEXT   = 0x1,
@@ -63,7 +68,7 @@ typedef void (*PWebSocketCallback)(
 
 /**
  * @brief Parse raw data in network byte order into a websocket flame structure
- * 
+ *
  * @param[in]  raw         raw data (network byte order)
  * @param[in]  frame_size  Size of webSocket frame
  * @param[out] frame       Output destination of parsed frame
@@ -92,13 +97,16 @@ int websocket_server_init(const int port_num, const int backlog);
 int     websocket_close(const int sock_fd);
 int     websocket_send(const int sock_fd, const char* buffer, const size_t buffer_size);
 ssize_t websocket_recvfrom(const int sock_fd, const size_t capacity, char* buffer);
+#ifndef __APPLE__
 ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** buffers, const int num_of_buffer);
-int     websocket_accept(const int sock_fd);
-int     websocket_listen(const int port_num, const int backlog);
-bool    websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event);
-bool    websocket_epoll_del(const int epoll_fd, const int sock_fd);
-int     websocket_epoll_create();
-int     websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const int max_events);
+#endif
+int websocket_accept(const int sock_fd);
+int websocket_listen(const int port_num, const int backlog);
+
+bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event);
+bool websocket_epoll_del(const int epoll_fd, const int sock_fd);
+int  websocket_epoll_create();
+int  websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const int max_events);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/server/loop.c                                                    */

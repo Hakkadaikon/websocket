@@ -18,8 +18,9 @@ static inline bool accept_handle(
 
     ALLOCATE_HTTP_REQUEST(request, websocket_alloc);
 
-    bool err         = false;
-    int  client_sock = websocket_accept(server_sock);
+    bool err = false;
+
+    int client_sock = websocket_accept(server_sock);
     if (client_sock <= 0) {
         if (client_sock == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
             err = true;
@@ -57,6 +58,7 @@ FINALIZE:
         return false;
     }
 
+    var_debug("accept done. client_sock : ", client_sock);
     return true;
 }
 

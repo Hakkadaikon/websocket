@@ -13,7 +13,7 @@
 
 /**
  * @brief Parse raw data in network byte order into a websocket frame structure
- * 
+ *
  * @param[in]  raw         raw data (network byte order)
  * @param[in]  frame_size  Size of webSocket frame
  * @param[out] frame       Output destination of parsed frame

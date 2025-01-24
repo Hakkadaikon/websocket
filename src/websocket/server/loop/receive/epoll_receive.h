@@ -16,6 +16,7 @@ static inline int epoll_receive(
     char*                      response_buffer,
     PWebSocketCallback         callback)
 {
+#ifndef __APPLE__
     int client_sock = epoll_events->data.fd;
     if (epoll_events->events & (WEBSOCKET_EPOLL_ERR)) {
         var_error("Client disconnected. : ", client_sock);
@@ -56,6 +57,33 @@ static inline int epoll_receive(
             return ret;
         }
     }
+#else
+    int client_sock = epoll_events->ident;
+
+    ssize_t read_size = websocket_recvfrom(
+        client_sock,
+        client_buffer_capacity,
+        request_buffers[0]);
+
+    if (read_size <= 0) {
+        if (read_size == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
+            return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
+        }
+
+        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+    }
+
+    int ret = receive_handle(
+        client_sock,
+        read_size,
+        request_buffers[0],
+        response_buffer,
+        callback);
+
+    if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR || ret == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
+        return ret;
+    }
+#endif
 
     return WEBSOCKET_ERRORCODE_NONE;
 }

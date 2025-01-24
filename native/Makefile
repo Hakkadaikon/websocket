@@ -38,7 +38,8 @@ CFLAGS := \
 	-ffast-math \
 	-fno-math-errno \
 	-falign-functions \
-	-flto=auto
+	-flto=auto \
+	-DLOG_LEVEL_ERROR
 
 LDLIBS  :=
 LDFLAGS := -flto

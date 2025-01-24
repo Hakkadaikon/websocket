@@ -4,10 +4,10 @@
 #include <stdarg.h>
 #include <unistd.h>
 
-//void set_log_level(LOG_LEVEL level);
-//#define LOG_LEVEL_DEBUG
-//#define LOG_LEVEL_INFO
-//#define LOG_LEVEL_ERROR
+// void set_log_level(LOG_LEVEL level);
+// #define LOG_LEVEL_DEBUG
+// #define LOG_LEVEL_INFO
+// #define LOG_LEVEL_ERROR
 //
 void log_dump_local(const int fd, const char* str);
 void var_dump_local(const int fd, const char* str, int value);

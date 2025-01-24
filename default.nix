@@ -58,6 +58,7 @@ in pkgs.stdenv.mkDerivation {
       src/websocket/socket/recv.c \
       src/websocket/socket/send.c \
       src/websocket/socket/epoll.c \
+      src/websocket/socket/kqueue.c \
       src/websocket/socket/close.c \
       src/websocket/log.c \
       src/http/http.c \

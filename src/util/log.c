@@ -1,10 +1,6 @@
 #include "./log.h"
 
-#include <stdarg.h>
-#include <stdatomic.h>
 #include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -52,7 +48,7 @@ static inline size_t safe_itoa(int value, char* restrict buffer, size_t buffer_c
 
 void hex_dump_local(const void* restrict data, size_t size)
 {
-    //TODO: I plan to prepare my own log (var_hex_info) and replace it with printf.
+    // TODO: I plan to prepare my own log (var_hex_info) and replace it with printf.
     const char* byte_data = (const char*)data;
 
     for (size_t i = 0; i < size; i++) {
