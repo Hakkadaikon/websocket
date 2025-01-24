@@ -58,6 +58,10 @@ static inline int epoll_receive(
         }
     }
 #else
+    if (!(epoll_events->filter | WEBSOCKET_EPOLL_IN)) {
+        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+    }
+
     int client_sock = epoll_events->ident;
 
     ssize_t read_size = websocket_recvfrom(

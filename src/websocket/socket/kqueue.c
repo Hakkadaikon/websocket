@@ -10,10 +10,8 @@
 #include "../../util/signal.h"
 #include "../websocket.h"
 
-bool websocket_epoll_add(const int kq_fd, const int sock_fd, PWebSocketEpollEvent event)
+bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event)
 {
-    EV_SET(event, sock_fd, EVFILT_WRITE, EV_ADD | EV_CLEAR, 0, 0, NULL);
-    EV_SET(event, sock_fd, EVFILT_EXCEPT, EV_ADD | EV_CLEAR, 0, 0, NULL);
     EV_SET(event, sock_fd, EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, NULL);
     // EV_SET(event, sock_fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
 
@@ -23,7 +21,7 @@ bool websocket_epoll_add(const int kq_fd, const int sock_fd, PWebSocketEpollEven
             return false;
         }
 
-        if (kevent(kq_fd, event, 1, NULL, 0, NULL) != WEBSOCKET_SYSCALL_ERROR) {
+        if (kevent(epoll_fd, event, 1, NULL, 0, NULL) != WEBSOCKET_SYSCALL_ERROR) {
             break;
         }
 
@@ -36,12 +34,12 @@ bool websocket_epoll_add(const int kq_fd, const int sock_fd, PWebSocketEpollEven
     return true;
 }
 
-bool websocket_epoll_del(const int kq_fd, const int sock_fd)
+bool websocket_epoll_del(const int epoll_fd, const int sock_fd)
 {
     struct kevent event;
     EV_SET(&event, sock_fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
 
-    if (kevent(kq_fd, &event, 1, NULL, 0, NULL) < 0) {
+    if (kevent(epoll_fd, &event, 1, NULL, 0, NULL) < 0) {
         str_error("Failed to kevent(DEL). reason : ", strerror(errno));
         return false;
     }
@@ -51,16 +49,16 @@ bool websocket_epoll_del(const int kq_fd, const int sock_fd)
 
 int websocket_epoll_create()
 {
-    int kq_fd = kqueue();
-    if (kq_fd == -1) {
+    int epoll_fd = kqueue();
+    if (epoll_fd == -1) {
         str_error("Failed to kqueue(). reason : ", strerror(errno));
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
-    return kq_fd;
+    return epoll_fd;
 }
 
-int websocket_epoll_wait(const int kq_fd, PWebSocketEpollEvent events, const int max_events)
+int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const int max_events)
 {
     if (is_rise_signal()) {
         log_info("A signal was raised during kevent(). The system will abort processing.\n");
@@ -68,7 +66,7 @@ int websocket_epoll_wait(const int kq_fd, PWebSocketEpollEvent events, const int
     }
 
     struct timespec timeout      = {0, 0};  // Non-blocking
-    int             num_of_event = kevent(kq_fd, NULL, 0, events, max_events, &timeout);
+    int             num_of_event = kevent(epoll_fd, NULL, 0, events, max_events, &timeout);
 
     if (num_of_event < 0) {
         if (errno == EINTR || errno == EAGAIN) {
