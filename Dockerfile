@@ -1,0 +1,7 @@
+FROM debian:bookworm AS build-dev
+WORKDIR /opt/websocket
+RUN apt update && apt install -y cmake make git
+COPY . /opt/websocket
+RUN make native-build
+
+ENTRYPOINT ["/opt/websocket/native/bin/ws-server"]
