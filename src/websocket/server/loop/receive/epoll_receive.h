@@ -18,7 +18,7 @@ static inline int epoll_receive(
 {
 #ifndef __APPLE__
     int client_sock = epoll_events->data.fd;
-    if (epoll_events->events & (WEBSOCKET_EPOLL_ERR)) {
+    if (epoll_events->events & (WEBSOCKET_EPOLL_ERROR)) {
         var_error("Client disconnected. : ", client_sock);
         return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
     }

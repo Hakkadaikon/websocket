@@ -15,7 +15,7 @@ static inline int epoll_accept(
     const PWebSocketEpollEvent register_event)
 {
 #ifndef __APPLE__
-    if (epoll_events->events & WEBSOCKET_EPOLL_ERR) {
+    if (epoll_events->events & WEBSOCKET_EPOLL_ERROR) {
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 

@@ -69,6 +69,10 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
             websocket_epoll_event_dump(epoll_events[i].events);
             int fd = epoll_events[i].data.fd;
 #else
+            if (epoll_events[i].flags & WEBSOCKET_EPOLL_ERROR) {
+                str_error("EV_ERROR : ", strerror((int)epoll_events[i].data));
+                continue;
+            }
             int fd = epoll_events[i].ident;
 #endif
 
