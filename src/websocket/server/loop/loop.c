@@ -27,29 +27,16 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
     var_debug("websocket server fd : ", server_sock);
     var_debug("websocket epoll  fd : ", epoll_fd);
 
-    const int num_of_buffer = 1;
-    char*     request_buffers[num_of_buffer];
-    bool      alloc_error = false;
-
-    for (int i = 0; i < num_of_buffer; i++) {
-        request_buffers[i] = websocket_alloc(client_buffer_capacity);
-
-        if (is_null(request_buffers[i])) {
-            alloc_error = true;
-            break;
-        }
-
-        memset(request_buffers[i], 0x00, sizeof(client_buffer_capacity));
-    }
-
+    char* request_buffer  = websocket_alloc(client_buffer_capacity);
     char* response_buffer = websocket_alloc(client_buffer_capacity);
 
-    if (alloc_error || !response_buffer) {
+    if (!request_buffer || !response_buffer) {
         log_error("Failed to allocate buffers\n");
         websocket_close(epoll_fd);
         return false;
     }
 
+    memset(request_buffer, 0x00, client_buffer_capacity);
     memset(response_buffer, 0x00, client_buffer_capacity);
 
     while (1) {
@@ -73,7 +60,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
                         epoll_fd,
                         server_sock,
                         client_buffer_capacity,
-                        request_buffers[0],
+                        request_buffer,
                         response_buffer,
                         &register_event) == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
                     goto FINALIZE;
@@ -88,8 +75,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
                 epoll_events,
                 epoll_fd,
                 client_buffer_capacity,
-                request_buffers,
-                num_of_buffer,
+                request_buffer,
                 response_buffer,
                 callback);
 
@@ -105,9 +91,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
     }
 
 FINALIZE:
-    for (int i = 0; i < num_of_buffer; i++) {
-        websocket_free(request_buffers);
-    }
+    websocket_free(request_buffer);
     websocket_free(response_buffer);
     websocket_epoll_del(epoll_fd, server_sock);
     websocket_close(epoll_fd);
