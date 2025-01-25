@@ -1,9 +1,4 @@
 #include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "util/log.h"
-#include "util/signal.h"
 #include "websocket/websocket.h"
 
 void websocket_callback(const int client_sock, PWebSocketFrame frame, const size_t client_buffer_capacity, char* response_buffer)

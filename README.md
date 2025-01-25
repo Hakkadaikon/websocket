@@ -60,8 +60,6 @@ make test
 ```c
 // main.c
 #include <stdint.h>
-#include "util/log.h"
-#include "util/signal.h"
 #include "websocket/websocket.h"
 
 void websocket_callback(

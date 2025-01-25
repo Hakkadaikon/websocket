@@ -24,6 +24,8 @@ typedef struct kevent WebSocketEpollEvent, *PWebSocketEpollEvent;
 #endif
 
 #include "../http/http.h"
+#include "../util/log.h"
+#include "../util/signal.h"
 
 typedef enum {
     WEBSOCKET_OP_CODE_TEXT   = 0x1,
