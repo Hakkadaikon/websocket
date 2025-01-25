@@ -7,18 +7,18 @@
 #------------------------------------------------------------------------------
 # Build options
 #------------------------------------------------------------------------------
-.PHONY:  build native-build debug-build clean format
+.PHONY:  build debug-build native-build clean format
 
 build:
 	nix-build
+
+debug-build:
+	nix-build --arg debug true
 
 native-build:
 	mkdir -p native/bin native/obj
 	rm -rf native/src native/obj/* native/bin/*
 	make -C native
-
-debug-build:
-	nix-build --arg debug true
 
 clean:
 	nix store gc
