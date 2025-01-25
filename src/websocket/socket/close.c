@@ -1,7 +1,6 @@
 #include <sys/syscall.h>
 
 #include "../../util/log.h"
-#include "../../util/signal.h"
 #include "../websocket.h"
 
 #ifdef __APPLE__

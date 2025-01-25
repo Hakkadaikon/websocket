@@ -9,12 +9,10 @@
 #include "../../util/log.h"
 #include "../../util/signal.h"
 #include "../websocket.h"
-#include "optimize_socket.h"
 
 bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event)
 {
     EV_SET(event, sock_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-    // EV_SET(event, sock_fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, NULL);
 
     while (1) {
         if (is_rise_signal()) {
@@ -55,10 +53,6 @@ int websocket_epoll_create()
         str_error("Failed to kqueue(). reason : ", strerror(errno));
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
-
-    // if (set_nonblocking(epoll_fd) == WEBSOCKET_SYSCALL_ERROR) {
-    //     return WEBSOCKET_ERRORCODE_FATAL_ERROR;
-    // }
 
     return epoll_fd;
 }
