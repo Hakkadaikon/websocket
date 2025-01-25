@@ -8,6 +8,12 @@
 #include "../../util/signal.h"
 #include "../websocket.h"
 
+#ifdef __APPLE__
+#define SYSCALL_RECVFROM(fd, buffer, length, flags, address, address_len) recvfrom(fd, buffer, length, flags, address, address_len)
+#else
+#define SYSCALL_RECVFROM(fd, buffer, length, flags, address, address_len) syscall(SYS_recvfrom, fd, buffer, length, flags, address, address_len)
+#endif
+
 #ifndef __APPLE__
 typedef struct mmsghdr  WebSocketMmsgHeader, *PWebSocketMmsgHeader;
 typedef struct timespec WebSocketTimeSpec, *PWebSocketTimeSpec;
@@ -69,7 +75,7 @@ ssize_t websocket_recvfrom(const int sock_fd, const size_t capacity, char* restr
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
-    ssize_t bytes_read = syscall(SYS_recvfrom, sock_fd, buffer, capacity - 1, MSG_DONTWAIT, NULL, NULL);
+    ssize_t bytes_read = SYSCALL_RECVFROM(sock_fd, buffer, capacity - 1, MSG_DONTWAIT, NULL, NULL);
     if (bytes_read == 0) {
         var_error("Socket was disconnected. socket : ", sock_fd);
         return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
