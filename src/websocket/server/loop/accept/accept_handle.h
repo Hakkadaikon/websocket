@@ -29,23 +29,28 @@ static inline bool accept_handle(
         goto FINALIZE;
     }
 
+    log_debug("epoll add(client sock)...\n");
     if (!websocket_epoll_add(epoll_fd, client_sock, event)) {
         err = true;
         goto FINALIZE;
     }
 
+    log_debug("Read to handshake message...\n");
     bytes_read = websocket_recvfrom(client_sock, buffer_capacity, request_buffer);
     if (bytes_read <= 0) {
         if (client_sock == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
             err = true;
         }
 
+        log_error("Failed to handshake message read.\n");
         websocket_epoll_del(epoll_fd, client_sock);
         goto FINALIZE;
     }
 
+    log_debug("Analyze to handshake message...\n");
     if (!client_handshake(client_sock, buffer_capacity, bytes_read, request_buffer, response_buffer, &request)) {
         websocket_epoll_del(epoll_fd, client_sock);
+        err = true;
         goto FINALIZE;
     }
 

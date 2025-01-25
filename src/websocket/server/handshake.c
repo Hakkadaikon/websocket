@@ -266,5 +266,8 @@ FINALIZE:
         return false;
     }
 
+    log_debug("handshake success !");
+    str_debug("request : ", request_buffer);
+    str_debug("response : ", response_buffer);
     return true;
 }
