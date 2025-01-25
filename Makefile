@@ -7,7 +7,7 @@
 #------------------------------------------------------------------------------
 # Build options
 #------------------------------------------------------------------------------
-.PHONY:  build debug-build native-build clean format
+.PHONY:  build debug-build native-build docker-build clean format
 
 build:
 	nix-build
@@ -19,6 +19,9 @@ native-build:
 	mkdir -p native/bin native/obj
 	rm -rf native/src native/obj/* native/bin/*
 	make -C native
+
+docker-build:
+	docker compose build --no-cache
 
 clean:
 	nix store gc
