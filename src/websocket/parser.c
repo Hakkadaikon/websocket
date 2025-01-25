@@ -5,7 +5,6 @@
  * @see RFC6455 (https://datatracker.ietf.org/doc/html/rfc6455)
  */
 #include <stdbool.h>
-#include <stdint.h>
 #include <string.h>
 
 #include "../util/string.h"
@@ -20,7 +19,7 @@
  *
  * @return true: Parse was successful / false: Failed parse
  */
-bool parse_websocket_frame(const uint8_t* restrict raw, const size_t frame_size, PWebSocketFrame restrict frame)
+bool parse_websocket_frame(const char* restrict raw, const size_t frame_size, PWebSocketFrame restrict frame)
 {
     if (frame_size < 2) {
         return false;
@@ -134,7 +133,7 @@ bool parse_websocket_frame(const uint8_t* restrict raw, const size_t frame_size,
         frame_offset += sizeof(frame->masking_key);
     }
 
-    const uint8_t* payload_raw = &raw[frame_offset];
+    const char* payload_raw = &raw[frame_offset];
     for (size_t i = 0; i < frame->ext_payload_len; i++) {
         frame->payload[i] =
             payload_raw[i] ^ (frame->mask ? frame->masking_key[i % 4] : 0);
@@ -143,7 +142,7 @@ bool parse_websocket_frame(const uint8_t* restrict raw, const size_t frame_size,
     return true;
 }
 
-size_t create_websocket_frame(PWebSocketFrame restrict frame, const size_t capacity, uint8_t* restrict raw)
+size_t create_websocket_frame(PWebSocketFrame restrict frame, const size_t capacity, char* restrict raw)
 {
     if (!frame || !raw || capacity < 2) {
         return 0;
@@ -172,7 +171,7 @@ size_t create_websocket_frame(PWebSocketFrame restrict frame, const size_t capac
     // |S|             |
     // |K|             |
     // +-+-------------+
-    uint8_t mask = (frame->mask ? 0x80 : 0x00);
+    unsigned char mask = (frame->mask ? 0x80 : 0x00);
 
     if (frame->ext_payload_len <= 125 && !frame->mask) {
         raw[offset] = frame->ext_payload_len & 0x7F;

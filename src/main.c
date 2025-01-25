@@ -1,12 +1,15 @@
-#include <stdint.h>
 #include "websocket/websocket.h"
 
-void websocket_callback(const int client_sock, PWebSocketFrame frame, const size_t client_buffer_capacity, char* response_buffer)
+void websocket_callback(
+    const int       client_sock,
+    PWebSocketFrame frame,
+    const size_t    client_buffer_capacity,
+    char*           response_buffer)
 {
     switch (frame->opcode) {
         case WEBSOCKET_OP_CODE_TEXT: {
             frame->mask       = 0;
-            size_t frame_size = create_websocket_frame(frame, client_buffer_capacity, (uint8_t*)&response_buffer[0]);
+            size_t frame_size = create_websocket_frame(frame, client_buffer_capacity, response_buffer);
             if (frame_size == 0) {
                 log_error("Failed to create websocket frame.\n");
                 return;

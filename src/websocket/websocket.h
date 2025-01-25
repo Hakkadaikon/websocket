@@ -78,8 +78,8 @@ typedef void (*PWebSocketCallback)(
  *
  * @return true: Parse was successful / false: Failed parse
  */
-bool   parse_websocket_frame(const uint8_t* raw, const size_t frame_size, PWebSocketFrame frame);
-size_t create_websocket_frame(PWebSocketFrame frame, const size_t capacity, uint8_t* raw);
+bool   parse_websocket_frame(const char* raw, const size_t frame_size, PWebSocketFrame frame);
+size_t create_websocket_frame(PWebSocketFrame frame, const size_t capacity, char* raw);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/crypto.c                                                         */

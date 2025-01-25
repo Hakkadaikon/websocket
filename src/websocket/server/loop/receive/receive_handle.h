@@ -21,7 +21,7 @@ static inline int receive_handle(
 
     int rtn = 0;
 
-    if (!parse_websocket_frame((uint8_t*)request_buffer, buffer_capacity, &frame)) {
+    if (!parse_websocket_frame(request_buffer, buffer_capacity, &frame)) {
         rtn = WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
         goto FINALIZE;
     }

@@ -29,8 +29,7 @@ static inline int opcode_handle(
             frame->mask   = 0;
             frame->opcode = WEBSOCKET_OP_CODE_PONG;
 
-            size_t frame_size = create_websocket_frame(
-                frame, buffer_capacity, (uint8_t*)&response_buffer[0]);
+            size_t frame_size = create_websocket_frame(frame, buffer_capacity, response_buffer);
             if (frame_size == 0) {
                 log_error("Failed to create pong frame.\n");
                 return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
