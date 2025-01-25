@@ -36,15 +36,20 @@ static inline bool accept_handle(
     }
 
     log_debug("Read to handshake message...\n");
-    bytes_read = websocket_recvfrom(client_sock, buffer_capacity, request_buffer);
-    if (bytes_read <= 0) {
-        if (client_sock == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
+    while (1) {
+        bytes_read = websocket_recvfrom(client_sock, buffer_capacity, request_buffer);
+        if (bytes_read < 0) {
+            if (bytes_read == WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR) {
+                continue;
+            }
+
             err = true;
+            log_error("Failed to handshake message read.\n");
+            websocket_epoll_del(epoll_fd, client_sock);
+            goto FINALIZE;
         }
 
-        log_error("Failed to handshake message read.\n");
-        websocket_epoll_del(epoll_fd, client_sock);
-        goto FINALIZE;
+        break;
     }
 
     log_debug("Analyze to handshake message...\n");

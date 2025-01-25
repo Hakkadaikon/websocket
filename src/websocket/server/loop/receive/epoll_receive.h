@@ -33,7 +33,7 @@ static inline int epoll_receive(
         request_buffer);
 
     if (read_size <= 0) {
-        if (read_size == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
+        if (read_size == WEBSOCKET_ERRORCODE_FATAL_ERROR || read_size == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
             return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
         }
 
