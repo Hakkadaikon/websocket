@@ -81,4 +81,28 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const 
     return num_of_event;
 }
 
+int websocket_epoll_getfd(PWebSocketEpollEvent event)
+{
+    return event->ident;
+}
+
+int websocket_epoll_rise_error(PWebSocketEpollEvent event)
+{
+    if (event->flags & WEBSOCKET_EPOLL_ERROR) {
+        str_error("EV_ERROR : ", strerror((int)event->data));
+        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+    }
+
+    return WEBSOCKET_ERRORCODE_NONE;
+}
+
+int websocket_epoll_rise_input(PWebSocketEpollEvent event)
+{
+    if (!(event->filter | WEBSOCKET_EPOLL_IN)) {
+        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+    }
+
+    return WEBSOCKET_ERRORCODE_NONE;
+}
+
 #endif

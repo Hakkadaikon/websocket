@@ -108,6 +108,9 @@ bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollE
 bool websocket_epoll_del(const int epoll_fd, const int sock_fd);
 int  websocket_epoll_create();
 int  websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const int max_events);
+int  websocket_epoll_getfd(PWebSocketEpollEvent event);
+int  websocket_epoll_rise_error(PWebSocketEpollEvent event);
+int  websocket_epoll_rise_input(PWebSocketEpollEvent event);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/server/loop.c                                                    */

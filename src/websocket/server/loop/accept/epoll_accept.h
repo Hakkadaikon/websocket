@@ -1,6 +1,8 @@
 #ifndef NOSTR_SERVER_LOOP_EPOLL_ACCEPT_H_
 #define NOSTR_SERVER_LOOP_EPOLL_ACCEPT_H_
 
+#include <string.h>
+
 #include "../../../../util/log.h"
 #include "../../../websocket.h"
 #include "accept_handle.h"
@@ -14,15 +16,15 @@ static inline int epoll_accept(
     char*                      response_buffer,
     const PWebSocketEpollEvent register_event)
 {
-#ifndef __APPLE__
-    if (epoll_events->events & WEBSOCKET_EPOLL_ERROR) {
-        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+    int code = websocket_epoll_rise_error(epoll_events);
+    if (code != WEBSOCKET_ERRORCODE_NONE) {
+        return code;
     }
 
-    if (!(epoll_events->events & WEBSOCKET_EPOLL_IN)) {
-        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+    code = websocket_epoll_rise_input(epoll_events);
+    if (code != WEBSOCKET_ERRORCODE_NONE) {
+        return code;
     }
-#endif
 
     if (!accept_handle(
             epoll_fd,

@@ -65,16 +65,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
         var_debug("Escaped from epoll wait. num of events: ", num_of_events);
 
         for (int i = 0; i < num_of_events; ++i) {
-#ifndef __APPLE__
-            websocket_epoll_event_dump(epoll_events[i].events);
-            int fd = epoll_events[i].data.fd;
-#else
-            if (epoll_events[i].flags & WEBSOCKET_EPOLL_ERROR) {
-                str_error("EV_ERROR : ", strerror((int)epoll_events[i].data));
-                continue;
-            }
-            int fd = epoll_events[i].ident;
-#endif
+            int fd = websocket_epoll_getfd(&epoll_events[i]);
 
             if (fd == server_sock) {
                 if (epoll_accept(
