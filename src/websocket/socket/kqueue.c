@@ -26,7 +26,7 @@ bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollE
         }
 
         if (errno != EINTR) {
-            str_error("Failed to kevent(ADD). reason : ", strerror(errno));
+            str_error("Failed to kevent(EV_ADD | EV_CLEAR). reason : ", strerror(errno));
             return false;
         }
     }
@@ -40,7 +40,7 @@ bool websocket_epoll_del(const int epoll_fd, const int sock_fd)
     EV_SET(&event, sock_fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
 
     if (kevent(epoll_fd, &event, 1, NULL, 0, NULL) < 0) {
-        str_error("Failed to kevent(DEL). reason : ", strerror(errno));
+        str_error("Failed to kevent(EV_DELETE). reason : ", strerror(errno));
         return false;
     }
 
