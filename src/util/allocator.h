@@ -5,14 +5,16 @@
 #include <stdlib.h>
 
 #define ALLOCATE_STACK
-// #define ALLOCATE_HEAP
+//#define ALLOCATE_HEAP
 
 #if defined(ALLOCATE_STACK)
 #define websocket_alloc(size) alloca(size)
 #define websocket_free(addr)
+#undef ALLOCATE_STACK
 #elif defined(ALLOCATE_HEAP)
 #define websocket_alloc(size) malloc(size)
 #define websocket_free(addr) free(addr)
+#undef ALLOCATE_HEAP
 #endif
 
 #endif

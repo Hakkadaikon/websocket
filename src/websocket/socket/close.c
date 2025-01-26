@@ -1,7 +1,6 @@
 #include <sys/syscall.h>
 
-#include "../../util/log.h"
-#include "../websocket.h"
+#include "../websocket_local.h"
 
 #ifdef __APPLE__
 #define SYSCALL_CLOSE(fd) close(sock_fd)

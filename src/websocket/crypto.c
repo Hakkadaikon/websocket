@@ -1,12 +1,6 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "../crypto/base64.h"
 #include "../crypto/sha1.h"
-#include "../util/log.h"
-#include "../util/string.h"
-#include "websocket.h"
+#include "websocket_local.h"
 
 bool generate_websocket_acceptkey(const char* client_key, const size_t accept_key_size, char* accept_key)
 {

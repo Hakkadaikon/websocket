@@ -1,8 +1,7 @@
 #ifndef _NOSTR_WEBSOCKET_H_
 #define _NOSTR_WEBSOCKET_H_
 
-/**
- * @file  websocket.h
+/** @file  websocket.h
  *
  * @brief Parses each parameter of a websocket frame stored in network byte order.
  * @see RFC6455 (https://datatracker.ietf.org/doc/html/rfc6455)
@@ -10,17 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#ifndef __APPLE__
-#include <sys/epoll.h>
-typedef struct epoll_event WebSocketEpollEvent, *PWebSocketEpollEvent;
-#else
-#include <sys/event.h>
-typedef struct kevent WebSocketEpollEvent, *PWebSocketEpollEvent;
-#endif
-
-#include "../http/http.h"
-#include "../util/log.h"
-#include "../util/signal.h"
+#include <unistd.h>
 
 typedef enum {
     WEBSOCKET_OP_CODE_TEXT   = 0x1,
@@ -36,10 +25,6 @@ typedef enum {
     WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR  = -1,
     WEBSOCKET_ERRORCODE_NONE               = 0,
 } WebSocketErrorCode;
-
-typedef enum {
-    WEBSOCKET_SYSCALL_ERROR = -1
-} WebSocketSysCallErrorCode;
 
 typedef struct _WebSocketFrame {
     uint8_t         fin;
@@ -77,37 +62,31 @@ bool   parse_websocket_frame(const char* raw, const size_t frame_size, PWebSocke
 size_t create_websocket_frame(PWebSocketFrame frame, const size_t capacity, char* raw);
 
 /*----------------------------------------------------------------------------*/
-/* websocket/crypto.c                                                         */
-/*----------------------------------------------------------------------------*/
-
-bool generate_websocket_acceptkey(const char* client_key, const size_t accept_key_size, char* accept_key);
-
-/*----------------------------------------------------------------------------*/
 /* websocket/server/init.c                                                    */
 /*----------------------------------------------------------------------------*/
 
 int websocket_server_init(const int port_num, const int backlog);
 
 /*----------------------------------------------------------------------------*/
-/* websocket/socket/                                                          */
+/* websocket/socket/send.c                                                    */
 /*----------------------------------------------------------------------------*/
 
-int     websocket_close(const int sock_fd);
-int     websocket_send(const int sock_fd, const char* buffer, const size_t buffer_size);
+int websocket_send(const int sock_fd, const char* buffer, const size_t buffer_size);
+
+/*----------------------------------------------------------------------------*/
+/* websocket/socket/recv.c                                                    */
+/*----------------------------------------------------------------------------*/
+
 ssize_t websocket_recvfrom(const int sock_fd, const size_t capacity, char* buffer);
 #ifndef __APPLE__
 ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** buffers, const int num_of_buffer);
 #endif
-int websocket_accept(const int sock_fd);
-int websocket_listen(const int port_num, const int backlog);
 
-bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event);
-bool websocket_epoll_del(const int epoll_fd, const int sock_fd);
-int  websocket_epoll_create();
-int  websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const int max_events);
-int  websocket_epoll_getfd(PWebSocketEpollEvent event);
-int  websocket_epoll_rise_error(PWebSocketEpollEvent event);
-int  websocket_epoll_rise_input(PWebSocketEpollEvent event);
+/*----------------------------------------------------------------------------*/
+/* websocket/socket/close.c                                                   */
+/*----------------------------------------------------------------------------*/
+
+int websocket_close(const int sock_fd);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/server/loop.c                                                    */
@@ -116,16 +95,77 @@ int  websocket_epoll_rise_input(PWebSocketEpollEvent event);
 bool websocket_server_loop(int server_sock, const size_t client_buffer_size, PWebSocketCallback callback);
 
 /*----------------------------------------------------------------------------*/
-/* websocket/handshake.c                                                      */
+/* util/log.c                                                                 */
 /*----------------------------------------------------------------------------*/
 
-bool client_handshake(const int client_sock, const size_t buffer_capacity, const size_t bytes_read, char* request_buffer, char* response_buffer, PHTTPRequest request);
+// void set_log_level(LOG_LEVEL level);
+// #define LOG_LEVEL_DEBUG
+// #define LOG_LEVEL_INFO
+// #define LOG_LEVEL_ERROR
+//
+void log_dump_local(const int fd, const char* str);
+void var_dump_local(const int fd, const char* str, int value);
+void str_dump_local(const int fd, const char* str, const char* value);
 
-/*----------------------------------------------------------------------------*/
-/* websocket/log.c                                                            */
-/*----------------------------------------------------------------------------*/
+#if !defined(LOG_LEVEL_DEBUG) && !defined(LOG_LEVEL_INFO) && !defined(LOG_LEVEL_ERROR)
+#define LOG_LEVEL_ERROR
+#endif
 
-void websocket_frame_dump(PWebSocketFrame frame);
-void websocket_epoll_event_dump(const int events);
+#ifdef LOG_LEVEL_DEBUG
+#define hex_dump(data, size) hex_dump_local(data, size)
+#define log_dump(fd, str) log_dump_local(fd, str)
+#define log_debug(str) log_dump(STDOUT_FILENO, str)
+#define log_info(str) log_dump(STDOUT_FILENO, str)
+#define log_error(str) log_dump(STDERR_FILENO, str)
+#define var_dump(fd, str, value) var_dump_local(fd, str, value)
+#define var_debug(str, value) var_dump(STDOUT_FILENO, str, value)
+#define var_info(str, value) var_dump(STDOUT_FILENO, str, value)
+#define var_error(str, value) var_dump(STDERR_FILENO, str, value)
+#define str_debug(str, value) str_dump_local(STDOUT_FILENO, str, value)
+#define str_info(str, value) str_dump_local(STDOUT_FILENO, str, value)
+#define str_error(str, value) str_dump_local(STDERR_FILENO, str, value)
+
+#elif defined(LOG_LEVEL_INFO)
+#define hex_dump(data, size) hex_dump_local(data, size)
+#define log_dump(fd, str) log_dump_local(fd, str)
+#define log_debug(str)
+#define log_info(str) log_dump(STDOUT_FILENO, str)
+#define log_error(str) log_dump(STDERR_FILENO, str)
+#define var_dump(fd, str, value) var_dump_local(fd, str, value)
+#define var_debug(str, value)
+#define var_info(str, value) var_dump(STDOUT_FILENO, str, value)
+#define var_error(str, value) var_dump(STDERR_FILENO, str, value)
+#define str_debug(str, value)
+#define str_info(str, value) str_dump_local(STDOUT_FILENO, str, value)
+#define str_error(str, value) str_dump_local(STDERR_FILENO, str, value)
+
+#elif defined(LOG_LEVEL_ERROR)
+#define hex_dump(data, size) hex_dump_local(data, size)
+#define log_dump(fd, str) log_dump_local(fd, str)
+#define log_debug(str)
+#define log_info(str)
+#define log_error(str) log_dump(STDERR_FILENO, str)
+#define var_dump(fd, str, value) var_dump_local(fd, str, value)
+#define var_debug(str, value)
+#define var_info(str, value)
+#define var_error(str, value) var_dump(STDERR_FILENO, str, value)
+#define str_debug(str, value)
+#define str_info(str, value)
+#define str_error(str, value) str_dump_local(STDERR_FILENO, str, value)
+
+#elif
+#define hex_dump(data, size)
+#define log_dump(fd, str)
+#define log_debug(str)
+#define log_info(str)
+#define log_error(str)
+#define var_dump(fd, str, value)
+#define var_debug(str, value)
+#define var_info(str, value)
+#define var_error(str, value)
+#define str_debug(str, value)
+#define str_info(str, value)
+#define str_error(str, value)
+#endif
 
 #endif

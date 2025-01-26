@@ -1,11 +1,11 @@
+#include "signal.h"
+
 #include <signal.h>
 #include <stdatomic.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "./log.h"
 
 _Atomic static bool rise_signal = false;
 
@@ -27,7 +27,6 @@ void signal_init()
 
 static void signal_handler(int signum)
 {
-    log_info("\nrise signal\n");
     rise_signal = true;
 }
 

@@ -2,8 +2,7 @@
 #include <string.h>
 #include <sys/syscall.h>
 
-#include "../../util/log.h"
-#include "../websocket.h"
+#include "../websocket_local.h"
 #include "optimize_socket.h"
 
 #ifdef __APPLE__

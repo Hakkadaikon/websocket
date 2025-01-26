@@ -2,8 +2,7 @@
 #define NOSTR_SERVER_LOOP_ACCEPT_H_
 
 #include "../../../../util/allocator.h"
-#include "../../../../util/log.h"
-#include "../../../websocket.h"
+#include "../../../websocket_local.h"
 
 static inline bool accept_handle(
     const int            epoll_fd,

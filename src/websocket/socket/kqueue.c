@@ -6,9 +6,7 @@
 #include <sys/event.h>
 #include <sys/syscall.h>
 
-#include "../../util/log.h"
-#include "../../util/signal.h"
-#include "../websocket.h"
+#include "../websocket_local.h"
 
 bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent restrict event)
 {

@@ -1,7 +1,5 @@
 #include "../../../util/allocator.h"
-#include "../../../util/log.h"
-#include "../../../util/string.h"
-#include "../../websocket.h"
+#include "../../websocket_local.h"
 #include "accept/epoll_accept.h"
 #include "receive/epoll_receive.h"
 

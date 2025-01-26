@@ -2,9 +2,7 @@
 #define NOSTR_SERVER_LOOP_EPOLL_RECEIVE_H_
 
 #include "../../../../util/allocator.h"
-#include "../../../../util/log.h"
-#include "../../../../util/string.h"
-#include "../../../websocket.h"
+#include "../../../websocket_local.h"
 #include "receive_handle.h"
 
 static inline int epoll_receive(

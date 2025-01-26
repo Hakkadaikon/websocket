@@ -1,11 +1,12 @@
-#include "../../util/log.h"
-#include "../websocket.h"
+#include "../websocket_local.h"
 
 int websocket_server_init(const int port_num, const int backlog)
 {
     log_info("websocket server init processing...\n");
     var_info("port    : ", port_num);
     var_info("backlog : ", backlog);
+
+    signal_init();
 
     int server_sock = websocket_listen(port_num, backlog);
     if (server_sock < 0) {

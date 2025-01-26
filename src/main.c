@@ -28,8 +28,6 @@ int main()
     int    backlog                = 5;
     size_t client_buffer_capacity = 1024;
 
-    signal_init();
-
     int server_sock = websocket_server_init(websocket_port_num, backlog);
     if (server_sock < WEBSOCKET_ERRORCODE_NONE) {
         log_error("websocket server init error.\n");

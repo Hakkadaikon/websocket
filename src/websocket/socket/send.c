@@ -3,9 +3,7 @@
 #include <sys/socket.h>
 #include <sys/syscall.h>
 
-#include "../../util/log.h"
-#include "../../util/signal.h"
-#include "../websocket.h"
+#include "../websocket_local.h"
 
 #ifdef __APPLE__
 #define SYSCALL_SENDTO(fd, buffer, length, flags, dest_addr, dest_len) sendto(fd, buffer, length, flags, dest_addr, dest_len)

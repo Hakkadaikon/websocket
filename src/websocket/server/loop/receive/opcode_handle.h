@@ -7,9 +7,7 @@
 #include <unistd.h>
 
 #include "../../../../util/allocator.h"
-#include "../../../../util/log.h"
-#include "../../../../util/signal.h"
-#include "../../../websocket.h"
+#include "../../../websocket_local.h"
 
 static inline int opcode_handle(
     const int          client_sock,

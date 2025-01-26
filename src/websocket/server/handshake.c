@@ -2,10 +2,7 @@
 #include <string.h>
 
 #include "../../crypto/base64.h"
-#include "../../http/http.h"
-#include "../../util/log.h"
-#include "../../util/string.h"
-#include "../websocket.h"
+#include "../websocket_local.h"
 
 #define IS_VALID_KEY(value, expected) is_compare_str(value, expected, HTTP_HEADER_KEY_CAPACITY, sizeof(expected))
 #define IS_VALID_VALUE(value, expected) is_compare_str(value, expected, HTTP_HEADER_VALUE_CAPACITY, sizeof(expected))

@@ -9,8 +9,7 @@
 #include <sys/socket.h>
 #include <sys/syscall.h>
 
-#include "../../util/log.h"
-#include "../websocket.h"
+#include "../websocket_local.h"
 
 #ifdef __APPLE__
 #define SYSCALL_FCNTL(fd, ...) fcntl(fd, __VA_ARGS__)

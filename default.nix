@@ -60,7 +60,7 @@ in pkgs.stdenv.mkDerivation {
       src/websocket/socket/epoll.c \
       src/websocket/socket/kqueue.c \
       src/websocket/socket/close.c \
-      src/websocket/log.c \
+      src/websocket/internal_log.c \
       src/http/http.c \
       src/util/signal.c \
       src/crypto/sha1.c \

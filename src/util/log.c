@@ -1,10 +1,9 @@
-#include "./log.h"
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
+#include "../websocket/websocket.h"
 #include "./string.h"
 
 static inline int calc_digit(int value)

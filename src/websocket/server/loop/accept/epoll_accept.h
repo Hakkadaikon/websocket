@@ -3,8 +3,7 @@
 
 #include <string.h>
 
-#include "../../../../util/log.h"
-#include "../../../websocket.h"
+#include "../../../websocket_local.h"
 #include "accept_handle.h"
 
 static inline int epoll_accept(

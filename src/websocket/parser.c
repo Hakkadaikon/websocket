@@ -7,8 +7,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../util/string.h"
-#include "websocket.h"
+#include "websocket_local.h"
 
 /**
  * @brief Parse raw data in network byte order into a websocket frame structure

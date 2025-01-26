@@ -1,10 +1,8 @@
-#include "../util/log.h"
-
 #ifndef __APPLE__
 #include <sys/epoll.h>
 #endif
 
-#include "websocket.h"
+#include "websocket_local.h"
 
 void websocket_frame_dump(PWebSocketFrame restrict frame)
 {
