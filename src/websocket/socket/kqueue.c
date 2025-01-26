@@ -87,7 +87,7 @@ int websocket_epoll_getfd(PWebSocketEpollEvent restrict event)
 
 int websocket_epoll_rise_error(PWebSocketEpollEvent restrict event)
 {
-    if (event->flags & WEBSOCKET_EPOLL_ERROR) {
+    if (event->flags & EV_ERROR) {
         str_error("EV_ERROR : ", strerror((int)event->data));
         return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
     }
@@ -97,7 +97,7 @@ int websocket_epoll_rise_error(PWebSocketEpollEvent restrict event)
 
 int websocket_epoll_rise_input(PWebSocketEpollEvent restrict event)
 {
-    if (!(event->filter | WEBSOCKET_EPOLL_IN)) {
+    if (!(event->filter | EVFILT_READ)) {
         return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
     }
 

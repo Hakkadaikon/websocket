@@ -12,14 +12,9 @@
 #include <stdio.h>
 #ifndef __APPLE__
 #include <sys/epoll.h>
-#define WEBSOCKET_EPOLL_ERROR (EPOLLHUP | EPOLLERR | EPOLLRDHUP)
-#define WEBSOCKET_EPOLL_IN (EPOLLIN)
-
 typedef struct epoll_event WebSocketEpollEvent, *PWebSocketEpollEvent;
 #else
 #include <sys/event.h>
-#define WEBSOCKET_EPOLL_ERROR (EV_ERROR)
-#define WEBSOCKET_EPOLL_IN (EVFILT_READ)
 typedef struct kevent WebSocketEpollEvent, *PWebSocketEpollEvent;
 #endif
 
