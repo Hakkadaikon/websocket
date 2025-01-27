@@ -11,9 +11,9 @@ in pkgs.stdenv.mkDerivation {
   ];
 
   buildPhase = if debug then ''
-    make native-debug-build
+    make debug-build
   '' else ''
-    make native-build
+    make build
   '';
 
   installPhase = ''
