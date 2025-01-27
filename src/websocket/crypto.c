@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "../crypto/base64.h"
 #include "../crypto/sha1.h"
 #include "websocket_local.h"

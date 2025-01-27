@@ -8,7 +8,6 @@
  */
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <unistd.h>
 
 typedef enum {
