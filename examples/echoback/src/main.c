@@ -16,7 +16,7 @@ void websocket_callback(
                 return;
             }
 
-            websocket_send(client_sock, response_buffer, frame_size);
+            websocket_send(client_sock, frame_size, response_buffer);
         } break;
         default:
             break;

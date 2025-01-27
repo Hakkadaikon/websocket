@@ -33,7 +33,7 @@ static inline int opcode_handle(
                 return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
             }
 
-            int rtn = websocket_send(client_sock, response_buffer, frame_size);
+            int rtn = websocket_send(client_sock, frame_size, response_buffer);
             if (rtn != WEBSOCKET_ERRORCODE_NONE) {
                 return rtn;
             }

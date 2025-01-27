@@ -10,21 +10,31 @@
 #include <stdint.h>
 #include <unistd.h>
 
+/**
+ * @enum WebSocketOpCode
+ * @brief WebSocket frame type
+ */
 typedef enum {
-    WEBSOCKET_OP_CODE_TEXT   = 0x1,
-    WEBSOCKET_OP_CODE_BINARY = 0x2,
-    WEBSOCKET_OP_CODE_CLOSE  = 0x8,
-    WEBSOCKET_OP_CODE_PING   = 0x9,
-    WEBSOCKET_OP_CODE_PONG   = 0xA,
+    WEBSOCKET_OP_CODE_TEXT   = 0x1,  ///< When this frame is received, Invokes the user callback.
+    WEBSOCKET_OP_CODE_BINARY = 0x2,  ///< When this frame is received, Invokes the user callback.
+    WEBSOCKET_OP_CODE_CLOSE  = 0x8,  ///< When this frame is received, closes the client socket.
+    WEBSOCKET_OP_CODE_PING   = 0x9,  ///< When this frame is received, this server replies with a Pong.
+    WEBSOCKET_OP_CODE_PONG   = 0xA,  ///< Pong frame.
 } WebSocketOpCode;
 
+/**
+ * @brief Error code when calling a WebSocket function
+ */
 typedef enum {
-    WEBSOCKET_ERRORCODE_FATAL_ERROR        = -3,
-    WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR = -2,
-    WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR  = -1,
-    WEBSOCKET_ERRORCODE_NONE               = 0,
+    WEBSOCKET_ERRORCODE_FATAL_ERROR        = -3,  ///< When this code is received, This server will terminate processing.
+    WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR = -2,  ///< When this code is received, This server closes the client socket.
+    WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR  = -1,  ///< When this code is received, This server will not proceed to the next epoll loop and will continue.
+    WEBSOCKET_ERRORCODE_NONE               = 0,   ///< Normal code. No action.
 } WebSocketErrorCode;
 
+/**
+ * @brief Result of parsing the WebSocket frame
+ */
 typedef struct _WebSocketFrame {
     uint8_t         fin;
     uint8_t         rsv1;
@@ -38,11 +48,15 @@ typedef struct _WebSocketFrame {
     char*           payload;
 } WebSocketFrame, *PWebSocketFrame;
 
+/**
+ * @brief Result of parsing the WebSocket frame
+ */
 typedef void (*PWebSocketCallback)(
-    const int       client_sock,
-    PWebSocketFrame frame,
-    const size_t    client_buffer_capacity,
-    char*           response_buffer);
+    const int       client_sock,             ///< Client socket that sent the data
+    PWebSocketFrame frame,                   ///< Parsed websocket frame
+    const size_t    client_buffer_capacity,  ///< Response_buffer capacity.
+    char*           response_buffer          ///< This buffer must be used to create the return frame.
+);
 
 /*----------------------------------------------------------------------------*/
 /* websocket_parser.c                                                         */
@@ -57,51 +71,116 @@ typedef void (*PWebSocketCallback)(
  *
  * @return true: Parse was successful / false: Failed parse
  */
-bool   parse_websocket_frame(const char* raw, const size_t frame_size, PWebSocketFrame frame);
+bool parse_websocket_frame(const char* raw, const size_t frame_size, PWebSocketFrame frame);
+
+/**
+ * @brief Creates raw data to send back to the client
+ *
+ * @param[in]  frame    Transmitted frame before it becomes raw data
+ * @param[in]  capacity Raw data capacity
+ * @param[out] raw      Raw data frame to be returned
+ *
+ * @return Size of raw data. If parsing fails, 0 is returned.
+ */
 size_t create_websocket_frame(PWebSocketFrame frame, const size_t capacity, char* raw);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/server/init.c                                                    */
 /*----------------------------------------------------------------------------*/
 
+/**
+ * @brief Initialize a WebSocket server. socket listen and register signal handler.
+ *
+ * @param[in] port_num Listening port number
+ * @param[in] backlog  Listen queue size
+ *
+ * @return Positive value: Server socket descriptor / Negative value: WebSocket error code
+ * @see WebSocketErrorCode
+ */
 int websocket_server_init(const int port_num, const int backlog);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/socket/send.c                                                    */
 /*----------------------------------------------------------------------------*/
 
-int websocket_send(const int sock_fd, const char* buffer, const size_t buffer_size);
+/**
+ * @brief Wrapper for the BSD socket sendto() API.
+ *
+ * @param[in] sock_fd     Destination socket descriptor
+ * @param[in] buffer_size Buffer size
+ * @param[in] buffer      Buffer that stores the transmission data
+ *
+ * @return WebSocket error code
+ * @see WebSocketErrorCode
+ */
+int websocket_send(const int sock_fd, const size_t buffer_size, const char* buffer);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/socket/recv.c                                                    */
 /*----------------------------------------------------------------------------*/
 
+/**
+ * @brief Wrapper for the BSD socket recvfrom() API.
+ *
+ * @param[in]  sock_fd  Destination socket descriptor
+ * @param[in]  capacity Receive buffer capacity
+ * @param[out] buffer   Receive buffer. User must allocate the amount specified by the capacity variable.
+ *
+ * @return Positive value: Receive data size / Negative value: WebSocket error code
+ * @see WebSocketErrorCode
+ */
 ssize_t websocket_recvfrom(const int sock_fd, const size_t capacity, char* buffer);
+
 #ifndef __APPLE__
-ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** buffers, const int num_of_buffer);
+/**
+ * @brief Wrapper for the BSD socket recvfrom() API.
+ *
+ * @param[in]  sock_fd       Destination socket descriptor
+ * @param[in]  capacity      Receive buffer capacity
+ * @param[in]  num_of_buffer Number of receive buffer
+ * @param[out] buffers       Receive buffers. User must allocate the amount specified by the capacity x num_of_buffer.
+ *
+ * @return Positive value: Receive data count / Negative value: WebSocket error code
+ * @see WebSocketErrorCode
+ */
+ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, const int num_of_buffer, char** buffers);
 #endif
 
 /*----------------------------------------------------------------------------*/
 /* websocket/socket/close.c                                                   */
 /*----------------------------------------------------------------------------*/
 
+/**
+ * @brief Wrapper for the BSD socket close() API
+ *
+ * @param[in] sock_fd Socket descriptor
+ *
+ * @return WebSocket error code
+ * @see WebSocketErrorCode
+ */
 int websocket_close(const int sock_fd);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/server/loop.c                                                    */
 /*----------------------------------------------------------------------------*/
 
+/**
+ * @brief Enter the receive loop from the client.
+ *        This function will block until it is sent a SIGHUP/SIGINT/SIGTERM signal or detects a FATAL ERROR internally.
+ *
+ * @param[in] server_sock        Socket descriptor obtained by websocket_server_init() function
+ * @param[in] client_buffer_size Size of the send and receive buffer for one client.
+ *                               The size specified here is actually allocated 2x internally. (request and response)
+ * @param[in] callback           Callback that is called when data is received from the client 
+ *
+ * @return true: success / false: failure
+ */
 bool websocket_server_loop(int server_sock, const size_t client_buffer_size, PWebSocketCallback callback);
 
 /*----------------------------------------------------------------------------*/
 /* util/log.c                                                                 */
 /*----------------------------------------------------------------------------*/
 
-// void set_log_level(LOG_LEVEL level);
-// #define LOG_LEVEL_DEBUG
-// #define LOG_LEVEL_INFO
-// #define LOG_LEVEL_ERROR
-//
 void log_dump_local(const int fd, const char* str);
 void var_dump_local(const int fd, const char* str, int value);
 void str_dump_local(const int fd, const char* str, const char* value);

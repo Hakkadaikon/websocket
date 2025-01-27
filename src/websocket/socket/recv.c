@@ -16,7 +16,7 @@
 typedef struct mmsghdr  WebSocketMmsgHeader, *PWebSocketMmsgHeader;
 typedef struct timespec WebSocketTimeSpec, *PWebSocketTimeSpec;
 
-ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, char** restrict buffers, const int num_of_buffer)
+ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, const int num_of_buffer, char** restrict buffers)
 {
     if (is_rise_signal()) {
         log_info("A signal was raised during recvmmsg(). The system will abort processing.\n");

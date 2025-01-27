@@ -11,7 +11,7 @@
 #define SYSCALL_SENDTO(fd, buffer, length, flags, dest_addr, dest_len) syscall(SYS_sendto, fd, buffer, length, flags, dest_addr, dest_len)
 #endif
 
-int websocket_send(const int sock_fd, const char* restrict buffer, const size_t buffer_size)
+int websocket_send(const int sock_fd, const size_t buffer_size, const char* restrict buffer)
 {
     log_debug("WebSocket server send\n");
 
