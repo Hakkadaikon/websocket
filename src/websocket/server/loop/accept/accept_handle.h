@@ -19,6 +19,7 @@ static inline bool accept_handle(
 
     bool err = false;
 
+    log_debug("accept...\n");
     int client_sock = websocket_accept(server_sock);
     if (client_sock <= 0) {
         if (client_sock == WEBSOCKET_ERRORCODE_FATAL_ERROR) {

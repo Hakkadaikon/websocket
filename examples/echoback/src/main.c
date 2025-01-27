@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <websocket/websocket.h>
 
 void websocket_callback(

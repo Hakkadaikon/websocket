@@ -15,16 +15,19 @@ static inline int epoll_accept(
     char*                      response_buffer,
     const PWebSocketEpollEvent register_event)
 {
+    log_debug("rise error check...\n");
     int code = websocket_epoll_rise_error(epoll_events);
     if (code != WEBSOCKET_ERRORCODE_NONE) {
         return code;
     }
 
+    log_debug("rise input check...\n");
     code = websocket_epoll_rise_input(epoll_events);
     if (code != WEBSOCKET_ERRORCODE_NONE) {
         return code;
     }
 
+    log_debug("accept handle\n");
     if (!accept_handle(
             epoll_fd,
             server_sock,
