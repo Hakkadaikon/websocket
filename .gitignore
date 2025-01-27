@@ -17,6 +17,7 @@
 *.pch
 
 # Libraries
+./lib
 *.lib
 *.a
 *.la
@@ -62,3 +63,6 @@ ws-server
 result
 tmp/
 native/src
+native/lib
+native/obj
+

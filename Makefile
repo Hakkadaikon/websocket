@@ -4,28 +4,34 @@
 # Author      : hakkadaikon
 ###############################################################################
 
+LIBNAME := libwsserver
+
 #------------------------------------------------------------------------------
 # Build options
 #------------------------------------------------------------------------------
-.PHONY:  build debug-build native-build docker-build clean format
+.PHONY:  build debug-build native-build clean format
 
-build:
+build: clean
 	nix-build
+	cp -p result/lib/$(LIBNAME).a lib/
 
-debug-build:
+debug-build: clean
 	nix-build --arg debug true
+	cp -p result/lib/$(LIBNAME).a lib/
 
-native-build:
-	mkdir -p native/bin native/obj
-	rm -rf native/src native/obj/* native/bin/*
-	make -C native
+native-build: clean
+	make BUILD=release -C native
+	cp -p native/lib/$(LIBNAME).a lib/
 
-docker-build:
-	docker compose build --no-cache
+native-debug-build: clean
+	make BUILD=debug BUILD=debug -C native
+	cp -p native/lib/$(LIBNAME).a lib/
 
 clean:
-	nix store gc
-	rm result
+	rm -f result
+	rm -rf lib/
+	mkdir -p lib/
+	make clean -C native
 
 # format (use clang)
 format:

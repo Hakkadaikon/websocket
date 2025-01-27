@@ -7,7 +7,7 @@
 #------------------------------------------------------------------------------
 # Program name
 #------------------------------------------------------------------------------
-PROGRAM  := libwsserver
+PROGRAM  := wsserver
 BUILD    := release
 
 #------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ CC       := gcc
 #------------------------------------------------------------------------------
 SRCROOT  := .
 OBJROOT  := ./obj
-LIBROOT  := ./lib
+BINROOT  := ./bin
 
 #------------------------------------------------------------------------------
 # Files
@@ -34,17 +34,19 @@ DEPENDFILES  := $(OBJFILES:.o=.d)
 #------------------------------------------------------------------------------
 ifeq ($(BUILD), debug)
 CFLAGS := \
+	-I../../src \
 	-O0 \
 	-static-libasan \
 	-g \
 	-DLOG_LEVEL_DEBUG
 
-LDLIBS  :=
-LDFLAGS := -flto
+LDLIBS  := -L../../lib
+LDFLAGS := -flto -lwsserver
 
 else
 ifeq ($(BUILD), release)
 CFLAGS := \
+	-I../../src \
 	-O3 \
 	-fno-lto \
 	-mtune=native \
@@ -54,16 +56,16 @@ CFLAGS := \
 	-flto=auto \
 	-DLOG_LEVEL_ERROR
 
-LDLIBS  :=
-LDFLAGS := -flto
+LDLIBS  := -L../../lib
+LDFLAGS := -flto -lwsserver
 endif
 endif
 
 #------------------------------------------------------------------------------
 # Make rules
 #------------------------------------------------------------------------------
-$(LIBROOT)/$(PROGRAM): $(OBJFILES)
-	ar rcs $@.a $^
+$(BINROOT)/$(PROGRAM): $(OBJFILES)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDLIBS) $(LDFLAGS)
 
 $(OBJROOT)/%.o: $(SRCROOT)/%.c 
 	if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
@@ -78,11 +80,8 @@ all:
 	$(OBJROOT)/$(PROGRAM)
 
 clean:
-	rm -rf $(LIBROOT)
-	rm -rf $(OBJROOT)
-	rm -rf ./src
-	cp -rp ../src $(SRCROOT)
-	mkdir -p $(LIBROOT) $(OBJROOT)
+	rm -f $(BINROOT)/$(PROGRAM)
+	rm -rf $(OBJROOT)/*
 	rm -rf $(DEPENDFILES)
 
 ifneq "$(MAKECMDGOALS)" "clean"

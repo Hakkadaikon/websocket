@@ -18,10 +18,13 @@ make build
 
 # debug build
 make debug-build
+```
 
-# docker build
-make docker-build
-docker compose up
+## Install  
+
+```shell
+cp websocket/websocket.h [install include directory]
+cp lib/libwsserver.a [install library directory]
 ```
 
 ## Format  
@@ -54,8 +57,8 @@ make test
 ./shell/static_analysis.sh
 ```
 
-## Sample
-### Echo back
+## Examples  
+### Echo back  
 
 ```c
 // main.c
