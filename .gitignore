@@ -56,6 +56,10 @@ dkms.conf
 perf.data
 perf.data.old
 
+# Examples
+examples/echoback/bin/*
+examples/echoback/obj/*
+
 # Other
 tests/build
 test
