@@ -24,7 +24,7 @@ native-build: clean
 	cp -p native/lib/$(LIBNAME).a lib/
 
 native-debug-build: clean
-	make BUILD=debug BUILD=debug -C native
+	make BUILD=debug -C native
 	cp -p native/lib/$(LIBNAME).a lib/
 
 clean:
