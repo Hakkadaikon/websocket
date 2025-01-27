@@ -117,19 +117,12 @@ int main()
 - Compression / Decode   : No  
 
 # Dependencies  
-## Build  
+## Develop
 [NixOS/nix](https://github.com/NixOS/nix) - Package manager / OS  
-
-## develop  
-[DeterminateSystems/nix-installer](https://github.com/DeterminateSystems/nix-installer) - Nix installer  
 [clang-format](https://github.com/llvm/llvm-project/tree/main/clang/tools/clang-format) - Formatter  
 
 ## Test  
 [googletest](https://github.com/google/googletest) - Google Testing and Mocking Framework  
-
-## Performance measurement  
-[valgrind](https://sourceware.org/git/valgrind.git) - building analysis tools  
-[iperf3](https://github.com/esnet/iperf) - A TCP, UDP, and SCTP network bandwidth measurement tool  
 
 # Author
 Hakkadaikon
