@@ -258,7 +258,7 @@ FINALIZE:
         return false;
     }
 
-    if (websocket_send(client_sock, response_buffer, response_len) != WEBSOCKET_ERRORCODE_NONE) {
+    if (websocket_send(client_sock, response_len, response_buffer) != WEBSOCKET_ERRORCODE_NONE) {
         log_error("Failed to send OK frame.");
         return false;
     }
