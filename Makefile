@@ -9,15 +9,7 @@ LIBNAME := libwsserver
 #------------------------------------------------------------------------------
 # Build options
 #------------------------------------------------------------------------------
-.PHONY:  nix-build nix-debug-build build debug-build clean format
-
-nix-build: clean
-	nix-build
-	cp -p result/lib/$(LIBNAME).a lib/
-
-nix-debug-build: clean
-	nix-build --arg debug true
-	cp -p result/lib/$(LIBNAME).a lib/
+.PHONY:  build debug-build nix-build nix-debug-build clean format
 
 build: clean
 	make BUILD=release -C native
@@ -26,6 +18,14 @@ build: clean
 debug-build: clean
 	make BUILD=debug -C native
 	cp -p native/lib/$(LIBNAME).a lib/
+
+nix-build: clean
+	nix-build
+	cp -p result/lib/$(LIBNAME).a lib/
+
+nix-debug-build: clean
+	nix-build --arg debug true
+	cp -p result/lib/$(LIBNAME).a lib/
 
 clean:
 	rm -f result
