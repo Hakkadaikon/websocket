@@ -18,6 +18,10 @@ make build
 
 # debug build
 make debug-build
+
+# Run (example: echoback)
+docker compose build --no-cache
+docker compose up
 ```
 
 ## Install  
@@ -62,7 +66,7 @@ make test
 
 ```c
 // main.c
-#include "websocket/websocket.h"
+#include "websocket.h"
 
 void websocket_callback(
     const int       client_sock,
