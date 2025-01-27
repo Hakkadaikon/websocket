@@ -26,15 +26,39 @@ static inline bool is_utf8_white_space(const char* str)
            (str[2] == '\x80');
 }
 
-static inline bool is_compare_str(const char* str1, const char* str2, const size_t str1capacity, const size_t str2capacity)
+static inline bool compare_case_sensitive(const char a, const char b)
+{
+    if (a != b) {
+        return false;
+    }
+
+    return true;
+}
+
+static inline bool compare(const char a, const char b)
+{
+    char lower_a = (a >= 'A' && a <= 'Z') ? (a + 'a' - 'A') : (a);
+    char lower_b = (b >= 'A' && b <= 'Z') ? (b + 'a' - 'A') : (b);
+
+    if (lower_a != lower_b) {
+        return false;
+    }
+
+    return true;
+}
+
+static inline bool is_compare_str(const char* str1, const char* str2, const size_t str1capacity, const size_t str2capacity, const bool case_sensitive)
 {
     size_t capacity = (str1capacity > str2capacity) ? str2capacity : str1capacity;
     if (capacity == 0) {
         return false;
     }
 
+    typedef bool (*PCompareFunc)(const char a, const char b);
+    PCompareFunc compare_func = (case_sensitive) ? compare_case_sensitive : compare;
+
     for (size_t i = 0; i < capacity; i++) {
-        if (str1[i] != str2[i]) {
+        if (!compare_func(str1[i], str2[i])) {
             return false;
         }
     }
@@ -42,7 +66,7 @@ static inline bool is_compare_str(const char* str1, const char* str2, const size
     return true;
 }
 
-static inline int search_str(const char* base, const size_t base_len, const char* target, const size_t target_len)
+static inline int search_str(const char* base, const size_t base_len, const char* target, const size_t target_len, const bool case_sensitive)
 {
     if (is_null_or_empty(base) || base_len <= 0 || target_len > base_len) {
         return -1;
@@ -53,7 +77,7 @@ static inline int search_str(const char* base, const size_t base_len, const char
     }
 
     for (size_t base_pos = 0; base_pos <= (base_len - target_len); base_pos++) {
-        if (is_compare_str(&base[base_pos], target, base_len, target_len)) {
+        if (is_compare_str(&base[base_pos], target, base_len, target_len, case_sensitive)) {
             return base_pos;
         }
     }
@@ -61,9 +85,9 @@ static inline int search_str(const char* base, const size_t base_len, const char
     return -1;
 }
 
-static inline bool is_contain_str(const char* base, const size_t base_len, const char* target, const size_t target_len)
+static inline bool is_contain_str(const char* base, const size_t base_len, const char* target, const size_t target_len, const bool case_sensitive)
 {
-    return (search_str(base, base_len, target, target_len) != -1);
+    return (search_str(base, base_len, target, target_len, case_sensitive) != -1);
 }
 
 static inline int skip_white_space(const char* buffer, const size_t buffer_size)

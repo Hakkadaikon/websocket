@@ -4,10 +4,10 @@
 #include "../../crypto/base64.h"
 #include "../websocket_local.h"
 
-#define IS_VALID_KEY(value, expected) is_compare_str(value, expected, HTTP_HEADER_KEY_CAPACITY, sizeof(expected))
-#define IS_VALID_VALUE(value, expected) is_compare_str(value, expected, HTTP_HEADER_VALUE_CAPACITY, sizeof(expected))
-#define IS_VALID_HTTP_VERSION(value, expected) is_compare_str(value, expected, HTTP_VERSION_CAPACITY, sizeof(expected))
-#define IS_VALID_HTTP_METHOD(value, expected) is_compare_str(value, expected, HTTP_METHOD_CAPACITY, sizeof(expected))
+#define IS_VALID_KEY(value, expected) is_compare_str(value, expected, HTTP_HEADER_KEY_CAPACITY, sizeof(expected), false)
+#define IS_VALID_VALUE(value, expected) is_compare_str(value, expected, HTTP_HEADER_VALUE_CAPACITY, sizeof(expected), false)
+#define IS_VALID_HTTP_VERSION(value, expected) is_compare_str(value, expected, HTTP_VERSION_CAPACITY, sizeof(expected), false)
+#define IS_VALID_HTTP_METHOD(value, expected) is_compare_str(value, expected, HTTP_METHOD_CAPACITY, sizeof(expected), false)
 
 static inline bool is_valid_host(const char* restrict host)
 {
@@ -26,7 +26,7 @@ static inline bool is_valid_upgrade(const char* restrict value)
 
 static inline bool is_valid_connection(const char* restrict value)
 {
-    if (!IS_VALID_KEY(value, "Upgrade")) {
+    if (!IS_VALID_KEY(value, "upgrade")) {
         str_error("Invalid websocket request header [Key: Connection] : ", value);
         return false;
     }
@@ -61,7 +61,7 @@ static inline bool is_valid_websocket_key(const char* restrict value)
 
 static inline bool is_valid_method(char* value)
 {
-    if (!IS_VALID_HTTP_METHOD(value, "GET")) {
+    if (!IS_VALID_HTTP_METHOD(value, "get")) {
         log_error("Invalid websocket request line: method is not GET\n");
         return false;
     }
@@ -83,9 +83,9 @@ static inline bool is_valid_http_version(char* value)
 {
     bool has_error = false;
 
-    if (!IS_VALID_HTTP_VERSION(value, "HTTP/1.1") &&
-        !IS_VALID_HTTP_VERSION(value, "HTTP/2.0") &&
-        !IS_VALID_HTTP_VERSION(value, "HTTP/3.0")) {
+    if (!IS_VALID_HTTP_VERSION(value, "http/1.1") &&
+        !IS_VALID_HTTP_VERSION(value, "http/2.0") &&
+        !IS_VALID_HTTP_VERSION(value, "http/3.0")) {
         log_error("Invalid websocket request line: Invalid HTTP version(Not 1.1/2.0/3.0)\n");
         return false;
     }
@@ -112,27 +112,27 @@ static inline bool is_valid_request_line(PHTTPRequestLine restrict line)
 
 static inline bool is_valid_request_header_line(PHTTPRequestHeaderLine restrict line)
 {
-    if (IS_VALID_KEY(line->key, "Host")) {
+    if (IS_VALID_KEY(line->key, "host")) {
         if (is_valid_host(line->value)) {
             return true;
         }
         return false;
-    } else if (IS_VALID_KEY(line->key, "Upgrade")) {
+    } else if (IS_VALID_KEY(line->key, "upgrade")) {
         if (is_valid_upgrade(line->value)) {
             return true;
         }
         return false;
-    } else if (IS_VALID_KEY(line->key, "Connection")) {
+    } else if (IS_VALID_KEY(line->key, "connection")) {
         if (is_valid_connection(line->value)) {
             return true;
         }
         return false;
-    } else if (IS_VALID_KEY(line->key, "Sec-WebSocket-Key")) {
+    } else if (IS_VALID_KEY(line->key, "sec-webSocket-key")) {
         if (is_valid_websocket_key(line->value)) {
             return true;
         }
         return false;
-    } else if (IS_VALID_KEY(line->key, "Sec-WebSocket-Version")) {
+    } else if (IS_VALID_KEY(line->key, "sec-websocket-version")) {
         if (is_valid_version(line->value)) {
             return true;
         }
