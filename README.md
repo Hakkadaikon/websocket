@@ -18,10 +18,6 @@ make build
 
 # debug build
 make debug-build
-
-# Run (example: echoback)
-docker compose build --no-cache
-docker compose up
 ```
 
 ## Install  
@@ -48,14 +44,9 @@ make test
 ## Run  
 
 ```shell  
-# Run  
-./shell/run.sh
-
-# Debug run (use valgrind --tool memcheck)  
-./shell/run.sh memcheck
-
-# Debug run (use valgrind --tool helgrind)  
-./shell/run.sh helgrind
+# Example: echoback server
+docker compose build --no-cache
+docker compose up
 
 # Static analysis (use clang-tidy)
 ./shell/static_analysis.sh
