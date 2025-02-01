@@ -57,7 +57,7 @@ ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, const int n
 ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict buffer)
 {
     if (is_rise_signal()) {
-        log_info("A signal was raised during recvfrom(). The system will abort processing.\n");
+        log_info("A signal was raised during recv(). The system will abort processing.\n");
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
@@ -72,7 +72,7 @@ ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict 
             return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
         }
 
-        str_error("Failed to recvfrom(). reason : ", strerror(errno));
+        str_error("Failed to recv(). reason : ", strerror(errno));
         var_error("socket : ", sock_fd);
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
