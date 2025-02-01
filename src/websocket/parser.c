@@ -131,6 +131,10 @@ bool parse_websocket_frame(const char* restrict raw, const size_t frame_size, PW
         frame_offset += sizeof(frame->masking_key);
     }
 
+    if (frame->ext_payload_len > (frame_size - frame_offset)) {
+        return false;
+    }
+
     const char* payload_raw = &raw[frame_offset];
     for (size_t i = 0; i < frame->ext_payload_len; i++) {
         frame->payload[i] =
