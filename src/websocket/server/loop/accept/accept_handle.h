@@ -37,7 +37,7 @@ static inline bool accept_handle(
 
     log_debug("Read to handshake message...\n");
     while (1) {
-        bytes_read = websocket_recvfrom(client_sock, buffer_capacity, request_buffer);
+        bytes_read = websocket_recv(client_sock, buffer_capacity, request_buffer);
         if (bytes_read < 0) {
             if (bytes_read == WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR) {
                 continue;

@@ -25,14 +25,14 @@ static inline int epoll_receive(
 
     int client_sock = websocket_epoll_getfd(epoll_events);
 
-    ssize_t read_size = websocket_recvfrom(
+    ssize_t read_size = websocket_recv(
         client_sock,
         client_buffer_capacity,
         request_buffer);
 
     if (read_size <= 0) {
         if (read_size == WEBSOCKET_ERRORCODE_FATAL_ERROR || read_size == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
-            return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
+            return read_size;
         }
 
         return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;

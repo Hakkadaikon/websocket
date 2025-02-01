@@ -104,7 +104,7 @@ int websocket_server_init(const int port_num, const int backlog);
 /*----------------------------------------------------------------------------*/
 
 /**
- * @brief Wrapper for the BSD socket sendto() API.
+ * @brief Wrapper for the BSD socket send() API.
  *
  * @param[in] sock_fd     Destination socket descriptor
  * @param[in] buffer_size Buffer size
@@ -120,7 +120,7 @@ int websocket_send(const int sock_fd, const size_t buffer_size, const char* buff
 /*----------------------------------------------------------------------------*/
 
 /**
- * @brief Wrapper for the BSD socket recvfrom() API.
+ * @brief Wrapper for the BSD socket recv() API.
  *
  * @param[in]  sock_fd  Destination socket descriptor
  * @param[in]  capacity Receive buffer capacity
@@ -129,11 +129,11 @@ int websocket_send(const int sock_fd, const size_t buffer_size, const char* buff
  * @return Positive value: Receive data size / Negative value: WebSocket error code
  * @see WebSocketErrorCode
  */
-ssize_t websocket_recvfrom(const int sock_fd, const size_t capacity, char* buffer);
+ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* buffer);
 
 #ifndef __APPLE__
 /**
- * @brief Wrapper for the BSD socket recvfrom() API.
+ * @brief Wrapper for the BSD socket recv() API.
  *
  * @param[in]  sock_fd       Destination socket descriptor
  * @param[in]  capacity      Receive buffer capacity
