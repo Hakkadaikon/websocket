@@ -17,6 +17,9 @@
      (c == '\n') ||       \
      (c == '\v') ||       \
      (c == '\f'))
+#define is_lower_char(c) ((c >= 'a') && (c <= 'z'))
+#define is_upper_char(c) ((c >= 'A') && (c <= 'Z'))
+#define is_number_char(c) ((c >= '0') && (c <= '9'))
 
 static inline bool is_utf8_white_space(const char* str)
 {
