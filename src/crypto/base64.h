@@ -10,11 +10,15 @@
 #define is_base64_char(c) (is_lower_char(c) || is_upper_char(c) || is_number_char(c) || c == '+' || c == '/')
 static const char padding_char = '=';
 
-static inline void base64_encode(const uint8_t* input, size_t input_len, char* output, const size_t output_len)
+static inline bool base64_encode(const uint8_t* input, size_t input_len, char* output, const size_t output_len)
 {
     const char base64_chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     size_t     input_offset;
     size_t     output_offset;
+
+    if (is_null(input) || is_null(output) || input_len < 1 || output_len < 5) {
+        return false;
+    }
 
     for (
         input_offset = 0, output_offset = 0;
@@ -39,6 +43,7 @@ static inline void base64_encode(const uint8_t* input, size_t input_len, char* o
     }
 
     output[output_offset] = '\0';
+    return true;
 }
 
 static inline bool is_base64(const char* str)

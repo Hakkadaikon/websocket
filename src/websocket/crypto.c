@@ -19,7 +19,10 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
 
     uint8_t sha1_result[SHA1_DIGEST_LENGTH];
     sha1(concatenated, strnlen(concatenated, sizeof(concatenated)), sha1_result);
-    base64_encode(sha1_result, SHA1_DIGEST_LENGTH, accept_key, accept_key_size);
+
+    if (!base64_encode(sha1_result, SHA1_DIGEST_LENGTH, accept_key, accept_key_size)) {
+        return false;
+    }
 
     return true;
 }
