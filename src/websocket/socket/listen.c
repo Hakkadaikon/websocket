@@ -9,12 +9,10 @@
 #define SYSCALL_SOCKET(domain, type, protocol) socket(domain, type, protocol)
 #define SYSCALL_BIND(fd, addr, addr_len) bind(fd, addr, addr_len)
 #define SYSCALL_LISTEN(fd, backlog) listen(fd, backlog)
-#define SYSCALL_CLOSE(fd) close(fd)
 #else
 #define SYSCALL_SOCKET(domain, type, protocol) syscall(SYS_socket, domain, type, protocol)
 #define SYSCALL_BIND(fd, addr, addr_len) syscall(SYS_bind, fd, addr, addr_len)
 #define SYSCALL_LISTEN(fd, backlog) syscall(SYS_listen, fd, backlog)
-#define SYSCALL_CLOSE(fd) syscall(SYS_close, fd)
 #endif
 
 int websocket_listen(const int port_num, const int backlog)
@@ -60,7 +58,7 @@ int websocket_listen(const int port_num, const int backlog)
 
 FINALIZE:
     if (err) {
-        SYSCALL_CLOSE(server_sock);
+        websocket_close(server_sock);
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
