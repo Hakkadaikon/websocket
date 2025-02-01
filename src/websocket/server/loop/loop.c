@@ -44,6 +44,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
                 continue;
             }
 
+            log_debug("epoll_wait error. go to finalize...\n");
             goto FINALIZE;
         }
 
@@ -61,6 +62,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
                         request_buffer,
                         response_buffer,
                         &register_event) == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
+                    log_debug("accept error. go to finalize...\n");
                     goto FINALIZE;
                 }
 
@@ -83,6 +85,7 @@ bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity,
             }
 
             if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
+                log_debug("receive error. go to finalize...\n");
                 goto FINALIZE;
             }
         }

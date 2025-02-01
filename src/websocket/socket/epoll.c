@@ -89,7 +89,7 @@ int websocket_epoll_getfd(PWebSocketEpollEvent event)
 int websocket_epoll_rise_error(PWebSocketEpollEvent event)
 {
     if (event->events & (EPOLLHUP | EPOLLERR | EPOLLRDHUP)) {
-        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+        return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
     }
 
     return WEBSOCKET_ERRORCODE_NONE;

@@ -87,7 +87,7 @@ int websocket_epoll_rise_error(PWebSocketEpollEvent restrict event)
 {
     if (event->flags & EV_ERROR) {
         str_error("EV_ERROR : ", strerror((int)event->data));
-        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
+        return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
     }
 
     return WEBSOCKET_ERRORCODE_NONE;
