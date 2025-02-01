@@ -11,7 +11,7 @@ static inline int epoll_receive(
     const int                  client_buffer_capacity,
     char*                      request_buffer,
     char*                      response_buffer,
-    PWebSocketCallback         callback)
+    PWebSocketReceiveCallback  callback)
 {
     int code = websocket_epoll_rise_error(epoll_events);
     if (code != WEBSOCKET_ERRORCODE_NONE) {

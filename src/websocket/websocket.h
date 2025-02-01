@@ -51,7 +51,7 @@ typedef struct _WebSocketFrame {
 /**
  * @brief Result of parsing the WebSocket frame
  */
-typedef void (*PWebSocketCallback)(
+typedef void (*PWebSocketReceiveCallback)(
     const int       client_sock,             ///< Client socket that sent the data
     PWebSocketFrame frame,                   ///< Parsed websocket frame
     const size_t    client_buffer_capacity,  ///< Response_buffer capacity.
@@ -171,11 +171,11 @@ int websocket_close(const int sock_fd);
  * @param[in] server_sock        Socket descriptor obtained by websocket_server_init() function
  * @param[in] client_buffer_size Size of the send and receive buffer for one client.
  *                               The size specified here is actually allocated 2x internally. (request and response)
- * @param[in] callback           Callback that is called when data is received from the client 
+ * @param[in] callback           Callback that is called when data is received from the client
  *
  * @return true: success / false: failure
  */
-bool websocket_server_loop(int server_sock, const size_t client_buffer_size, PWebSocketCallback callback);
+bool websocket_server_loop(int server_sock, const size_t client_buffer_size, PWebSocketReceiveCallback callback);
 
 /*----------------------------------------------------------------------------*/
 /* util/log.c                                                                 */

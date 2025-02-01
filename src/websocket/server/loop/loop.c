@@ -3,7 +3,7 @@
 #include "accept/epoll_accept.h"
 #include "receive/epoll_receive.h"
 
-bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity, PWebSocketCallback callback)
+bool websocket_server_loop(int server_sock, const size_t client_buffer_capacity, PWebSocketReceiveCallback callback)
 {
     int epoll_fd = websocket_epoll_create();
     if (epoll_fd < 0) {
