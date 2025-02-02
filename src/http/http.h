@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "../util/allocator.h"
+
 enum {
     HTTP_METHOD_CAPACITY       = 16,
     HTTP_TARGET_CAPACITY       = 256,
@@ -43,11 +45,8 @@ bool extract_http_request(
 #define ALLOCATE_HTTP_REQUEST(REQUEST, ALLOCATOR) \
     REQUEST.headers = (PHTTPRequestHeaderLine)ALLOCATOR(sizeof(HTTPRequestHeaderLine) * HTTP_HEADER_CAPACITY);
 
-#define FREE_HTTP_HEADER_LINE(HEADER_LINE, FREE) \
-    FREE(HEADER_LINE.key);                       \
-    FREE(HEADER_LINE.value);
-
-#define FREE_HTTP_REQUEST(REQUEST, FREE) \
+#define FREE_HTTP_REQUEST(REQUEST, FREE)                                                                                                         \
+    memset_s(REQUEST.headers, sizeof(HTTPRequestHeaderLine) * HTTP_HEADER_CAPACITY, 0x00, sizeof(HTTPRequestHeaderLine) * HTTP_HEADER_CAPACITY); \
     FREE(REQUEST.headers);
 
 #endif

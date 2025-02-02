@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "../../crypto/base64.h"
+#include "../../util/allocator.h"
 #include "../websocket_local.h"
 
 #define IS_VALID_KEY(value, expected) is_compare_str(value, expected, HTTP_HEADER_KEY_CAPACITY, sizeof(expected), false)
@@ -243,28 +244,34 @@ bool client_handshake(
         goto FINALIZE;
     }
 
-FINALIZE:
     if (has_error) {
-        str_error("Invalid handshake request : ", request_buffer);
-        return false;
+        str_info("Invalid handshake request : ", request_buffer);
+    } else {
+        if (!build_response_frame(accept_key, sizeof(accept_key), response_buffer, buffer_capacity)) {
+            has_error = true;
+            goto FINALIZE;
+        }
+
+        size_t response_len = strnlen(response_buffer, buffer_capacity);
+        if (response_len == 0) {
+            has_error = true;
+            goto FINALIZE;
+        }
+
+        if (websocket_send(client_sock, response_len, response_buffer) != WEBSOCKET_ERRORCODE_NONE) {
+            log_error("Failed to send OK frame.");
+            has_error = true;
+            goto FINALIZE;
+        }
+
+        log_debug("handshake success !");
+        str_debug("request : ", request_buffer);
+        str_debug("response : ", response_buffer);
     }
 
-    if (!build_response_frame(accept_key, sizeof(accept_key), response_buffer, buffer_capacity)) {
-        return false;
-    }
+FINALIZE:
+    // Wipe variables
+    memset_s(accept_key, sizeof(accept_key), 0x00, sizeof(accept_key));
 
-    size_t response_len = strnlen(response_buffer, buffer_capacity);
-    if (response_len == 0) {
-        return false;
-    }
-
-    if (websocket_send(client_sock, response_len, response_buffer) != WEBSOCKET_ERRORCODE_NONE) {
-        log_error("Failed to send OK frame.");
-        return false;
-    }
-
-    log_debug("handshake success !");
-    str_debug("request : ", request_buffer);
-    str_debug("response : ", response_buffer);
-    return true;
+    return !has_error;
 }

@@ -99,9 +99,16 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
     }
 
 FINALIZE:
-    websocket_free(request_buffer);
-    websocket_free(response_buffer);
     websocket_epoll_del(epoll_fd, args->server_sock);
     websocket_close(epoll_fd);
+
+    // Wipe buffer
+    memset(request_buffer, 0x00, args->buffer_capacity);
+    memset(response_buffer, 0x00, args->buffer_capacity);
+
+    // Free buffer
+    websocket_free(request_buffer);
+    websocket_free(response_buffer);
+
     return true;
 }
