@@ -36,6 +36,7 @@ typedef int    errno_t;
  */
 static inline errno_t memset_s(void* s, rsize_t smax, int c, rsize_t n)
 {
+#ifndef __APPLE__
     if (s == NULL && n != 0) {
         return EINVAL;
     }
@@ -62,6 +63,15 @@ static inline errno_t memset_s(void* s, rsize_t smax, int c, rsize_t n)
                          : "memory");
 
     return 0;
+#else
+    // For macOS, it is only built for testing purposes and is not used for server operation.
+    // Therefore, there is no risk of "confidential information being leaked due to memset removal optimization."
+    if (memset(s, c, n) == NULL) {
+        return EINVAL;
+    }
+
+    return 0;
+#endif
 }
 #endif  // __STDC_LIB_EXT1__
 
