@@ -44,7 +44,7 @@ static inline bool accept_handle(
             }
 
             err = true;
-            log_error("Failed to handshake message read.\n");
+            var_info("Failed to handshake message read.\n", client_sock);
             websocket_epoll_del(epoll_fd, client_sock);
             goto FINALIZE;
         }

@@ -34,7 +34,7 @@ static inline int epoll_accept(
             request_buffer,
             response_buffer,
             register_event)) {
-        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+        return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
     }
 
     return WEBSOCKET_ERRORCODE_NONE;

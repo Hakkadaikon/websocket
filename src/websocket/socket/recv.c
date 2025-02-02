@@ -63,7 +63,7 @@ ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict 
 
     ssize_t bytes_read = recv(sock_fd, buffer, capacity - 1, MSG_DONTWAIT);
     if (bytes_read == 0) {
-        var_error("Socket was disconnected. socket : ", sock_fd);
+        var_info("Socket was disconnected. socket : ", sock_fd);
         return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
     }
 
@@ -72,9 +72,9 @@ ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict 
             return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
         }
 
-        str_error("Failed to recv(). reason : ", strerror(errno));
-        var_error("socket : ", sock_fd);
-        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+        str_info("Failed to recv(). reason : ", strerror(errno));
+        var_info("socket : ", sock_fd);
+        return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
     }
 
     buffer[bytes_read] = '\0';
