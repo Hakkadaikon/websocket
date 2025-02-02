@@ -1,14 +1,14 @@
 #include "../websocket_local.h"
 
-int websocket_server_init(const int port_num, const int backlog)
+int websocket_server_init(const PWebSocketInitArgs args)
 {
     log_info("websocket server init processing...\n");
-    var_info("port    : ", port_num);
-    var_info("backlog : ", backlog);
+    var_info("port    : ", args->port_num);
+    var_info("backlog : ", args->backlog);
 
     signal_init();
 
-    int server_sock = websocket_listen(port_num, backlog);
+    int server_sock = websocket_listen(args->port_num, args->backlog);
     if (server_sock < 0) {
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }

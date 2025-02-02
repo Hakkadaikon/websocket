@@ -1,6 +1,6 @@
 #include <stddef.h>
-#include <websocket.h>
-//#include "../../../src/websocket/websocket.h"
+//#include <websocket.h>
+#include "../../../src/websocket/websocket.h"
 
 void websocket_callback(
     const int       client_sock,
@@ -26,23 +26,23 @@ void websocket_callback(
 
 int main()
 {
-    int    websocket_port_num     = 8080;
-    int    backlog                = 5;
-    size_t buffer_capacity        = 1024;
+    WebSocketInitArgs init_args;
+    init_args.port_num = 8080;
+    init_args.backlog  = 5;
 
-    int server_sock = websocket_server_init(websocket_port_num, backlog);
+    int server_sock = websocket_server_init(&init_args);
     if (server_sock < WEBSOCKET_ERRORCODE_NONE) {
         log_error("websocket server init error.\n");
         return 1;
     }
 
-    WebSocketLoopArgs args;
-    args.server_sock                     = server_sock;
-    args.callbacks.receive_callback      = websocket_callback;
-    args.callbacks.socket_close_callback = NULL;
-    args.buffer_capacity                 = buffer_capacity;
+    WebSocketLoopArgs loop_args;
+    loop_args.server_sock                     = server_sock;
+    loop_args.callbacks.receive_callback      = websocket_callback;
+    loop_args.callbacks.socket_close_callback = NULL;
+    loop_args.buffer_capacity                 = 1024;
 
-    websocket_server_loop(&args);
+    websocket_server_loop(&loop_args);
     websocket_close(server_sock);
 
     log_error("websocket server end.\n");

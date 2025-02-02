@@ -68,8 +68,13 @@ typedef struct {
 } WebSocketCallbacks, *PWebSocketCallbacks;
 
 typedef struct {
+    int    port_num; ///< WebSocket port number
+    int    backlog;  ///< Listen queue size
+} WebSocketInitArgs, *PWebSocketInitArgs;
+
+typedef struct {
     int                server_sock;     ///< Socket descriptor obtained by websocket_server_init() function
-    size_t             buffer_capacity; ///< Size of the send and receive buffer for one client.
+    size_t             buffer_capacity; ///< Capacity of the send and receive buffer for one client.
     WebSocketCallbacks callbacks;       ///< @see WebSocketCallBacks
 } WebSocketLoopArgs, *PWebSocketLoopArgs;
 
@@ -104,7 +109,7 @@ size_t create_websocket_frame(PWebSocketFrame frame, const size_t capacity, char
  * @return Positive value: Server socket descriptor / Negative value: WebSocket error code
  * @see WebSocketErrorCode
  */
-int websocket_server_init(const int port_num, const int backlog);
+int websocket_server_init(const PWebSocketInitArgs args);
 
 /**
  * @brief Wrapper for the BSD socket send() API.
