@@ -58,10 +58,6 @@ typedef void (*PWebSocketReceiveCallback)(
     char*           response_buffer          ///< This buffer must be used to create the return frame.
 );
 
-/*----------------------------------------------------------------------------*/
-/* websocket_parser.c                                                         */
-/*----------------------------------------------------------------------------*/
-
 /**
  * @brief Parse raw data in network byte order into a websocket flame structure
  *
@@ -84,10 +80,6 @@ bool parse_websocket_frame(const char* raw, const size_t frame_size, PWebSocketF
  */
 size_t create_websocket_frame(PWebSocketFrame frame, const size_t capacity, char* raw);
 
-/*----------------------------------------------------------------------------*/
-/* websocket/server/init.c                                                    */
-/*----------------------------------------------------------------------------*/
-
 /**
  * @brief Initialize a WebSocket server. socket listen and register signal handler.
  *
@@ -98,10 +90,6 @@ size_t create_websocket_frame(PWebSocketFrame frame, const size_t capacity, char
  * @see WebSocketErrorCode
  */
 int websocket_server_init(const int port_num, const int backlog);
-
-/*----------------------------------------------------------------------------*/
-/* websocket/socket/send.c                                                    */
-/*----------------------------------------------------------------------------*/
 
 /**
  * @brief Wrapper for the BSD socket send() API.
@@ -114,10 +102,6 @@ int websocket_server_init(const int port_num, const int backlog);
  * @see WebSocketErrorCode
  */
 int websocket_send(const int sock_fd, const size_t buffer_size, const char* buffer);
-
-/*----------------------------------------------------------------------------*/
-/* websocket/socket/recv.c                                                    */
-/*----------------------------------------------------------------------------*/
 
 /**
  * @brief Wrapper for the BSD socket recv() API.
@@ -146,10 +130,6 @@ ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* buffer);
 ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, const int num_of_buffer, char** buffers);
 #endif
 
-/*----------------------------------------------------------------------------*/
-/* websocket/socket/close.c                                                   */
-/*----------------------------------------------------------------------------*/
-
 /**
  * @brief Wrapper for the BSD socket close() API
  *
@@ -159,10 +139,6 @@ ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, const int n
  * @see WebSocketErrorCode
  */
 int websocket_close(const int sock_fd);
-
-/*----------------------------------------------------------------------------*/
-/* websocket/server/loop.c                                                    */
-/*----------------------------------------------------------------------------*/
 
 /**
  * @brief Enter the receive loop from the client.
@@ -176,10 +152,6 @@ int websocket_close(const int sock_fd);
  * @return true: success / false: failure
  */
 bool websocket_server_loop(int server_sock, const size_t client_buffer_size, PWebSocketReceiveCallback callback);
-
-/*----------------------------------------------------------------------------*/
-/* util/log.c                                                                 */
-/*----------------------------------------------------------------------------*/
 
 void log_dump_local(const int fd, const char* str);
 void var_dump_local(const int fd, const char* str, int value);
