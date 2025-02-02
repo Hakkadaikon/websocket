@@ -58,13 +58,18 @@ typedef void (*PWebSocketReceiveCallback)(
     char*           response_buffer   ///< This buffer must be used to create the return frame.
 );
 
-typedef void (*PWebSocketSocketCloseCallback)(
-    const int client_sock  ///< Client socket that sent the data
+typedef void (*PWebSocketConnectCallback)(
+    const int client_sock  ///< Client socket to connect
+);
+
+typedef void (*PWebSocketDisconnectCallback)(
+    const int client_sock  ///< Client socket to disconnect
 );
 
 typedef struct {
-    PWebSocketReceiveCallback     receive_callback;       ///< @see PWebSocketReceiveCallback
-    PWebSocketSocketCloseCallback socket_close_callback;  ///< @see PWebSocketSocketCloseCallback
+    PWebSocketReceiveCallback    receive_callback;     ///< @see PWebSocketReceiveCallback
+    PWebSocketConnectCallback    connect_callback;     ///< @see PWebSocketConnectCallback
+    PWebSocketDisconnectCallback disconnect_callback;  ///< @see PWebSocketDisconnectCallback
 } WebSocketCallbacks, *PWebSocketCallbacks;
 
 typedef struct {

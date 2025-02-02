@@ -64,7 +64,8 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
                         args->buffer_capacity,
                         request_buffer,
                         response_buffer,
-                        &register_event) == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
+                        &register_event,
+                        &args->callbacks) == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
                     log_debug("accept error. go to finalize...\n");
                     goto FINALIZE;
                 }
@@ -84,6 +85,10 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
             if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR || ret == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
                 websocket_epoll_del(epoll_fd, client_sock);
                 websocket_close(client_sock);
+
+                if (!is_null(args->callbacks.disconnect_callback)) {
+                    args->callbacks.disconnect_callback(client_sock);
+                }
             }
 
             if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR) {

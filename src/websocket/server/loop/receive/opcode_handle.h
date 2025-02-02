@@ -19,7 +19,10 @@ static inline int opcode_handle(
     switch (frame->opcode) {
         case WEBSOCKET_OP_CODE_TEXT:
         case WEBSOCKET_OP_CODE_BINARY:
-            callbacks->receive_callback(client_sock, frame, buffer_capacity, response_buffer);
+            if (!is_null(callbacks->receive_callback)) {
+                callbacks->receive_callback(client_sock, frame, buffer_capacity, response_buffer);
+            }
+
             break;
         case WEBSOCKET_OP_CODE_CLOSE:
             return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;

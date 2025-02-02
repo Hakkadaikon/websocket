@@ -1,8 +1,9 @@
 #include <stddef.h>
+#include <stdio.h>
 //#include <websocket.h>
 #include "../../../src/websocket/websocket.h"
 
-void websocket_callback(
+void websocket_receive_callback(
     const int       client_sock,
     PWebSocketFrame frame,
     const size_t    buffer_capacity,
@@ -24,6 +25,18 @@ void websocket_callback(
     }
 }
 
+void websocket_connect_callback(int client_sock)
+{
+    //printf("[user] connect. socket fd : %d\n", client_sock);
+    //fflush(stdout);
+}
+
+void websocket_disconnect_callback(int client_sock)
+{
+    //printf("[user] disconnect. socket fd : %d\n", client_sock);
+    //fflush(stdout);
+}
+
 int main()
 {
     WebSocketInitArgs init_args;
@@ -38,8 +51,9 @@ int main()
 
     WebSocketLoopArgs loop_args;
     loop_args.server_sock                     = server_sock;
-    loop_args.callbacks.receive_callback      = websocket_callback;
-    loop_args.callbacks.socket_close_callback = NULL;
+    loop_args.callbacks.receive_callback      = websocket_receive_callback;
+    loop_args.callbacks.connect_callback      = websocket_connect_callback;
+    loop_args.callbacks.disconnect_callback   = websocket_disconnect_callback;
     loop_args.buffer_capacity                 = 1024;
 
     websocket_server_loop(&loop_args);

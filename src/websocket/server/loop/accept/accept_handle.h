@@ -10,7 +10,8 @@ static inline bool accept_handle(
     const size_t         buffer_capacity,
     char*                request_buffer,
     char*                response_buffer,
-    PWebSocketEpollEvent event)
+    PWebSocketEpollEvent event,
+    PWebSocketCallbacks  callbacks)
 {
     HTTPRequest request;
     ssize_t     bytes_read;
@@ -66,6 +67,10 @@ FINALIZE:
         log_debug("websocket_accept error. finalize...\n");
         websocket_close(client_sock);
         return false;
+    }
+
+    if (!is_null(callbacks->connect_callback)) {
+        callbacks->connect_callback(client_sock);
     }
 
     var_debug("accept done. client_sock : ", client_sock);

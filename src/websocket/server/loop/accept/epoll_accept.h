@@ -12,7 +12,8 @@ static inline int epoll_accept(
     const size_t                  client_buffer_capacity,
     char*                         request_buffer,
     char*                         response_buffer,
-    const PWebSocketEpollEvent    register_event)
+    const PWebSocketEpollEvent    register_event,
+    PWebSocketCallbacks           callbacks)
 {
     log_debug("rise error check...\n");
     int code = websocket_epoll_rise_error(epoll_args->event);
@@ -33,7 +34,8 @@ static inline int epoll_accept(
             client_buffer_capacity,
             request_buffer,
             response_buffer,
-            register_event)) {
+            register_event,
+            callbacks)) {
         return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
     }
 
