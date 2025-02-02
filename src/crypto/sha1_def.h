@@ -1,6 +1,20 @@
 #ifndef NOSTR_SHA1_DEF_H_
 #define NOSTR_SHA1_DEF_H_
 
+#include <stdint.h>
+
+typedef struct
+{
+    uint32_t state[5];
+    uint32_t count[2];
+    uint8_t  buffer[64];
+} Sha1Ctx;
+
+typedef union {
+    uint8_t  c[64];
+    uint32_t l[16];
+} Char64Long16;
+
 #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
 
 /* blk0() and blk() perform the initial expand. */
