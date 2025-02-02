@@ -69,6 +69,7 @@ endif
 #------------------------------------------------------------------------------
 $(LIBROOT)/$(PROGRAM): $(OBJFILES)
 	ar rcs $@.a $^
+	rm -rf ./src
 
 $(OBJROOT)/%.o: $(SRCROOT)/%.c 
 	if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
