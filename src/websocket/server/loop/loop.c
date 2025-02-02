@@ -51,12 +51,15 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
         var_debug("Escaped from epoll wait. num of events: ", num_of_events);
 
         for (int i = 0; i < num_of_events; ++i) {
-            int fd = websocket_epoll_getfd(&epoll_events[i]);
+            WebSocketEpollLoopArgs epoll_args;
+            epoll_args.event    = &epoll_events[i];
+            epoll_args.epoll_fd = epoll_fd;
+
+            int fd = websocket_epoll_getfd(epoll_args.event);
 
             if (fd == args->server_sock) {
                 if (epoll_accept(
-                        &epoll_events[i],
-                        epoll_fd,
+                        &epoll_args,
                         args->server_sock,
                         args->buffer_capacity,
                         request_buffer,
@@ -72,8 +75,7 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
             int client_sock = fd;
 
             int ret = epoll_receive(
-                epoll_events,
-                epoll_fd,
+                &epoll_args,
                 args->buffer_capacity,
                 request_buffer,
                 response_buffer,

@@ -52,14 +52,14 @@ typedef struct _WebSocketFrame {
  * @brief Result of parsing the WebSocket frame
  */
 typedef void (*PWebSocketReceiveCallback)(
-    const int       client_sock,             ///< Client socket that sent the data
-    PWebSocketFrame frame,                   ///< Parsed websocket frame
-    const size_t    buffer_capacity,         ///< Response_buffer capacity.
-    char*           response_buffer          ///< This buffer must be used to create the return frame.
+    const int       client_sock,      ///< Client socket that sent the data
+    PWebSocketFrame frame,            ///< Parsed websocket frame
+    const size_t    buffer_capacity,  ///< Response_buffer capacity.
+    char*           response_buffer   ///< This buffer must be used to create the return frame.
 );
 
 typedef void (*PWebSocketSocketCloseCallback)(
-    const int       client_sock ///< Client socket that sent the data
+    const int client_sock  ///< Client socket that sent the data
 );
 
 typedef struct {
@@ -68,14 +68,14 @@ typedef struct {
 } WebSocketCallbacks, *PWebSocketCallbacks;
 
 typedef struct {
-    int    port_num; ///< WebSocket port number
-    int    backlog;  ///< Listen queue size
+    int port_num;  ///< WebSocket port number
+    int backlog;   ///< Listen queue size
 } WebSocketInitArgs, *PWebSocketInitArgs;
 
 typedef struct {
-    int                server_sock;     ///< Socket descriptor obtained by websocket_server_init() function
-    size_t             buffer_capacity; ///< Capacity of the send and receive buffer for one client.
-    WebSocketCallbacks callbacks;       ///< @see WebSocketCallBacks
+    int                server_sock;      ///< Socket descriptor obtained by websocket_server_init() function
+    size_t             buffer_capacity;  ///< Capacity of the send and receive buffer for one client.
+    WebSocketCallbacks callbacks;        ///< @see WebSocketCallBacks
 } WebSocketLoopArgs, *PWebSocketLoopArgs;
 
 /**

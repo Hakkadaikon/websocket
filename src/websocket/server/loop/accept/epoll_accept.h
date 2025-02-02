@@ -7,29 +7,28 @@
 #include "accept_handle.h"
 
 static inline int epoll_accept(
-    const PWebSocketEpollEvent epoll_events,
-    const int                  epoll_fd,
-    const int                  server_sock,
-    const size_t               client_buffer_capacity,
-    char*                      request_buffer,
-    char*                      response_buffer,
-    const PWebSocketEpollEvent register_event)
+    const PWebSocketEpollLoopArgs epoll_args,
+    const int                     server_sock,
+    const size_t                  client_buffer_capacity,
+    char*                         request_buffer,
+    char*                         response_buffer,
+    const PWebSocketEpollEvent    register_event)
 {
     log_debug("rise error check...\n");
-    int code = websocket_epoll_rise_error(epoll_events);
+    int code = websocket_epoll_rise_error(epoll_args->event);
     if (code != WEBSOCKET_ERRORCODE_NONE) {
         return code;
     }
 
     log_debug("rise input check...\n");
-    code = websocket_epoll_rise_input(epoll_events);
+    code = websocket_epoll_rise_input(epoll_args->event);
     if (code != WEBSOCKET_ERRORCODE_NONE) {
         return code;
     }
 
     log_debug("accept handle\n");
     if (!accept_handle(
-            epoll_fd,
+            epoll_args->epoll_fd,
             server_sock,
             client_buffer_capacity,
             request_buffer,

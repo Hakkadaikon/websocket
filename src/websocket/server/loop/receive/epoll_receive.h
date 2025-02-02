@@ -6,24 +6,23 @@
 #include "receive_handle.h"
 
 static inline int epoll_receive(
-    const PWebSocketEpollEvent epoll_events,
-    const int                  epoll_fd,
-    const size_t               buffer_capacity,
-    char*                      request_buffer,
-    char*                      response_buffer,
-    PWebSocketCallbacks        callbacks)
+    const PWebSocketEpollLoopArgs epoll_args,
+    const size_t                  buffer_capacity,
+    char*                         request_buffer,
+    char*                         response_buffer,
+    PWebSocketCallbacks           callbacks)
 {
-    int code = websocket_epoll_rise_error(epoll_events);
+    int code = websocket_epoll_rise_error(epoll_args->event);
     if (code != WEBSOCKET_ERRORCODE_NONE) {
         return code;
     }
 
-    code = websocket_epoll_rise_input(epoll_events);
+    code = websocket_epoll_rise_input(epoll_args->event);
     if (code != WEBSOCKET_ERRORCODE_NONE) {
         return code;
     }
 
-    int client_sock = websocket_epoll_getfd(epoll_events);
+    int client_sock = websocket_epoll_getfd(epoll_args->event);
 
     ssize_t read_size = websocket_recv(
         client_sock,

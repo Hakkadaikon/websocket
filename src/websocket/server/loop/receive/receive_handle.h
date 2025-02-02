@@ -6,11 +6,11 @@
 #include "opcode_handle.h"
 
 static inline int receive_handle(
-    const int                 client_sock,
-    const size_t              buffer_capacity,
-    char*                     request_buffer,
-    char*                     response_buffer,
-    PWebSocketCallbacks       callbacks)
+    const int           client_sock,
+    const size_t        buffer_capacity,
+    char*               request_buffer,
+    char*               response_buffer,
+    PWebSocketCallbacks callbacks)
 {
     WebSocketFrame frame;
     memset(&frame, 0x00, sizeof(frame));

@@ -16,6 +16,11 @@ typedef struct epoll_event WebSocketEpollEvent, *PWebSocketEpollEvent;
 typedef struct kevent WebSocketEpollEvent, *PWebSocketEpollEvent;
 #endif
 
+typedef struct {
+    int                  epoll_fd;
+    PWebSocketEpollEvent event;
+} WebSocketEpollLoopArgs, *PWebSocketEpollLoopArgs;
+
 #include "../http/http.h"
 #include "../util/signal.h"
 #include "../util/string.h"
