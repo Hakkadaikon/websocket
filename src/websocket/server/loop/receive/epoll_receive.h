@@ -8,10 +8,10 @@
 static inline int epoll_receive(
     const PWebSocketEpollEvent epoll_events,
     const int                  epoll_fd,
-    const int                  client_buffer_capacity,
+    const size_t               buffer_capacity,
     char*                      request_buffer,
     char*                      response_buffer,
-    PWebSocketReceiveCallback  callback)
+    PWebSocketCallbacks        callbacks)
 {
     int code = websocket_epoll_rise_error(epoll_events);
     if (code != WEBSOCKET_ERRORCODE_NONE) {
@@ -27,7 +27,7 @@ static inline int epoll_receive(
 
     ssize_t read_size = websocket_recv(
         client_sock,
-        client_buffer_capacity,
+        buffer_capacity,
         request_buffer);
 
     if (read_size <= 0) {
@@ -43,7 +43,7 @@ static inline int epoll_receive(
         read_size,
         request_buffer,
         response_buffer,
-        callback);
+        callbacks);
 
     if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR || ret == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
         return ret;

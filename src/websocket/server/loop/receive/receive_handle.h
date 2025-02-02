@@ -10,7 +10,7 @@ static inline int receive_handle(
     const size_t              buffer_capacity,
     char*                     request_buffer,
     char*                     response_buffer,
-    PWebSocketReceiveCallback callback)
+    PWebSocketCallbacks       callbacks)
 {
     WebSocketFrame frame;
     memset(&frame, 0x00, sizeof(frame));
@@ -26,7 +26,7 @@ static inline int receive_handle(
 
     websocket_frame_dump(&frame);
 
-    rtn = opcode_handle(client_sock, buffer_capacity, response_buffer, callback, &frame);
+    rtn = opcode_handle(client_sock, buffer_capacity, response_buffer, callbacks, &frame);
     if (rtn != WEBSOCKET_ERRORCODE_NONE) {
         goto FINALIZE;
     }

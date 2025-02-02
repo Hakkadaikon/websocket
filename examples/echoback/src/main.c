@@ -1,16 +1,17 @@
 #include <stddef.h>
-#include <websocket/websocket.h>
+#include <websocket.h>
+//#include "../../../src/websocket/websocket.h"
 
 void websocket_callback(
     const int       client_sock,
     PWebSocketFrame frame,
-    const size_t    client_buffer_capacity,
+    const size_t    buffer_capacity,
     char*           response_buffer)
 {
     switch (frame->opcode) {
         case WEBSOCKET_OP_CODE_TEXT: {
             frame->mask       = 0;
-            size_t frame_size = create_websocket_frame(frame, client_buffer_capacity, response_buffer);
+            size_t frame_size = create_websocket_frame(frame, buffer_capacity, response_buffer);
             if (frame_size == 0) {
                 log_error("Failed to create websocket frame.\n");
                 return;
@@ -27,7 +28,7 @@ int main()
 {
     int    websocket_port_num     = 8080;
     int    backlog                = 5;
-    size_t client_buffer_capacity = 1024;
+    size_t buffer_capacity        = 1024;
 
     int server_sock = websocket_server_init(websocket_port_num, backlog);
     if (server_sock < WEBSOCKET_ERRORCODE_NONE) {
@@ -35,7 +36,13 @@ int main()
         return 1;
     }
 
-    websocket_server_loop(server_sock, client_buffer_capacity, websocket_callback);
+    WebSocketLoopArgs args;
+    args.server_sock                     = server_sock;
+    args.callbacks.receive_callback      = websocket_callback;
+    args.callbacks.socket_close_callback = NULL;
+    args.buffer_capacity                 = buffer_capacity;
+
+    websocket_server_loop(&args);
     websocket_close(server_sock);
 
     log_error("websocket server end.\n");

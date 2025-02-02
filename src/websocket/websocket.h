@@ -54,9 +54,24 @@ typedef struct _WebSocketFrame {
 typedef void (*PWebSocketReceiveCallback)(
     const int       client_sock,             ///< Client socket that sent the data
     PWebSocketFrame frame,                   ///< Parsed websocket frame
-    const size_t    client_buffer_capacity,  ///< Response_buffer capacity.
+    const size_t    buffer_capacity,         ///< Response_buffer capacity.
     char*           response_buffer          ///< This buffer must be used to create the return frame.
 );
+
+typedef void (*PWebSocketSocketCloseCallback)(
+    const int       client_sock ///< Client socket that sent the data
+);
+
+typedef struct {
+    PWebSocketReceiveCallback     receive_callback;       ///< @see PWebSocketReceiveCallback
+    PWebSocketSocketCloseCallback socket_close_callback;  ///< @see PWebSocketSocketCloseCallback
+} WebSocketCallbacks, *PWebSocketCallbacks;
+
+typedef struct {
+    int                server_sock;     ///< Socket descriptor obtained by websocket_server_init() function
+    size_t             buffer_capacity; ///< Size of the send and receive buffer for one client.
+    WebSocketCallbacks callbacks;       ///< @see WebSocketCallBacks
+} WebSocketLoopArgs, *PWebSocketLoopArgs;
 
 /**
  * @brief Parse raw data in network byte order into a websocket flame structure
@@ -144,14 +159,11 @@ int websocket_close(const int sock_fd);
  * @brief Enter the receive loop from the client.
  *        This function will block until it is sent a SIGHUP/SIGINT/SIGTERM signal or detects a FATAL ERROR internally.
  *
- * @param[in] server_sock        Socket descriptor obtained by websocket_server_init() function
- * @param[in] client_buffer_size Size of the send and receive buffer for one client.
- *                               The size specified here is actually allocated 2x internally. (request and response)
- * @param[in] callback           Callback that is called when data is received from the client
+ * @param[in] args @see WebSocketLoopArgs
  *
  * @return true: success / false: failure
  */
-bool websocket_server_loop(int server_sock, const size_t client_buffer_size, PWebSocketReceiveCallback callback);
+bool websocket_server_loop(PWebSocketLoopArgs args);
 
 void log_dump_local(const int fd, const char* str);
 void var_dump_local(const int fd, const char* str, int value);

@@ -13,13 +13,13 @@ static inline int opcode_handle(
     const int                 client_sock,
     const size_t              buffer_capacity,
     char*                     response_buffer,
-    PWebSocketReceiveCallback callback,
+    PWebSocketCallbacks       callbacks,
     PWebSocketFrame           frame)
 {
     switch (frame->opcode) {
         case WEBSOCKET_OP_CODE_TEXT:
         case WEBSOCKET_OP_CODE_BINARY:
-            callback(client_sock, frame, buffer_capacity, response_buffer);
+            callbacks->receive_callback(client_sock, frame, buffer_capacity, response_buffer);
             break;
         case WEBSOCKET_OP_CODE_CLOSE:
             return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
