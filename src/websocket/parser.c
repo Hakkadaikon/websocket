@@ -11,15 +11,15 @@
 /**
  * @brief Parse raw data in network byte order into a websocket frame structure
  *
- * @param[in]  raw         raw data (network byte order)
- * @param[in]  frame_size  Size of webSocket frame
+ * @param[in]  raw         Raw data (network byte order)
+ * @param[in]  frame_size  Capacity of raw data
  * @param[out] frame       Output destination of parsed frame
  *
  * @return true: Parse was successful / false: Failed parse
  */
-bool parse_websocket_frame(const char* restrict raw, const size_t frame_size, PWebSocketFrame restrict frame)
+bool parse_websocket_frame(const char* restrict raw, const size_t capacity, PWebSocketFrame restrict frame)
 {
-    if (frame_size < 2) {
+    if (capacity < 2) {
         return false;
     }
 
@@ -92,13 +92,16 @@ bool parse_websocket_frame(const char* restrict raw, const size_t frame_size, PW
     // |                               |
     // +-------------------------------+
     if (frame->payload_len == 126) {
-        if (frame_size < 4) {
+        if (capacity < 4) {
             return false;
         }
         frame->ext_payload_len = (raw[2] << 8) | raw[3];
+        if (frame->ext_payload_len > capacity) {
+            return false;
+        }
         frame_offset += 2;
     } else if (frame->payload_len == 127) {
-        if (frame_size < 10) {
+        if (capacity < 10) {
             return false;
         }
 
@@ -123,7 +126,7 @@ bool parse_websocket_frame(const char* restrict raw, const size_t frame_size, PW
     // | Masking-key (continued)       |
     // +--------------------------------
     if (frame->mask) {
-        if (frame_size < frame_offset + 4) {
+        if (capacity < frame_offset + 4) {
             return false;
         }
 
@@ -131,7 +134,7 @@ bool parse_websocket_frame(const char* restrict raw, const size_t frame_size, PW
         frame_offset += sizeof(frame->masking_key);
     }
 
-    if (frame->ext_payload_len > (frame_size - frame_offset)) {
+    if (frame->ext_payload_len > (capacity - frame_offset)) {
         return false;
     }
 
