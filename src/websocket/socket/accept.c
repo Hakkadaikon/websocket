@@ -23,7 +23,6 @@ int websocket_accept(const int sock_fd)
         }
 
         str_error("accept() failed. reason : ", strerror(errno));
-        log_error("The system will abort processing.\n");
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
