@@ -145,7 +145,6 @@ void sha1Transform(uint32_t state[5], const uint8_t buffer[64])
 
     // Wipe variables
     a = b = c = d = e = 0;
-
     memset_s(block, sizeof(block), '\0', sizeof(block));
 }
 
