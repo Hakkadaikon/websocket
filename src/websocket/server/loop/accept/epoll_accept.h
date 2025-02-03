@@ -9,9 +9,7 @@
 static inline int epoll_accept(
     const PWebSocketEpollLoopArgs epoll_args,
     const int                     server_sock,
-    const size_t                  client_buffer_capacity,
-    char*                         request_buffer,
-    char*                         response_buffer,
+    PWebSocketRawBuffer           buffer,
     const PWebSocketEpollEvent    register_event,
     PWebSocketCallbacks           callbacks)
 {
@@ -31,9 +29,7 @@ static inline int epoll_accept(
     if (!accept_handle(
             epoll_args->epoll_fd,
             server_sock,
-            client_buffer_capacity,
-            request_buffer,
-            response_buffer,
+            buffer,
             register_event,
             callbacks)) {
         return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;

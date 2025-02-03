@@ -21,6 +21,12 @@ typedef struct {
     PWebSocketEpollEvent event;
 } WebSocketEpollLoopArgs, *PWebSocketEpollLoopArgs;
 
+typedef struct {
+    size_t capacity;
+    char*  request;
+    char*  response;
+} WebSocketRawBuffer, *PWebSocketRawBuffer;
+
 #include "../http/http.h"
 #include "../util/signal.h"
 #include "../util/string.h"
@@ -35,12 +41,10 @@ typedef enum {
 /*----------------------------------------------------------------------------*/
 
 bool client_handshake(
-    const int    client_sock,
-    const size_t buffer_capacity,
-    const size_t bytes_read,
-    char*        request_buffer,
-    char*        response_buffer,
-    PHTTPRequest request);
+    const int           client_sock,
+    const size_t        bytes_read,
+    PWebSocketRawBuffer buffer,
+    PHTTPRequest        request);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/crypto.c                                                         */

@@ -214,15 +214,13 @@ static inline bool build_response_frame(
 
 bool client_handshake(
     const int             client_sock,
-    const size_t          buffer_capacity,
     const size_t          bytes_read,
-    char* restrict        request_buffer,
-    char* restrict        response_buffer,
+    PWebSocketRawBuffer   buffer,
     PHTTPRequest restrict request)
 {
     bool has_error = false;
 
-    if (!extract_http_request(request_buffer, bytes_read, HTTP_HEADER_CAPACITY, request)) {
+    if (!extract_http_request(buffer->request, bytes_read, HTTP_HEADER_CAPACITY, request)) {
         has_error = true;
         goto FINALIZE;
     }
@@ -245,28 +243,28 @@ bool client_handshake(
     }
 
     if (has_error) {
-        str_info("Invalid handshake request : ", request_buffer);
+        str_info("Invalid handshake request : ", buffer->request);
     } else {
-        if (!build_response_frame(accept_key, sizeof(accept_key), response_buffer, buffer_capacity)) {
+        if (!build_response_frame(accept_key, sizeof(accept_key), buffer->response, buffer->capacity)) {
             has_error = true;
             goto FINALIZE;
         }
 
-        size_t response_len = strnlen(response_buffer, buffer_capacity);
+        size_t response_len = strnlen(buffer->response, buffer->capacity);
         if (response_len == 0) {
             has_error = true;
             goto FINALIZE;
         }
 
-        if (websocket_send(client_sock, response_len, response_buffer) != WEBSOCKET_ERRORCODE_NONE) {
+        if (websocket_send(client_sock, response_len, buffer->response) != WEBSOCKET_ERRORCODE_NONE) {
             log_error("Failed to send OK frame.");
             has_error = true;
             goto FINALIZE;
         }
 
         log_debug("handshake success !");
-        str_debug("request : ", request_buffer);
-        str_debug("response : ", response_buffer);
+        str_debug("request : ", buffer->request);
+        str_debug("response : ", buffer->response);
     }
 
 FINALIZE:

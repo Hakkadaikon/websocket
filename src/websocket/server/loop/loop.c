@@ -13,6 +13,7 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
     const size_t        MAX_EVENTS = 16384;
     WebSocketEpollEvent register_event;
     WebSocketEpollEvent epoll_events[MAX_EVENTS];
+    WebSocketRawBuffer  buffer;
 
     memset(&register_event, 0x00, sizeof(register_event));
     memset(epoll_events, 0x00, sizeof(epoll_events));
@@ -22,20 +23,21 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
         return false;
     }
 
-    var_debug("websocket server fd : ", server_sock);
+    var_debug("websocket server fd : ", args->server_sock);
     var_debug("websocket epoll  fd : ", epoll_fd);
 
-    char* request_buffer  = websocket_alloc(args->buffer_capacity);
-    char* response_buffer = websocket_alloc(args->buffer_capacity);
+    buffer.capacity = args->buffer_capacity;
+    buffer.request  = websocket_alloc(buffer.capacity);
+    buffer.response = websocket_alloc(buffer.capacity);
 
-    if (!request_buffer || !response_buffer) {
+    if (!buffer.request || !buffer.response) {
         log_error("Failed to allocate buffers\n");
         websocket_close(epoll_fd);
         return false;
     }
 
-    memset(request_buffer, 0x00, args->buffer_capacity);
-    memset(response_buffer, 0x00, args->buffer_capacity);
+    memset(buffer.request, 0x00, buffer.capacity);
+    memset(buffer.response, 0x00, buffer.capacity);
 
     while (1) {
         int num_of_events = websocket_epoll_wait(epoll_fd, epoll_events, MAX_EVENTS);
@@ -61,9 +63,7 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
                 if (epoll_accept(
                         &epoll_args,
                         args->server_sock,
-                        args->buffer_capacity,
-                        request_buffer,
-                        response_buffer,
+                        &buffer,
                         &register_event,
                         &args->callbacks) == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
                     log_debug("accept error. go to finalize...\n");
@@ -75,12 +75,7 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
 
             int client_sock = fd;
 
-            int ret = epoll_receive(
-                &epoll_args,
-                args->buffer_capacity,
-                request_buffer,
-                response_buffer,
-                &args->callbacks);
+            int ret = epoll_receive(&epoll_args, &buffer, &args->callbacks);
 
             if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR || ret == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
                 websocket_epoll_del(epoll_fd, client_sock);
@@ -103,12 +98,12 @@ FINALIZE:
     websocket_close(epoll_fd);
 
     // Wipe buffer
-    memset(request_buffer, 0x00, args->buffer_capacity);
-    memset(response_buffer, 0x00, args->buffer_capacity);
+    memset(buffer.request, 0x00, buffer.capacity);
+    memset(buffer.response, 0x00, buffer.capacity);
 
     // Free buffer
-    websocket_free(request_buffer);
-    websocket_free(response_buffer);
+    websocket_free(buffer.request);
+    websocket_free(buffer.response);
 
     return true;
 }

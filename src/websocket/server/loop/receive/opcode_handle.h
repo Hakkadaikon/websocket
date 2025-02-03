@@ -11,8 +11,7 @@
 
 static inline int opcode_handle(
     const int           client_sock,
-    const size_t        buffer_capacity,
-    char*               response_buffer,
+    PWebSocketRawBuffer buffer,
     PWebSocketCallbacks callbacks,
     PWebSocketFrame     frame)
 {
@@ -20,7 +19,7 @@ static inline int opcode_handle(
         case WEBSOCKET_OP_CODE_TEXT:
         case WEBSOCKET_OP_CODE_BINARY:
             if (!is_null(callbacks->receive_callback)) {
-                callbacks->receive_callback(client_sock, frame, buffer_capacity, response_buffer);
+                callbacks->receive_callback(client_sock, frame, buffer->capacity, buffer->response);
             }
 
             break;
@@ -30,13 +29,13 @@ static inline int opcode_handle(
             frame->mask   = 0;
             frame->opcode = WEBSOCKET_OP_CODE_PONG;
 
-            size_t frame_size = create_websocket_frame(frame, buffer_capacity, response_buffer);
+            size_t frame_size = create_websocket_frame(frame, buffer->capacity, buffer->response);
             if (frame_size == 0) {
                 log_error("Failed to create pong frame.\n");
                 return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
             }
 
-            int rtn = websocket_send(client_sock, frame_size, response_buffer);
+            int rtn = websocket_send(client_sock, frame_size, buffer->response);
             if (rtn != WEBSOCKET_ERRORCODE_NONE) {
                 return rtn;
             }

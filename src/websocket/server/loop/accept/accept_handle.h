@@ -7,9 +7,7 @@
 static inline bool accept_handle(
     const int            epoll_fd,
     const int            server_sock,
-    const size_t         buffer_capacity,
-    char*                request_buffer,
-    char*                response_buffer,
+    PWebSocketRawBuffer  buffer,
     PWebSocketEpollEvent event,
     PWebSocketCallbacks  callbacks)
 {
@@ -38,7 +36,7 @@ static inline bool accept_handle(
 
     log_debug("Read to handshake message...\n");
     while (1) {
-        bytes_read = websocket_recv(client_sock, buffer_capacity, request_buffer);
+        bytes_read = websocket_recv(client_sock, buffer->capacity, buffer->request);
         if (bytes_read < 0) {
             if (bytes_read == WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR) {
                 continue;
@@ -54,7 +52,7 @@ static inline bool accept_handle(
     }
 
     log_debug("Analyze to handshake message...\n");
-    if (!client_handshake(client_sock, buffer_capacity, bytes_read, request_buffer, response_buffer, &request)) {
+    if (!client_handshake(client_sock, bytes_read, buffer, &request)) {
         websocket_epoll_del(epoll_fd, client_sock);
         err = true;
         goto FINALIZE;
