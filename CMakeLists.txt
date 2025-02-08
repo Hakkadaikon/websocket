@@ -20,7 +20,7 @@ set_target_properties(wsserver PROPERTIES
 # Add the src directory to the include path
 target_include_directories(wsserver PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-if(APPLE)
+if(APPLE OR "${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
     # macOS
     set(DEBUG_COMPILE_OPTIONS "-O0" "-g")
 
