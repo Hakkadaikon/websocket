@@ -14,10 +14,12 @@ Websocket server that complies with RFC6455.(The WebSocket Protocol)
 
 ```shell  
 # release build
-make build
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+make BUILD=release -C examples/echoback 
 
 # debug build
-make debug-build
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+make BUILD=debug -C examples/echoback 
 ```
 
 ## Install  
@@ -137,6 +139,7 @@ int main()
 ## Develop
 [NixOS/nix](https://github.com/NixOS/nix) - Package manager / OS  
 [clang-format](https://github.com/llvm/llvm-project/tree/main/clang/tools/clang-format) - Formatter  
+[cmake](https://github.com/Kitware/CMake) - Build tool  
 
 ## Test  
 [googletest](https://github.com/google/googletest) - Google Testing and Mocking Framework  

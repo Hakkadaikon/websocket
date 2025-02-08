@@ -61,7 +61,7 @@ CFLAGS := \
 	-flto=auto \
 	-DLOG_LEVEL_ERROR
 
-LDLIBS  := -L../../lib
+LDLIBS  := -L../../build/lib
 LDFLAGS := -flto -lwsserver
 endif
 endif

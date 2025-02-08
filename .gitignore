@@ -62,6 +62,7 @@ examples/echoback/obj/*
 
 # Other
 tests/build
+build
 test
 ws-server
 result
@@ -69,4 +70,3 @@ tmp/
 native/src
 native/lib
 native/obj
-

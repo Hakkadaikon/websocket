@@ -47,7 +47,7 @@ jobs:
       - name: Build/scan websocket
         if: env.TOKEN
         run: |
-          cov-build --dir cov-int make build
+          cov-build --dir cov-int mkdir build && cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 
       - name: Submit results
         if: env.TOKEN
