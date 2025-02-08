@@ -33,7 +33,7 @@ cp lib/libwsserver.a [install library directory]
 
 ```shell  
 # Formatting source code (use clang-format)
-make format
+./format.sh
 ```
 
 ## Test  
