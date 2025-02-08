@@ -45,7 +45,7 @@ CFLAGS := \
 	-g \
 	-DLOG_LEVEL_DEBUG
 
-LDLIBS  := -L../../lib
+LDLIBS  := -L../../build/lib
 LDFLAGS := -flto -lwsserver
 
 else
