@@ -45,6 +45,7 @@ CFLAGS := \
 	-g \
 	-DLOG_LEVEL_DEBUG
 else
+CFLAGS := \
 	-I../../src \
 	-O0 \
 	-static-libasan \
