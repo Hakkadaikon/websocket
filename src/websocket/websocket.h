@@ -49,34 +49,53 @@ typedef struct _WebSocketFrame {
 } WebSocketFrame, *PWebSocketFrame;
 
 /**
- * @brief Result of parsing the WebSocket frame
+ * @brief User callback that is called when a WebSocket frame is received.
  */
 typedef void (*PWebSocketReceiveCallback)(
-    const int       client_sock,      ///< Client socket that sent the data
-    PWebSocketFrame frame,            ///< Parsed websocket frame
-    const size_t    buffer_capacity,  ///< Response_buffer capacity.
-    char*           response_buffer   ///< This buffer must be used to create the return frame.
+    const int       client_sock,      ///< @param[in]     client_sock     Client socket that sent the data
+    PWebSocketFrame frame,            ///< @param[in]     frame           Parsed websocket frame
+    const size_t    buffer_capacity,  ///< @param[in]     buffer_capacity Response_buffer capacity.
+    char*           response_buffer   ///< @param[in/out] response_buffer This buffer must be used to create the return frame.
 );
 
+/**
+ * @brief User callback to be called when connection is established
+ */
 typedef void (*PWebSocketConnectCallback)(
-    const int client_sock  ///< Client socket to connect
+    const int client_sock  ///< @param[in] client_sock Client socket to connect
 );
 
+/**
+ * @ brief User callback that is called when a client is disconnected.
+ *
+ * When this callback is called, the connection has already been disconnected,
+ * so BSD socket functions cannot be called using the client_sock argument.
+ * It is passed to identify the client and release resources if they have been allocated.
+ */
 typedef void (*PWebSocketDisconnectCallback)(
-    const int client_sock  ///< Client socket to disconnect
+    const int client_sock  ///< @param[in] client_sock Client socket to disconnect
 );
 
+/**
+ * @brief User callback list to pass to the WebSocket library.
+ */
 typedef struct {
     PWebSocketReceiveCallback    receive_callback;     ///< @see PWebSocketReceiveCallback
     PWebSocketConnectCallback    connect_callback;     ///< @see PWebSocketConnectCallback
     PWebSocketDisconnectCallback disconnect_callback;  ///< @see PWebSocketDisconnectCallback
 } WebSocketCallbacks, *PWebSocketCallbacks;
 
+/**
+ * @brief Arguments to pass to websocket_init()
+ */
 typedef struct {
     int port_num;  ///< WebSocket port number
     int backlog;   ///< Listen queue size
 } WebSocketInitArgs, *PWebSocketInitArgs;
 
+/**
+ * @brief Arguments to pass to websocket_loop()
+ */
 typedef struct {
     int                server_sock;      ///< Socket descriptor obtained by websocket_server_init() function
     size_t             buffer_capacity;  ///< Capacity of the send and receive buffer for one client.
