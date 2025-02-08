@@ -23,10 +23,6 @@ target_include_directories(wsserver PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 if(APPLE)
     # macOS
     set(DEBUG_COMPILE_OPTIONS "-O0" "-g")
-
-    # Dynamic link to asan lib
-    target_compile_options(wsserver PRIVATE -fsanitize=address)
-    target_link_options(wsserver PRIVATE -fsanitize=address)
 else()
     # Linux
     set(DEBUG_COMPILE_OPTIONS "-O0" "-static-libasan" "-g")
