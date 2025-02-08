@@ -38,12 +38,19 @@ DEPENDFILES  := $(OBJFILES:.o=.d)
 # Flags
 #------------------------------------------------------------------------------
 ifeq ($(BUILD), debug)
+ifeq ($(OS), Darwin)
 CFLAGS := \
+	-I../../src \
+	-O0 \
+	-g \
+	-DLOG_LEVEL_DEBUG
+else
 	-I../../src \
 	-O0 \
 	-static-libasan \
 	-g \
 	-DLOG_LEVEL_DEBUG
+endif
 
 LDLIBS  := -L../../build/lib
 LDFLAGS := -flto -lwsserver
