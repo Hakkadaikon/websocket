@@ -139,7 +139,6 @@ int main()
 
 # Dependencies  
 ## Develop
-[NixOS/nix](https://github.com/NixOS/nix) - Package manager / OS  
 [clang-format](https://github.com/llvm/llvm-project/tree/main/clang/tools/clang-format) - Formatter  
 [cmake](https://github.com/Kitware/CMake) - Build tool  
 
