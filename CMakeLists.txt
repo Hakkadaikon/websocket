@@ -20,21 +20,10 @@ set_target_properties(wsserver PROPERTIES
 # Add the src directory to the include path
 target_include_directories(wsserver PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-if(APPLE OR "${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
-    # macOS
-    set(DEBUG_COMPILE_OPTIONS "-O0" "-g")
-
-    # Dynamic link to asan lib
-    target_compile_options(wsserver PRIVATE -fsanitize=address)
-    target_link_options(wsserver PRIVATE -fsanitize=address)
-else()
-    # Linux
-    set(DEBUG_COMPILE_OPTIONS "-O0" "-static-libasan" "-g")
-endif()
-
 # Add compile options and definitions for each build type using generator expressions
 target_compile_options(wsserver PRIVATE
-  $<$<CONFIG:Debug>:${DEBUG_COMPILE_OPTIONS}>
+  $<$<CONFIG:Debug>:-O0>
+  $<$<CONFIG:Debug>:-g>
   $<$<CONFIG:Release>:-O3>
   $<$<CONFIG:Release>:-fno-lto>
   $<$<CONFIG:Release>:-mtune=native>
