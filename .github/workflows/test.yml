@@ -45,6 +45,7 @@ jobs:
       - name: Build project
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+          cmake --build build
           make BUILD=debug -C examples/echoback
 
       - name: Run tests
