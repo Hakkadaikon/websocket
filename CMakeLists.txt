@@ -45,5 +45,13 @@ target_compile_definitions(wsserver PRIVATE
   $<$<CONFIG:Release>:LOG_LEVEL_ERROR>
 )
 
+install(TARGETS wsserver
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin)
+
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/websocket/websocket.h"
+        DESTINATION include)
+
 # Add link options (applied to both Debug and Release configurations)
 target_link_options(wsserver PRIVATE -flto)

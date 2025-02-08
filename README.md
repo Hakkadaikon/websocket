@@ -24,9 +24,11 @@ make BUILD=debug -C examples/echoback
 
 ## Install  
 
-```shell
-cp websocket/websocket.h [install include directory]
-cp lib/libwsserver.a [install library directory]
+```shell  
+# default install dir:
+# - /usr/local/lib/libwsserver.a
+# - /usr/local/include/websocket.h
+sudo cmake --install build
 ```
 
 ## Format  
