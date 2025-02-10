@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <string.h>
 
 #include "../util/string.h"
 
@@ -59,7 +58,7 @@ static inline bool base64_encode(const uint8_t* input, const size_t input_length
 
 static inline bool is_base64(const char* str)
 {
-    size_t len = strlen(str);
+    size_t len = get_str_len(str);
     if (len < base64_output_block_size) {
         return false;
     }

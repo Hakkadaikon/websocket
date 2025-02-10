@@ -3,9 +3,6 @@
 #include <signal.h>
 #include <stdatomic.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 _Atomic static bool rise_signal = false;
 
@@ -20,9 +17,9 @@ void signal_init()
     sa.sa_flags   = 0;
     sigemptyset(&sa.sa_mask);
 
-    sigaction(SIGHUP, &sa, NULL);
-    sigaction(SIGINT, &sa, NULL);
-    sigaction(SIGTERM, &sa, NULL);
+    sigaction(SIGHUP, &sa, (void*)0);
+    sigaction(SIGINT, &sa, (void*)0);
+    sigaction(SIGTERM, &sa, (void*)0);
 }
 
 static void signal_handler(int signum)

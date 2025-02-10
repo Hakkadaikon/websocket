@@ -4,7 +4,6 @@
  * @brief Parses each parameter of a websocket frame stored in network byte order.
  * @see RFC6455 (https://datatracker.ietf.org/doc/html/rfc6455)
  */
-#include <string.h>
 
 #include "websocket_local.h"
 

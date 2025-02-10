@@ -179,4 +179,13 @@ static inline int skip_token(const char* buffer, const size_t buffer_size, const
     return -1;
 }
 
+static size_t inline get_str_len(const char* str)
+{
+    int len = 0;
+    while (str[len++] != '\0')
+        ;
+
+    return len - 1;
+}
+
 #endif

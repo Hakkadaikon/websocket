@@ -1,11 +1,6 @@
 #ifndef NOSTR_SERVER_LOOP_OPCODE_HANDLE_H_
 #define NOSTR_SERVER_LOOP_OPCODE_HANDLE_H_
 
-#include <fcntl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
 #include "../../../../util/allocator.h"
 #include "../../../websocket_local.h"
 
