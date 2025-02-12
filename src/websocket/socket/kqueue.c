@@ -2,7 +2,6 @@
 
 #include <errno.h>
 #include <netinet/in.h>
-#include <string.h>
 #include <sys/event.h>
 #include <sys/syscall.h>
 

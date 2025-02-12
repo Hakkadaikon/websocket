@@ -1,5 +1,4 @@
 #include <errno.h>
-#include <string.h>
 #include <sys/syscall.h>
 
 #include "../websocket_local.h"
