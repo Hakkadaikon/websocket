@@ -27,7 +27,7 @@ static inline int linux_accept4(int sock_fd, struct sockaddr* addr, socklen_t* a
           "d"(addrlen),
           "r"(flags)
         : "rcx", "r11", "memory");
-    if (ret < 0) {
+    if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;
         ret   = -1;
     }
