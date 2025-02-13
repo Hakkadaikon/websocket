@@ -11,14 +11,40 @@
 
 #include "../websocket_local.h"
 
+#ifndef __APPLE__
+static inline int linux_fcntl(const int fd, const int cmd, const long arg)
+{
+    long ret;
+    __asm__ volatile(
+        "syscall"
+        : "=a"(ret)
+        : "0"(__NR_fcntl), "D"(fd), "S"(cmd), "d"(arg)
+        : "rcx", "r11", "memory");
+    if ((unsigned long)ret >= (unsigned long)-4095) {
+        errno = -ret;
+        ret   = WEBSOCKET_SYSCALL_ERROR;
+    }
+    return ret;
+}
+#endif
+
+static inline int internal_fcntl(const int fd, const int cmd, const long arg)
+{
+#ifdef __APPLE__
+    return fcntl(fd, cmd, arg);
+#else
+    return linux_fcntl(fd, cmd, arg);
+#endif
+}
+
 static inline int set_nonblocking(int fd)
 {
-    long flags = fcntl(fd, F_GETFL);
+    long flags = internal_fcntl(fd, F_GETFL, 0);
     if (flags == WEBSOCKET_SYSCALL_ERROR) {
         return WEBSOCKET_SYSCALL_ERROR;  // Failed to get flags
     }
 
-    return fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+    return internal_fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
 
 static inline int optimize_client_socket(int client_sock)
