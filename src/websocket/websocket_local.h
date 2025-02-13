@@ -9,8 +9,21 @@
  */
 
 #ifndef __APPLE__
-#include <sys/epoll.h>
-typedef struct epoll_event WebSocketEpollEvent, *PWebSocketEpollEvent;
+#include <stddef.h>
+#include <stdint.h>
+
+typedef union {
+    void*    ptr;
+    int      fd;
+    uint32_t u32;
+    uint64_t u64;
+} WebSocketEpollData, *PWebSocketEpollData;
+
+typedef struct
+{
+    uint32_t           events;
+    WebSocketEpollData data;
+} WebSocketEpollEvent, *PWebSocketEpollEvent;
 #else
 #include <sys/event.h>
 typedef struct kevent WebSocketEpollEvent, *PWebSocketEpollEvent;
