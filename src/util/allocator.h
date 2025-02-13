@@ -2,10 +2,13 @@
 #define NOSTR_ALLOCATOR_H_
 
 #include <alloca.h>
-#include <errno.h>   // for EINVAL
-#include <stddef.h>  // for size_t
+#include <errno.h>
+#include <stddef.h>
 #include <stdlib.h>
+
+#ifdef __APPLE__
 #include <string.h>  // for memset
+#endif
 
 #define ALLOCATE_STACK
 // #define ALLOCATE_HEAP
@@ -23,6 +26,24 @@
 typedef size_t rsize_t;
 typedef int    errno_t;
 
+#ifdef __APPLE__
+#define websocket_memset memset
+#else
+static inline errno_t websocket_memset(void* s, int c, rsize_t n)
+{
+    if (s == NULL && n != 0) {
+        return EINVAL;
+    }
+
+    unsigned char* p = (unsigned char*)s;
+    while (n--) {
+        *p++ = (unsigned char)c;
+    }
+
+    return 0;
+}
+#endif
+
 #ifndef __APPLE__
 #ifndef __STDC_LIB_EXT1__
 /*
@@ -35,7 +56,7 @@ typedef int    errno_t;
  *
  * Note: A compiler barrier is inserted to ensure that the memset call is not optimized away.
  */
-static inline errno_t memset_s(void* s, rsize_t smax, int c, rsize_t n)
+static inline errno_t websocket_memset_s(void* s, rsize_t smax, int c, rsize_t n)
 {
     if (s == NULL && n != 0) {
         return EINVAL;
@@ -44,7 +65,7 @@ static inline errno_t memset_s(void* s, rsize_t smax, int c, rsize_t n)
     // If n is greater than smax, clear the entire buffer (if possible) and return an error
     if (n > smax) {
         if (s != NULL && smax > 0) {
-            memset(s, 0, smax);
+            websocket_memset(s, c, smax);
             // Compiler barrier to prevent optimization removal
             __asm__ __volatile__(""
                                  :
@@ -55,7 +76,7 @@ static inline errno_t memset_s(void* s, rsize_t smax, int c, rsize_t n)
     }
 
     // Set n bytes of memory to the value c
-    memset(s, c, n);
+    websocket_memset(s, c, n);
     // Compiler barrier to prevent optimization removal
     __asm__ __volatile__(""
                          :
@@ -64,7 +85,11 @@ static inline errno_t memset_s(void* s, rsize_t smax, int c, rsize_t n)
 
     return 0;
 }
+#else
+#define websocket_memset_s memset_s
 #endif  // __STDC_LIB_EXT1__
+#else
+#define websocket_memset_s memset_s
 #endif  // __APPLE
 
 #endif

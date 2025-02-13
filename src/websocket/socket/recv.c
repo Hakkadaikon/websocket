@@ -21,7 +21,7 @@ ssize_t websocket_recvmmsg(const int sock_fd, const size_t capacity, const int n
     WebSocketMmsgHeader headers[num_of_buffer];
     struct iovec        iov[num_of_buffer][iov_capacity];
 
-    memset(&headers, 0x00, sizeof(headers));
+    websocket_memset(&headers, 0x00, sizeof(headers));
 
     for (int i = 0; i < num_of_buffer; i++) {
         headers[i].msg_hdr.msg_name            = NULL;

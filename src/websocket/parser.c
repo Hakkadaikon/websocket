@@ -5,6 +5,8 @@
  * @see RFC6455 (https://datatracker.ietf.org/doc/html/rfc6455)
  */
 
+#include <string.h>  //tmp
+
 #include "websocket_local.h"
 
 /**

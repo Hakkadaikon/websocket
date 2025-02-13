@@ -145,7 +145,7 @@ void sha1Transform(uint32_t state[5], const uint8_t buffer[64])
 
     // Wipe variables
     a = b = c = d = e = 0;
-    memset_s(block, sizeof(block), '\0', sizeof(block));
+    websocket_memset_s(block, sizeof(block), '\0', sizeof(block));
 }
 
 /**
@@ -218,6 +218,6 @@ void sha1Final(uint8_t digest[SHA1_DIGEST_LENGTH], Sha1Ctx* context)
     }
 
     // Wipe variables
-    memset_s(context, sizeof(*context), '\0', sizeof(*context));
-    memset_s(&finalcount, sizeof(finalcount), '\0', sizeof(finalcount));
+    websocket_memset_s(context, sizeof(*context), '\0', sizeof(*context));
+    websocket_memset_s(&finalcount, sizeof(finalcount), '\0', sizeof(finalcount));
 }

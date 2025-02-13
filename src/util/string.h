@@ -188,4 +188,13 @@ static size_t inline get_str_len(const char* str)
     return len - 1;
 }
 
+static size_t inline get_str_nlen(const char* str, const size_t capacity)
+{
+    int len = 0;
+    while (str[len++] != '\0' && len < capacity)
+        ;
+
+    return len - 1;
+}
+
 #endif

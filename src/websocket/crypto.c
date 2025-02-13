@@ -20,8 +20,8 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
     snprintf(concatenated, sizeof(concatenated), "%s%s", client_key, websocket_accept_guid);
 
     uint8_t sha1_result[SHA1_DIGEST_LENGTH];
-    memset(sha1_result, 0x00, sizeof(sha1_result));
-    sha1(concatenated, strnlen(concatenated, sizeof(concatenated)), sha1_result);
+    websocket_memset(sha1_result, 0x00, sizeof(sha1_result));
+    sha1(concatenated, get_str_nlen(concatenated, sizeof(concatenated)), sha1_result);
 
     if (!base64_encode(sha1_result, SHA1_DIGEST_LENGTH, accept_key, accept_key_size)) {
         has_error = false;
@@ -30,8 +30,8 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
 
 FINALIZE:
     // Wipe variables
-    memset_s(concatenated, sizeof(concatenated), 0x00, sizeof(concatenated));
-    memset_s(sha1_result, sizeof(sha1_result), 0x00, sizeof(sha1_result));
+    websocket_memset_s(concatenated, sizeof(concatenated), 0x00, sizeof(concatenated));
+    websocket_memset_s(sha1_result, sizeof(sha1_result), 0x00, sizeof(sha1_result));
 
     return !has_error;
 }

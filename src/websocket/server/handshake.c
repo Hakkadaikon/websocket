@@ -269,7 +269,7 @@ bool client_handshake(
 
 FINALIZE:
     // Wipe variables
-    memset_s(accept_key, sizeof(accept_key), 0x00, sizeof(accept_key));
+    websocket_memset_s(accept_key, sizeof(accept_key), 0x00, sizeof(accept_key));
 
     return !has_error;
 }
