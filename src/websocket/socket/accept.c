@@ -13,7 +13,6 @@
 #error "Unsupported architecture for linux_accept4"
 #endif
 #endif
-#endif
 
 static inline int linux_accept4(int sock_fd, struct sockaddr* addr, socklen_t* addrlen, int flags)
 {
@@ -33,6 +32,8 @@ static inline int linux_accept4(int sock_fd, struct sockaddr* addr, socklen_t* a
     }
     return ret;
 }
+
+#endif
 
 static inline int internal_accept(int sock_fd, struct sockaddr* addr, socklen_t* addrlen)
 {

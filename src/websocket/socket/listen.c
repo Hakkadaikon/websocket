@@ -5,6 +5,7 @@
 #include "../websocket_local.h"
 #include "optimize_socket.h"
 
+#ifndef __APPLE__
 static inline int linux_socket(const int domain, const int type, const int protocol)
 {
     long ret;
@@ -49,6 +50,7 @@ static inline int linux_listen(const int sockfd, const int backlog)
     }
     return ret;
 }
+#endif
 
 static inline int internal_socket(const int domain, const int type, const int protocol)
 {

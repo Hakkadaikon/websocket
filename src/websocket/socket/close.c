@@ -3,6 +3,7 @@
 
 #include "../websocket_local.h"
 
+#ifndef __APPLE__
 static inline int linux_close(int fd)
 {
     long ret;
@@ -17,6 +18,7 @@ static inline int linux_close(int fd)
     }
     return ret;
 }
+#endif
 
 static inline int internal_close(int fd)
 {
