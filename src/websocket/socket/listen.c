@@ -2,6 +2,19 @@
 
 #include "../websocket_local.h"
 #include "./optimize_socket.h"
+#ifdef __APPLE__
+#include <string.h>
+#else
+#include "../../arch/linux/errno.h"
+#endif
+
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define htons(x) ((((x)&0x00ff) << 8) | (((x)&0xff00) >> 8))
+#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#define htons(x) (x)
+#else
+#error "Unknown endianness"
+#endif
 
 int websocket_listen(const int port_num, const int backlog)
 {

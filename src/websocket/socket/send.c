@@ -1,15 +1,17 @@
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/syscall.h>
+#include "../../arch/send.h"
 
 #include "../websocket_local.h"
-#include "./errno.h"
+#ifdef __APPLE__
+#include <string.h>
+#else
+#include "../../arch/linux/errno.h"
+#endif
 
 int websocket_send(const int sock_fd, const size_t buffer_size, const char* restrict buffer)
 {
     log_debug("WebSocket server send\n");
 
-    ssize_t rtn = send(sock_fd, buffer, buffer_size, 0);
+    ssize_t rtn = internal_sendto(sock_fd, buffer, buffer_size, 0, NULL, 0);
     if (rtn == WEBSOCKET_SYSCALL_ERROR) {
         if (errno == EAGAIN || errno == EWOULDBLOCK) {
             return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;

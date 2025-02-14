@@ -1,9 +1,13 @@
-#include <string.h>
-#include <sys/socket.h>
-#include <sys/syscall.h>
+#include "../../arch/recv.h"
 
 #include "../websocket_local.h"
-#include "./errno.h"
+#ifdef __APPLE__
+#include <string.h>
+#else
+#include "../../arch/linux/errno.h"
+#endif
+
+#define MSG_DONTWAIT 0x40
 
 ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict buffer)
 {
@@ -12,7 +16,7 @@ ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict 
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
-    ssize_t bytes_read = recv(sock_fd, buffer, capacity - 1, MSG_DONTWAIT);
+    ssize_t bytes_read = internal_recvfrom(sock_fd, buffer, capacity - 1, MSG_DONTWAIT, NULL, NULL);
     if (bytes_read == 0) {
         var_info("Socket was disconnected. socket : ", sock_fd);
         return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
@@ -23,7 +27,7 @@ ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict 
             return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
         }
 
-        str_info("Failed to recv(). reason : ", websocket_strerror(errno));
+        str_info("Failed to recv(). reason : ", strerror(errno));
         var_info("socket : ", sock_fd);
         return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
     }
