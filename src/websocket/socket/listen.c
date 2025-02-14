@@ -1,6 +1,7 @@
+#include "../../arch/listen.h"
+
 #include "../websocket_local.h"
 #include "./optimize_socket.h"
-#include "../../arch/listen.h"
 
 int websocket_listen(const int port_num, const int backlog)
 {

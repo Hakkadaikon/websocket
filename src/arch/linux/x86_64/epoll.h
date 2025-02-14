@@ -1,13 +1,12 @@
-#include "./asm.h"
 #include "../epoll.h"
 #include "../errno.h"
+#include "./asm.h"
 
 static inline long linux_x8664_epoll_ctl(
-    const int epoll_fd,
-    const int op,
-    const int fd,
-    PWebSocketEpollEvent event
-)
+    const int            epoll_fd,
+    const int            op,
+    const int            fd,
+    PWebSocketEpollEvent event)
 {
     long           ret;
     register void* r10_asm asm("r10") = event;
@@ -44,11 +43,10 @@ static inline long linux_x8664_epoll_create1(const int flags)
 }
 
 static inline long linux_x8664_epoll_wait(
-    const int epfd,
+    const int            epfd,
     PWebSocketEpollEvent events,
-    const int maxevents,
-    const int timeout
-)
+    const int            maxevents,
+    const int            timeout)
 {
     long         ret;
     register int r10 asm("r10") = timeout;

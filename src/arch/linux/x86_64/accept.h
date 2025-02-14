@@ -3,8 +3,9 @@
 
 #include <errno.h>
 #include <stdint.h>
-#include "./asm.h"
+
 #include "../sockaddr.h"
+#include "./asm.h"
 
 static inline int linux_x8664_accept4(const int sock_fd, const struct sockaddr* addr, const socklen_t* addrlen, const int flags)
 {

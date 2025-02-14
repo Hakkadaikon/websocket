@@ -1,8 +1,8 @@
 #ifndef NOSTR_OPTIMIZE_SOCKET_H_
 #define NOSTR_OPTIMIZE_SOCKET_H_
 
-#include "../websocket_local.h"
 #include "../../arch/optimize_socket.h"
+#include "../websocket_local.h"
 
 static inline int set_nonblocking(int fd)
 {

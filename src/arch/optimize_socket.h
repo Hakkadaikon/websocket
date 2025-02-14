@@ -19,10 +19,10 @@ static inline int internal_fcntl(const int fd, const int cmd, const long arg)
 }
 
 static inline int internal_setsockopt(
-    const int sock_fd,
-    const int level,
-    const int optname,
-    const void* optval,
+    const int       sock_fd,
+    const int       level,
+    const int       optname,
+    const void*     optval,
     const socklen_t optlen)
 {
 #ifdef __APPLE__

@@ -6,8 +6,8 @@
 #include <stddef.h>
 
 #ifdef __APPLE__
-#include <string.h>  // for memset
 #include <stdlib.h>
+#include <string.h>  // for memset
 #endif
 
 #define ALLOCATE_STACK

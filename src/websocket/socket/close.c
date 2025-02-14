@@ -1,5 +1,6 @@
-#include "../websocket_local.h"
 #include "../../arch/close.h"
+
+#include "../websocket_local.h"
 
 int websocket_close(const int sock_fd)
 {

@@ -5,11 +5,10 @@
 #include "./linux/x86_64/epoll.h"
 
 static inline long internal_epoll_ctl(
-    const int epoll_fd,
-    const int op,
-    const int fd,
-    PWebSocketEpollEvent event
-)
+    const int            epoll_fd,
+    const int            op,
+    const int            fd,
+    PWebSocketEpollEvent event)
 {
     return linux_x8664_epoll_ctl(epoll_fd, op, fd, event);
 }
@@ -20,11 +19,10 @@ static inline long internal_epoll_create1(const int flags)
 }
 
 static inline long internal_epoll_wait(
-    const int epfd,
+    const int            epfd,
     PWebSocketEpollEvent events,
-    const int maxevents,
-    const int timeout
-)
+    const int            maxevents,
+    const int            timeout)
 {
     return linux_x8664_epoll_wait(epfd, events, maxevents, timeout);
 }

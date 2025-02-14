@@ -2,8 +2,8 @@
 #define NOSTR_INTERNAL_LISTEN_H_
 
 #ifdef __APPLE__
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #else
 #include "linux/x86_64/listen.h"
 #endif

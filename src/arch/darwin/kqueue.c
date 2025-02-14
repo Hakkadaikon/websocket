@@ -1,16 +1,16 @@
 #ifdef __APPLE__
 
-#include <stdbool.h>
 #include <errno.h>
-#include <string.h>
 #include <netinet/in.h>
+#include <stdbool.h>
+#include <string.h>
 #include <sys/event.h>
 #include <sys/syscall.h>
 
-#include "./epoll.h"
-#include "../../websocket/websocket_local.h"
-#include "../../util/signal.h"
 #include "../../util/log.h"
+#include "../../util/signal.h"
+#include "../../websocket/websocket_local.h"
+#include "./epoll.h"
 
 bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event)
 {

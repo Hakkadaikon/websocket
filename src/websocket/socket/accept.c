@@ -1,6 +1,7 @@
+#include "../../arch/accept.h"
+
 #include "../websocket_local.h"
 #include "./optimize_socket.h"
-#include "../../arch/accept.h"
 
 int websocket_accept(const int sock_fd)
 {

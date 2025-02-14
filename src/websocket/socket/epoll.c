@@ -1,8 +1,9 @@
 #ifndef __APPLE__
 
+#include "../../arch/epoll.h"
+
 #include "../websocket_local.h"
 #include "./optimize_socket.h"
-#include "../../arch/epoll.h"
 
 bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event)
 {
