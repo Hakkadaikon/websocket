@@ -1,9 +1,9 @@
-#include <errno.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/syscall.h>
 
 #include "../websocket_local.h"
+#include "./errno.h"
 
 int websocket_send(const int sock_fd, const size_t buffer_size, const char* restrict buffer)
 {

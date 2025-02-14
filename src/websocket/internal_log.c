@@ -1,5 +1,5 @@
 #ifndef __APPLE__
-#include <sys/epoll.h>
+#include "../arch/epoll.h"
 #endif
 
 #include "websocket_local.h"

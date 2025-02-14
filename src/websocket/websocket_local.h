@@ -8,25 +8,11 @@
  * @see RFC6455 (https://datatracker.ietf.org/doc/html/rfc6455)
  */
 
-#ifndef __APPLE__
-#include <stddef.h>
-#include <stdint.h>
-
-typedef union {
-    void*    ptr;
-    int      fd;
-    uint32_t u32;
-    uint64_t u64;
-} WebSocketEpollData, *PWebSocketEpollData;
-
-typedef struct
-{
-    uint32_t           events;
-    WebSocketEpollData data;
-} WebSocketEpollEvent, *PWebSocketEpollEvent;
+#include <sys/types.h>
+#ifdef __APPLE__
+#include "../arch/darwin/epoll.h"
 #else
-#include <sys/event.h>
-typedef struct kevent WebSocketEpollEvent, *PWebSocketEpollEvent;
+#include "../arch/linux/epoll.h"
 #endif
 
 typedef struct {

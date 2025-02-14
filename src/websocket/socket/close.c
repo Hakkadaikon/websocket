@@ -1,33 +1,5 @@
-#include <errno.h>
-#include <sys/syscall.h>
-
 #include "../websocket_local.h"
-
-#ifndef __APPLE__
-static inline int linux_close(int fd)
-{
-    long ret;
-    __asm__ volatile(
-        "syscall"
-        : "=a"(ret)
-        : "0"(__NR_close), "D"(fd)
-        : "rcx", "r11", "memory");
-    if ((unsigned long)ret >= (unsigned long)-4095) {
-        errno = -ret;
-        ret   = -1;
-    }
-    return ret;
-}
-#endif
-
-static inline int internal_close(int fd)
-{
-#ifdef __APPLE__
-    return close(fd);
-#else
-    return linux_close(fd);
-#endif
-}
+#include "../../arch/close.h"
 
 int websocket_close(const int sock_fd)
 {

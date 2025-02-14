@@ -4,10 +4,10 @@
 #include <alloca.h>
 #include <errno.h>
 #include <stddef.h>
-#include <stdlib.h>
 
 #ifdef __APPLE__
 #include <string.h>  // for memset
+#include <stdlib.h>
 #endif
 
 #define ALLOCATE_STACK

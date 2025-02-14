@@ -87,7 +87,7 @@ void log_dump_local(const int fd, const char* restrict str)
     (void)write(fd, str, len);
 }
 
-void var_dump_local(const int fd, const char* restrict str, int value)
+void var_dump_local(const int fd, const char* restrict str, const int value)
 {
     if (is_null(str) || fd <= 0) {
         return;
