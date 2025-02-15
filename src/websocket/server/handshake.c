@@ -1,4 +1,5 @@
 #include <stdbool.h>
+
 #include "../../crypto/base64.h"
 #include "../../util/allocator.h"
 #include "../../util/string.h"

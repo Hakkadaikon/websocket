@@ -8,7 +8,15 @@
  */
 #include <stdbool.h>
 #include <stdint.h>
-#include <unistd.h>
+#include <sys/types.h>
+
+#ifndef STDOUT_FILENO
+#define STDOUT_FILENO 1  // Standard output.
+#endif
+
+#ifndef STDERR_FILENO
+#define STDERR_FILENO 2  // Standard error output.
+#endif
 
 /**
  * @enum WebSocketOpCode

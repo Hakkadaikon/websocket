@@ -1,8 +1,7 @@
 #ifndef NOSTR_LINUX_X86_64_CLOSE_H_
 #define NOSTR_LINUX_X86_64_CLOSE_H_
 
-#include <errno.h>
-
+#include "../errno.h"
 #include "./asm.h"
 
 static inline int linux_x8664_close(const int fd)

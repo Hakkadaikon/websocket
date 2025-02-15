@@ -31,15 +31,15 @@
 #ifdef __APPLE__
 #define websocket_memcpy memcpy
 #else
-static inline void *websocket_memcpy(void *dest, const void *src, size_t size)
+static inline void* websocket_memcpy(void* dest, const void* src, size_t size)
 {
     if (dest == NULL || src == NULL || size == 0) {
         return NULL;
     }
 
-    unsigned char *d = (unsigned char *)dest;
-    const unsigned char *s = (const unsigned char *)src;
-    size_t n = size;
+    unsigned char*       d = (unsigned char*)dest;
+    const unsigned char* s = (const unsigned char*)src;
+    size_t               n = size;
 
     while (n--) {
         *d++ = *s++;
@@ -61,7 +61,7 @@ static inline int websocket_memset(void* s, const int c, const size_t size)
     }
 
     unsigned char* p = (unsigned char*)s;
-    size_t n = size;
+    size_t         n = size;
     while (n--) {
         *p++ = (unsigned char)c;
     }
