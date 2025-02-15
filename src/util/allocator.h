@@ -2,12 +2,14 @@
 #define NOSTR_ALLOCATOR_H_
 
 #include <alloca.h>
-#include <errno.h>
 #include <stddef.h>
 
 #ifdef __APPLE__
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>  // for memset
+#else
+#include "../arch/linux/errno.h"
 #endif
 
 #define ALLOCATE_STACK
@@ -23,19 +25,43 @@
 #undef ALLOCATE_HEAP
 #endif
 
-typedef size_t rsize_t;
-typedef int    errno_t;
+/**
+ * websocket_memcpy
+ */
+#ifdef __APPLE__
+#define websocket_memcpy memcpy
+#else
+static inline void *websocket_memcpy(void *dest, const void *src, size_t size)
+{
+    if (dest == NULL || src == NULL || size == 0) {
+        return NULL;
+    }
 
+    unsigned char *d = (unsigned char *)dest;
+    const unsigned char *s = (const unsigned char *)src;
+    size_t n = size;
+
+    while (n--) {
+        *d++ = *s++;
+    }
+    return dest;
+}
+#endif
+
+/*
+ * websocket_memset
+ */
 #ifdef __APPLE__
 #define websocket_memset memset
 #else
-static inline errno_t websocket_memset(void* s, int c, rsize_t n)
+static inline int websocket_memset(void* s, const int c, const size_t size)
 {
-    if (s == NULL && n != 0) {
+    if (s == NULL && size != 0) {
         return EINVAL;
     }
 
     unsigned char* p = (unsigned char*)s;
+    size_t n = size;
     while (n--) {
         *p++ = (unsigned char)c;
     }
@@ -44,8 +70,10 @@ static inline errno_t websocket_memset(void* s, int c, rsize_t n)
 }
 #endif
 
+/*
+ * websocket_memset_s
+ */
 #ifndef __APPLE__
-#ifndef __STDC_LIB_EXT1__
 /*
  * memset_s: Secure memory set function (wrapper for memset)
  *
@@ -56,7 +84,7 @@ static inline errno_t websocket_memset(void* s, int c, rsize_t n)
  *
  * Note: A compiler barrier is inserted to ensure that the memset call is not optimized away.
  */
-static inline errno_t websocket_memset_s(void* s, rsize_t smax, int c, rsize_t n)
+static inline int websocket_memset_s(void* s, const size_t smax, const int c, const size_t n)
 {
     if (s == NULL && n != 0) {
         return EINVAL;
@@ -85,9 +113,6 @@ static inline errno_t websocket_memset_s(void* s, rsize_t smax, int c, rsize_t n
 
     return 0;
 }
-#else
-#define websocket_memset_s memset_s
-#endif  // __STDC_LIB_EXT1__
 #else
 #define websocket_memset_s memset_s
 #endif  // __APPLE

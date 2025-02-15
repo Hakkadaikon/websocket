@@ -14,9 +14,12 @@
 #include "sha1.h"
 
 #include <stdint.h>
-#include <string.h>
 
+#ifdef __APPLE__
+#include <string.h>
+#else
 #include "../util/allocator.h"
+#endif
 #include "sha1_def.h"
 
 void sha1Transform(uint32_t state[5], const uint8_t buffer[64]);
@@ -45,7 +48,7 @@ void sha1Transform(uint32_t state[5], const uint8_t buffer[64])
     uint32_t     a, b, c, d, e;
     Char64Long16 block[1];  // use array to appear as a pointer
 
-    memcpy(block, buffer, sizeof(Char64Long16));
+    websocket_memcpy(block, buffer, sizeof(Char64Long16));
 
     // Copy context->state[] to working vars
     a = state[0];
@@ -177,7 +180,7 @@ void sha1Update(Sha1Ctx* context, const uint8_t* data, uint32_t len)
     context->count[1] += (len >> 29);
     j = (j >> 3) & 63;
     if ((j + len) > 63) {
-        memcpy(&context->buffer[j], data, (i = 64 - j));
+        websocket_memcpy(&context->buffer[j], data, (i = 64 - j));
         sha1Transform(context->state, context->buffer);
         for (; i + 63 < len; i += 64) {
             sha1Transform(context->state, &data[i]);
@@ -186,7 +189,7 @@ void sha1Update(Sha1Ctx* context, const uint8_t* data, uint32_t len)
     } else {
         i = 0;
     }
-    memcpy(&context->buffer[j], &data[i], len - i);
+    websocket_memcpy(&context->buffer[j], &data[i], len - i);
 }
 
 /**

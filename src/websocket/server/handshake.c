@@ -1,8 +1,7 @@
 #include <stdbool.h>
-#include <string.h>
-
 #include "../../crypto/base64.h"
 #include "../../util/allocator.h"
+#include "../../util/string.h"
 #include "../websocket_local.h"
 
 #define IS_VALID_KEY(value, expected) is_compare_str(value, expected, HTTP_HEADER_KEY_CAPACITY, sizeof(expected), false)
@@ -47,7 +46,7 @@ static inline bool is_valid_version(const char* restrict value)
 
 static inline bool is_valid_websocket_key(const char* restrict value)
 {
-    if (strnlen(value, HTTP_HEADER_VALUE_CAPACITY) < 16) {
+    if (get_str_nlen(value, HTTP_HEADER_VALUE_CAPACITY) < 16) {
         log_error("Invalid websocket request header [Key: Sec-WebSocket-Key] Length is less than 16.\n");
         return false;
     }
@@ -72,7 +71,7 @@ static inline bool is_valid_method(char* value)
 
 static inline bool is_valid_target(char* value)
 {
-    if (strnlen(value, HTTP_TARGET_CAPACITY) <= 0) {
+    if (get_str_nlen(value, HTTP_TARGET_CAPACITY) <= 0) {
         log_error("Invalid websocket request line: target size is 0\n");
         return false;
     }
@@ -171,7 +170,7 @@ static inline char* select_websocket_client_key(PHTTPRequest restrict request)
 {
     for (size_t i = 0; i < request->header_size; i++) {
         PHTTPRequestHeaderLine line = &request->headers[i];
-        if (strcmp(line->key, "Sec-WebSocket-Key") == 0) {
+        if (is_compare_str(line->key, "Sec-WebSocket-Key", sizeof(line->key), 17, false)) {
             return line->value;
         }
     }
@@ -192,7 +191,7 @@ static inline bool build_response_frame(
         "Connection: Upgrade\r\n"
         "Sec-WebSocket-Accept: ";
     const size_t OK_MESSAGE_LEN    = sizeof(OK_MESSAGE) - 1;
-    const size_t ACCEPT_KEY_LEN    = strnlen(accept_key, accept_key_capacity);
+    const size_t ACCEPT_KEY_LEN    = get_str_nlen(accept_key, accept_key_capacity);
     const size_t REQUIRED_CAPACITY = OK_MESSAGE_LEN + ACCEPT_KEY_LEN + 5;
 
     if (capacity <= REQUIRED_CAPACITY) {
@@ -200,13 +199,13 @@ static inline bool build_response_frame(
     }
 
     char* ptr = buffer;
-    memcpy(ptr, OK_MESSAGE, OK_MESSAGE_LEN);
+    websocket_memcpy(ptr, OK_MESSAGE, OK_MESSAGE_LEN);
     ptr += OK_MESSAGE_LEN;
 
-    memcpy(ptr, accept_key, ACCEPT_KEY_LEN);
+    websocket_memcpy(ptr, accept_key, ACCEPT_KEY_LEN);
     ptr += ACCEPT_KEY_LEN;
 
-    memcpy(ptr, "\r\n\r\n", 4);
+    websocket_memcpy(ptr, "\r\n\r\n", 4);
     ptr += 4;
 
     return true;
@@ -250,7 +249,7 @@ bool client_handshake(
             goto FINALIZE;
         }
 
-        size_t response_len = strnlen(buffer->response, buffer->capacity);
+        size_t response_len = get_str_nlen(buffer->response, buffer->capacity);
         if (response_len == 0) {
             has_error = true;
             goto FINALIZE;

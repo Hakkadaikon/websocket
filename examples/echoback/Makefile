@@ -58,6 +58,7 @@ LDFLAGS := -flto -lwsserver
 
 else
 ifeq ($(BUILD), release)
+ifeq ($(OS), Darwin)
 CFLAGS := \
 	-I../../src \
 	-O3 \
@@ -68,6 +69,18 @@ CFLAGS := \
 	-falign-functions \
 	-flto=auto \
 	-DLOG_LEVEL_ERROR
+else
+CFLAGS := \
+	-I../../src \
+	-O3 \
+	-fno-lto \
+	-mtune=native \
+	-ffast-math \
+	-fno-math-errno \
+	-falign-functions \
+	-flto=auto \
+	-DLOG_LEVEL_ERROR
+endif
 
 LDLIBS  := -L../../build/lib
 LDFLAGS := -flto -lwsserver
