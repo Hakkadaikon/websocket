@@ -3,7 +3,7 @@
 
 #include "../../../util/types.h"
 #include "./asm.h"
-#include "./errno.h"
+#include "../errno.h"
 
 static inline ssize_t linux_x8664_write(const int fd, const void* buf, const size_t count)
 {

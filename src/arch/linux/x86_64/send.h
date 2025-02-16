@@ -4,7 +4,7 @@
 #include "../../../util/types.h"
 #include "../sockaddr.h"
 #include "./asm.h"
-#include "./errno.h"
+#include "../errno.h"
 
 static inline ssize_t linux_x8664_sendto(
     const int        sock_fd,
