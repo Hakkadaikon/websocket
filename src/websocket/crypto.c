@@ -10,7 +10,7 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
         return false;
     }
 
-    const char* websocket_accept_guid = "258eafa5-e914-47da-95ca-c5ab0dc85b11";
+    const char* websocket_accept_guid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
     char        concatenated[256];
     bool        has_error = false;
 
@@ -26,7 +26,7 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
     sha1(concatenated, get_str_nlen(concatenated, sizeof(concatenated)), sha1_result);
 
     if (!base64_encode(sha1_result, SHA1_DIGEST_LENGTH, accept_key, accept_key_size)) {
-        has_error = false;
+        has_error = true;
         goto FINALIZE;
     }
 
