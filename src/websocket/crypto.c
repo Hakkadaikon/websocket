@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "../crypto/base64.h"
 #include "../crypto/sha1.h"
 #include "../util/allocator.h"
@@ -12,12 +10,16 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
         return false;
     }
 
-    const char* websocket_accept_guid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+    const char* websocket_accept_guid = "258eafa5-e914-47da-95ca-c5ab0dc85b11";
     char        concatenated[256];
     bool        has_error = false;
 
-    // TODO: snprintf consumes a lot of stack space, so switch to a different algorithm.
-    snprintf(concatenated, sizeof(concatenated), "%s%s", client_key, websocket_accept_guid);
+    size_t client_key_size = get_str_len(client_key);
+    size_t guid_size       = get_str_len(client_key);
+
+    websocket_memcpy(concatenated, client_key, client_key_size);
+    websocket_memcpy(concatenated + client_key_size, websocket_accept_guid, guid_size);
+    concatenated[client_key_size + guid_size] = '\0';
 
     uint8_t sha1_result[SHA1_DIGEST_LENGTH];
     websocket_memset(sha1_result, 0x00, sizeof(sha1_result));
