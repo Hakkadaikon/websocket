@@ -15,7 +15,7 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
     bool        has_error = false;
 
     size_t client_key_size = get_str_len(client_key);
-    size_t guid_size       = get_str_len(client_key);
+    size_t guid_size       = get_str_len(websocket_accept_guid);
 
     websocket_memcpy(concatenated, client_key, client_key_size);
     websocket_memcpy(concatenated + client_key_size, websocket_accept_guid, guid_size);
