@@ -2,10 +2,11 @@
 #define NOSTR_ALLOCATOR_H_
 
 #include <alloca.h>
-#include <stddef.h>
 
+#include "./types.h"
 #ifdef __APPLE__
 #include <errno.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>  // for memset
 #else

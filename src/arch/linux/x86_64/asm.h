@@ -1,5 +1,5 @@
-#ifndef NOSTR_ASM_H_
-#define NOSTR_ASM_H_
+#ifndef NOSTR_LINUX_X86_64_ASM_H_
+#define NOSTR_LINUX_X86_64_ASM_H_
 
 #define __NR_read 0
 #define __NR_write 1

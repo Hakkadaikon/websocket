@@ -1,8 +1,6 @@
 #ifndef NOSTR_LINUX_X86_64_ACCEPT_H_
 #define NOSTR_LINUX_X86_64_ACCEPT_H_
 
-#include <stdint.h>
-
 #include "../errno.h"
 #include "../sockaddr.h"
 #include "./asm.h"

@@ -1,5 +1,5 @@
-#ifndef NOSTR_SOCKADDR_H_
-#define NOSTR_SOCKADDR_H_
+#ifndef NOSTR_LINUX_SOCKADDR_H_
+#define NOSTR_LINUX_SOCKADDR_H_
 
 #include <stdint.h>
 

@@ -1,5 +1,5 @@
-#ifndef NOSTR_LINUX_X86_64_OPTIMIZE_RECV_H_
-#define NOSTR_LINUX_X86_64_OPTIMIZE_RECV_H_
+#ifndef NOSTR_LINUX_X86_64_RECV_H_
+#define NOSTR_LINUX_X86_64_RECV_H_
 
 #include "../errno.h"
 #include "../sockaddr.h"

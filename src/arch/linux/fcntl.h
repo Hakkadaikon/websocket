@@ -1,5 +1,5 @@
-#ifndef NOSTR_FCNTL_H_
-#define NOSTR_FCNTL_H_
+#ifndef NOSTR_LINUX_FCNTL_H_
+#define NOSTR_LINUX_FCNTL_H_
 
 #define O_ACCMODE 0003
 #define O_RDONLY 00

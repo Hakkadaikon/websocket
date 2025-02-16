@@ -1,12 +1,10 @@
-#ifndef NOSTR_LINUX_X86_64_OPTIMIZE_SEND_H_
-#define NOSTR_LINUX_X86_64_OPTIMIZE_SEND_H_
+#ifndef NOSTR_LINUX_X86_64_SEND_H_
+#define NOSTR_LINUX_X86_64_SEND_H_
 
+#include "../../../util/types.h"
 #include "../sockaddr.h"
 #include "./asm.h"
 #include "./errno.h"
-
-typedef unsigned long size_t;
-typedef long          ssize_t;
 
 static inline ssize_t linux_x8664_sendto(
     const int        sock_fd,

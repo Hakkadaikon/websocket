@@ -1,10 +1,8 @@
 #ifndef NOSTR_HTTP_H_
 #define NOSTR_HTTP_H_
 
-#include <stdbool.h>
-#include <stddef.h>
-
 #include "../util/allocator.h"
+#include "../util/types.h"
 
 enum {
     HTTP_METHOD_CAPACITY       = 16,

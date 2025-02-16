@@ -1,3 +1,6 @@
+#ifndef NOSTR_LINUX_X86_64_EPOLL_H_
+#define NOSTR_LINUX_X86_64_EPOLL_H_
+
 #include "../epoll.h"
 #include "../errno.h"
 #include "./asm.h"
@@ -65,3 +68,5 @@ static inline long linux_x8664_epoll_wait(
     }
     return ret;
 }
+
+#endif

@@ -1,6 +1,4 @@
-#include <stdbool.h>
-#include <unistd.h>
-
+#include "../arch/write.h"
 #include "../websocket/websocket.h"
 #include "./string.h"
 
@@ -53,7 +51,7 @@ static inline void hex_dump_char(char c)
     buf[1] = hex_digits[uc % 16];
     buf[2] = ' ';
 
-    write(STDOUT_FILENO, buf, 3);
+    internal_write(STDOUT_FILENO, buf, 3);
 }
 
 void hex_dump_local(const void* restrict data, size_t size)
@@ -64,12 +62,12 @@ void hex_dump_local(const void* restrict data, size_t size)
         hex_dump_char(byte_data[i]);
 
         if ((i + 1) % 16 == 0) {
-            write(STDOUT_FILENO, "\n", 1);
+            internal_write(STDOUT_FILENO, "\n", 1);
         }
     }
 
     if (size % 16 != 0) {
-        write(STDOUT_FILENO, "\n", 1);
+        internal_write(STDOUT_FILENO, "\n", 1);
     }
 }
 
@@ -84,7 +82,7 @@ void log_dump_local(const int fd, const char* restrict str)
         return;
     }
 
-    (void)write(fd, str, len);
+    (void)internal_write(fd, str, len);
 }
 
 void var_dump_local(const int fd, const char* restrict str, const int value)
@@ -98,14 +96,14 @@ void var_dump_local(const int fd, const char* restrict str, const int value)
         return;
     }
 
-    (void)write(fd, str, len);
+    (void)internal_write(fd, str, len);
 
     char   buffer[32];
     size_t buffer_size      = safe_itoa(value, buffer, sizeof(buffer));
     buffer[buffer_size]     = '\n';
     buffer[buffer_size + 1] = '\0';
 
-    (void)write(fd, buffer, buffer_size + 1);
+    (void)internal_write(fd, buffer, buffer_size + 1);
 }
 
 void str_dump_local(const int fd, const char* restrict str, const char* restrict value)

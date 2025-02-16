@@ -1,7 +1,6 @@
 #ifndef NOSTR_BASE64_H_
 #define NOSTR_BASE64_H_
 
-#include <stdbool.h>
 #include <stdint.h>
 
 #include "../util/string.h"

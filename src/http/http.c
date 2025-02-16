@@ -1,9 +1,5 @@
 #include "http.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-
-#include "../util/allocator.h"
 #include "../util/string.h"
 
 static inline size_t extract_keyword(

@@ -1,5 +1,5 @@
-#ifndef NOSTR_EPOLL_H_
-#define NOSTR_EPOLL_H_
+#ifndef NOSTR_LINUX_EPOLL_H_
+#define NOSTR_LINUX_EPOLL_H_
 
 #include <stdint.h>
 

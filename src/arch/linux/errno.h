@@ -1,5 +1,5 @@
-#ifndef NOSTR_ERRNO_H_
-#define NOSTR_ERRNO_H_
+#ifndef NOSTR_LINUX_ERRNO_H_
+#define NOSTR_LINUX_ERRNO_H_
 
 extern int errno;
 
