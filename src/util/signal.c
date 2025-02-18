@@ -1,28 +1,46 @@
-#include "signal.h"
+#include "./signal.h"
 
-#include <signal.h>
-#include <stdatomic.h>
-#include <stdbool.h>
+#include "../arch/sigaction.h"
+//#include <signal.h>
+#include <stdio.h>
 
-_Atomic static bool rise_signal = false;
+#include "./string.h"
+#include "allocator.h"
 
+static bool rise_signal = false;
+
+static void signal_action(int signum, siginfo_t* info, void* context);
 static void signal_handler(int signum);
 bool        is_rise_signal();
-void        signal_init();
+bool        signal_init();
 
-void signal_init()
+bool signal_init()
 {
     struct sigaction sa;
-    sa.sa_handler = signal_handler;
-    sa.sa_flags   = 0;
-    sigemptyset(&sa.sa_mask);
+    websocket_memset_s(&sa, sizeof(sa), 0x00, sizeof(sa));
+    //sa.sa_handler = signal_handler;
+    sa.sa_sigaction = signal_action;
+    internal_sigemptyset(&sa.sa_mask);
 
-    sigaction(SIGHUP, &sa, (void*)0);
-    sigaction(SIGINT, &sa, (void*)0);
-    sigaction(SIGTERM, &sa, (void*)0);
+    int signals[] = {SIGHUP, SIGINT, SIGTERM};
+
+    for (int i = 0; i < (sizeof(signals) / sizeof(signals[0])); i++) {
+        if (internal_sigaction(signals[i], &sa, (void*)0) == -1) {
+            printf("sig errno: %s\n", strerror(errno));
+            fflush(stdout);
+            return false;
+        }
+    }
+
+    return true;
 }
 
 static void signal_handler(int signum)
+{
+    rise_signal = true;
+}
+
+static void signal_action(int signum, siginfo_t* info, void* context)
 {
     rise_signal = true;
 }

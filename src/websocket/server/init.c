@@ -6,7 +6,9 @@ int websocket_server_init(const PWebSocketInitArgs args)
     var_info("port    : ", args->port_num);
     var_info("backlog : ", args->backlog);
 
-    signal_init();
+    if (!signal_init()) {
+        return WEBSOCKET_ERRORCODE_FATAL_ERROR;
+    }
 
     int server_sock = websocket_listen(args->port_num, args->backlog);
     if (server_sock < 0) {

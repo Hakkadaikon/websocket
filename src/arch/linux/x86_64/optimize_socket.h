@@ -13,7 +13,10 @@ static inline int linux_x8664_fcntl(const int fd, const int cmd, const long arg)
     __asm__ volatile(
         "syscall"
         : "=a"(ret)
-        : "0"(__NR_fcntl), "D"(fd), "S"(cmd), "d"(arg)
+        : "0"(__NR_fcntl),
+          "D"(fd),
+          "S"(cmd),
+          "d"(arg)
         : "rcx", "r11", "memory");
     if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;

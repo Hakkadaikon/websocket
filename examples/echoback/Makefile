@@ -50,6 +50,7 @@ CFLAGS := \
 	-O0 \
 	-static-libasan \
 	-g \
+	-fPIC \
 	-DLOG_LEVEL_DEBUG
 endif
 
@@ -79,6 +80,7 @@ CFLAGS := \
 	-fno-math-errno \
 	-falign-functions \
 	-flto=auto \
+	-fPIC \
 	-DLOG_LEVEL_ERROR
 endif
 

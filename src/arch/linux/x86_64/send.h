@@ -2,9 +2,9 @@
 #define NOSTR_LINUX_X86_64_SEND_H_
 
 #include "../../../util/types.h"
+#include "../errno.h"
 #include "../sockaddr.h"
 #include "./asm.h"
-#include "../errno.h"
 
 static inline ssize_t linux_x8664_sendto(
     const int        sock_fd,

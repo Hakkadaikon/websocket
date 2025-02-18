@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 project(wsserver C)
+enable_language(ASM)
 
 # Set a default build type if not specified (for single-config generators)
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -8,9 +9,11 @@ endif()
 
 # Collect all .c files from the src directory and its subdirectories
 file(GLOB_RECURSE SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
+# Collect all assembly files (*.S) from the src directory and its subdirectories
+file(GLOB_RECURSE ASM_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.S")
 
-# Create the static library target
-add_library(wsserver STATIC ${SRC_FILES})
+# Create the static library target including C and assembly files
+add_library(wsserver STATIC ${SRC_FILES} ${ASM_FILES})
 
 # Set the output directory for the static library to the "lib" folder in the build directory
 set_target_properties(wsserver PROPERTIES
