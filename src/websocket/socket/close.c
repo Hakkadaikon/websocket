@@ -1,11 +1,6 @@
 #include "../../arch/close.h"
 
 #include "../websocket_local.h"
-#ifdef __APPLE__
-#include <string.h>
-#else
-#include "../../arch/linux/errno.h"
-#endif
 
 int websocket_close(const int sock_fd)
 {

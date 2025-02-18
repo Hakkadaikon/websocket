@@ -1,11 +1,6 @@
 #include "../../arch/send.h"
 
 #include "../websocket_local.h"
-#ifdef __APPLE__
-#include <string.h>
-#else
-#include "../../arch/linux/errno.h"
-#endif
 
 int websocket_send(const int sock_fd, const size_t buffer_size, const char* restrict buffer)
 {

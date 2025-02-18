@@ -4,11 +4,6 @@
 
 #include "../websocket_local.h"
 #include "./optimize_socket.h"
-#ifdef __APPLE__
-#include <string.h>
-#else
-#include "../../arch/linux/errno.h"
-#endif
 
 bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event)
 {
