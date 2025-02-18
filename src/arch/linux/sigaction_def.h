@@ -3,58 +3,17 @@
 
 #include <stdint.h>
 
-typedef struct {
-    uint64_t sig[16];
-} sigset_t;
-
-typedef struct siginfo {
-    int si_signo;  // Signal number
-    int si_errno;  // An errno value
-    int si_code;   // Signal code
-    union {
-        // For signals like SIGCHLD
-        struct {
-            int  si_pid;     // Sending process ID
-            int  si_uid;     // Real user ID of sending process
-            int  si_status;  // Exit value or signal
-            long si_utime;   // User time consumed
-            long si_stime;   // System time consumed
-        } _sigchld;
-        // For signals like SIGILL, SIGFPE, SIGSEGV, SIGBUS
-        struct {
-            void* si_addr;  // Faulting instruction/memory reference
-        } _sigfault;
-        // For signals like SIGPOLL, SIGIO
-        struct {
-            long si_band;  // Band event
-            int  si_fd;    // File descriptor
-        } _sigpoll;
-        // Other cases: pad the structure
-        int _pad[(128 / sizeof(int)) - 3];
-    } _sifields;
-} siginfo_t;
-
-typedef void             sigactionfunc_t(int, siginfo_t*, void*);
-typedef void             signalfunc_t(int);
-typedef void             restorefunc_t(void);
-typedef signalfunc_t*    sighandler_t;
-typedef restorefunc_t*   sigrestore_t;
-typedef sigactionfunc_t* sigaction_t;
+typedef unsigned long  sigset_t;
+typedef void           signalfunc_t(int);
+typedef void           restorefunc_t(void);
+typedef signalfunc_t*  sighandler_t;
+typedef restorefunc_t* sigrestore_t;
 
 struct sigaction {
-#if defined __USE_POSIX199309 || defined __USE_XOPEN_EXTENDED
-    union {
-        sighandler_t sa_handler;
-        sigaction_t  sa_sigaction;
-    } sigaction_handler;
-#define sa_handler sigaction_handler.sa_handler
-#define sa_sigaction sigaction_handler.sa_sigaction
-#else
-    sighandler_t sa_handler;
-#endif
-    sigset_t     sa_mask;
-    int          sa_flags;
-    sigrestore_t sa_restorer;
+    sighandler_t  sa_handler;
+    unsigned long sa_flags;
+    sigrestore_t  sa_restorer;
+    sigset_t      sa_mask;
 };
 
 #ifndef SA_RESTORER
