@@ -2,6 +2,8 @@
 
 #include "../arch/sigaction.h"
 //#include <signal.h>
+//
+// TODO: debug print
 #include <stdio.h>
 
 #include "./string.h"
@@ -26,6 +28,7 @@ bool signal_init()
 
     for (int i = 0; i < (sizeof(signals) / sizeof(signals[0])); i++) {
         if (internal_sigaction(signals[i], &sa, (void*)0) == -1) {
+            //TODO: debug print
             printf("sig errno: %s\n", strerror(errno));
             fflush(stdout);
             return false;
