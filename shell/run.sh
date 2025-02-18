@@ -35,8 +35,8 @@ case "$1" in
   debug)
     wsDebugBuild
     echo "debug run"
-    gdb --args ${ECHOBACK_SERVER_BIN_PATH}
-    #${ECHOBACK_SERVER_BIN_PATH}
+    #gdb --args ${ECHOBACK_SERVER_BIN_PATH}
+    ${ECHOBACK_SERVER_BIN_PATH}
     ;;
   release)
     wsReleaseBuild
