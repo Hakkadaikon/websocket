@@ -14,6 +14,7 @@ file(GLOB_RECURSE ASM_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.S")
 
 # Create the static library target including C and assembly files
 add_library(wsserver STATIC ${SRC_FILES} ${ASM_FILES})
+add_library(wsserver_shared SHARED ${SRC_FILES} ${ASM_FILES})
 
 # Set the output directory for the static library to the "lib" folder in the build directory
 set_target_properties(wsserver PROPERTIES
