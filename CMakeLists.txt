@@ -35,7 +35,6 @@ endif()
 target_compile_options(wsserver PRIVATE
   $<$<CONFIG:Debug>:${DEBUG_COMPILE_OPTIONS}>
   $<$<CONFIG:Release>:-O3>
-  $<$<CONFIG:Release>:-fno-lto>
   $<$<CONFIG:Release>:-mtune=native>
   $<$<CONFIG:Release>:-ffast-math>
   $<$<CONFIG:Release>:-fno-math-errno>
