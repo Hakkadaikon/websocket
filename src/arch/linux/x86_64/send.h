@@ -14,22 +14,15 @@ static inline ssize_t linux_x8664_sendto(
     struct sockaddr* dest_addr,
     const socklen_t  addrlen)
 {
-    long               ret;
-    register int       r10_asm asm("r10") = flags;
-    register void*     r8_asm asm("r8")   = dest_addr;
-    register socklen_t r9_asm asm("r9")   = addrlen;
+    long ret = linux_x8664_asm_syscall6(
+        __NR_sendto,
+        sock_fd,
+        buf,
+        len,
+        flags,
+        dest_addr,
+        addrlen);
 
-    __asm__ volatile(
-        "syscall"
-        : "=a"(ret)
-        : "0"(__NR_sendto),
-          "D"(sock_fd),
-          "S"(buf),
-          "d"(len),
-          "r"(r10_asm),
-          "r"(r8_asm),
-          "r"(r9_asm)
-        : "rcx", "r11", "memory");
     if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;
         ret   = -1;

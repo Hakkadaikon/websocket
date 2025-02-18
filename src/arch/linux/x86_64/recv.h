@@ -1,12 +1,10 @@
 #ifndef NOSTR_LINUX_X86_64_RECV_H_
 #define NOSTR_LINUX_X86_64_RECV_H_
 
+#include "../../../util/types.h"
 #include "../errno.h"
 #include "../sockaddr.h"
 #include "./asm.h"
-
-typedef unsigned long size_t;
-typedef long          ssize_t;
 
 static inline ssize_t linux_x8664_recvfrom(
     const int        sock_fd,
@@ -16,22 +14,15 @@ static inline ssize_t linux_x8664_recvfrom(
     struct sockaddr* src_addr,
     socklen_t*       addrlen)
 {
-    long           ret;
-    register int   r10_asm asm("r10") = flags;
-    register void* r8_asm asm("r8")   = src_addr;
-    register void* r9_asm asm("r9")   = addrlen;
+    long ret = linux_x8664_asm_syscall6(
+        __NR_recvfrom,
+        sock_fd,
+        buf,
+        len,
+        flags,
+        src_addr,
+        addrlen);
 
-    __asm__ volatile(
-        "syscall"
-        : "=a"(ret)
-        : "0"(__NR_recvfrom),
-          "D"(sock_fd),
-          "S"(buf),
-          "d"(len),
-          "r"(r10_asm),
-          "r"(r8_asm),
-          "r"(r9_asm)
-        : "rcx", "r11", "memory");
     if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;
         ret   = -1;

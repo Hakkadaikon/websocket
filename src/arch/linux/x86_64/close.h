@@ -6,13 +6,10 @@
 
 static inline int linux_x8664_close(const int fd)
 {
-    long ret;
-    __asm__ volatile(
-        "syscall"
-        : "=a"(ret)
-        : "0"(__NR_close),
-          "D"(fd)
-        : "rcx", "r11", "memory");
+    long ret = linux_x8664_asm_syscall1(
+        __NR_close,
+        fd);
+
     if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;
         ret   = -1;

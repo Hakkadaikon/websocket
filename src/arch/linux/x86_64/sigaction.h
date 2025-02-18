@@ -8,13 +8,18 @@
 #include "asm.h"
 
 extern void linux_x8664_restore_rt(void);
-extern int  linux_x8664_assembly_sigaction(const int signum, struct sigaction* act, struct sigaction* oldact, size_t sigsetsize);
-static int  linux_x8664_sigaction(const int signum, struct sigaction* act, struct sigaction* oldact)
+
+static int linux_x8664_sigaction(const int signum, struct sigaction* act, struct sigaction* oldact)
 {
     act->sa_flags |= SA_RESTORER;
     act->sa_restorer = &linux_x8664_restore_rt;
 
-    long ret = linux_x8664_assembly_sigaction(signum, act, oldact, sizeof(act->sa_mask));
+    long ret = linux_x8664_asm_syscall4(
+        __NR_rt_sigaction,
+        signum,
+        act,
+        oldact,
+        sizeof(act->sa_mask));
 
     if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;

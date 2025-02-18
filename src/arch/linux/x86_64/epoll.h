@@ -11,17 +11,13 @@ static inline long linux_x8664_epoll_ctl(
     const int            fd,
     PWebSocketEpollEvent event)
 {
-    long           ret;
-    register void* r10_asm asm("r10") = event;
-    __asm__ volatile(
-        "syscall"
-        : "=a"(ret)
-        : "0"(__NR_epoll_ctl),
-          "D"(epoll_fd),
-          "S"(op),
-          "d"(fd),
-          "r"(r10_asm)
-        : "rcx", "r11", "memory");
+    long ret = linux_x8664_asm_syscall4(
+        __NR_epoll_ctl,
+        epoll_fd,
+        op,
+        fd,
+        event);
+
     if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;
         ret   = -1;
@@ -31,13 +27,10 @@ static inline long linux_x8664_epoll_ctl(
 
 static inline long linux_x8664_epoll_create1(const int flags)
 {
-    long ret;
-    __asm__ volatile(
-        "syscall"
-        : "=a"(ret)
-        : "0"(__NR_epoll_create1),
-          "D"(flags)
-        : "rcx", "r11", "memory");
+    long ret = linux_x8664_asm_syscall1(
+        __NR_epoll_create1,
+        flags);
+
     if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;
         ret   = -1;
@@ -51,17 +44,13 @@ static inline long linux_x8664_epoll_wait(
     const int            maxevents,
     const int            timeout)
 {
-    long         ret;
-    register int r10 asm("r10") = timeout;
-    __asm__ volatile(
-        "syscall"
-        : "=a"(ret)
-        : "0"(__NR_epoll_wait),
-          "D"(epfd),
-          "S"(events),
-          "d"(maxevents),
-          "r"(r10)
-        : "rcx", "r11", "memory");
+    long ret = linux_x8664_asm_syscall4(
+        __NR_epoll_wait,
+        epfd,
+        events,
+        maxevents,
+        timeout);
+
     if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;
         ret   = -1;

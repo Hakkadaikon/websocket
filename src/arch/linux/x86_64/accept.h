@@ -7,17 +7,13 @@
 
 static inline int linux_x8664_accept4(const int sock_fd, const struct sockaddr* addr, const socklen_t* addrlen, const int flags)
 {
-    long         ret;
-    register int r10_asm asm("r10") = flags;
-    __asm__ volatile(
-        "syscall"
-        : "=a"(ret)
-        : "0"(__NR_accept4),
-          "D"(sock_fd),
-          "S"(addr),
-          "d"(addrlen),
-          "r"(r10_asm)
-        : "rcx", "r11", "memory");
+    long ret = linux_x8664_asm_syscall4(
+        __NR_accept4,
+        sock_fd,
+        addr,
+        addrlen,
+        flags);
+
     if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;
         ret   = -1;

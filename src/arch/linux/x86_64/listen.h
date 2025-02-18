@@ -5,15 +5,12 @@
 
 static inline int linux_x8664_socket(const int domain, const int type, const int protocol)
 {
-    long ret;
-    __asm__ volatile(
-        "syscall"
-        : "=a"(ret)
-        : "0"(__NR_socket),
-          "D"(domain),
-          "S"(type),
-          "d"(protocol)
-        : "rcx", "r11", "memory");
+    long ret = linux_x8664_asm_syscall3(
+        __NR_socket,
+        domain,
+        type,
+        protocol);
+
     if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;
         ret   = -1;
@@ -23,15 +20,12 @@ static inline int linux_x8664_socket(const int domain, const int type, const int
 
 static inline int linux_x8664_bind(const int sockfd, const struct sockaddr* addr, const socklen_t addrlen)
 {
-    long ret;
-    __asm__ volatile(
-        "syscall"
-        : "=a"(ret)
-        : "0"(__NR_bind),
-          "D"(sockfd),
-          "S"(addr),
-          "d"(addrlen)
-        : "rcx", "r11", "memory");
+    long ret = linux_x8664_asm_syscall3(
+        __NR_bind,
+        sockfd,
+        addr,
+        addrlen);
+
     if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;
         ret   = -1;
@@ -41,12 +35,11 @@ static inline int linux_x8664_bind(const int sockfd, const struct sockaddr* addr
 
 static inline int linux_x8664_listen(const int sockfd, const int backlog)
 {
-    long ret;
-    __asm__ volatile(
-        "syscall"
-        : "=a"(ret)
-        : "0"(__NR_listen), "D"(sockfd), "S"(backlog)
-        : "rcx", "r11", "memory");
+    long ret = linux_x8664_asm_syscall2(
+        __NR_listen,
+        sockfd,
+        backlog);
+
     if ((unsigned long)ret >= (unsigned long)-4095) {
         errno = -ret;
         ret   = -1;
