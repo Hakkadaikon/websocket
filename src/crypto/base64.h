@@ -43,8 +43,8 @@ static inline bool base64_encode(const uint8_t* input, const size_t input_length
         output[output_offset + 3] = base64_chars[base64_out_char_index(marge, 3)];
     }
 
-    int input_length_mod = input_length % base64_input_block_size;
-    int padding_count    = (input_length_mod) ? (base64_input_block_size - input_length_mod) : 0;
+    int32_t input_length_mod = input_length % base64_input_block_size;
+    int32_t padding_count    = (input_length_mod) ? (base64_input_block_size - input_length_mod) : 0;
     for (size_t i = 1; i <= padding_count; i++) {
         output[output_offset - i] = base64_padding_char;
     }

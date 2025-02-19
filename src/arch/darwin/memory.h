@@ -3,12 +3,14 @@
 
 #include <string.h>
 
+#include "../../util/types.h"
+
 static inline void* darwin_memcpy(void* dest, const void* src, size_t size)
 {
     return memcpy(dest, src, size);
 }
 
-static inline void* darwin_memset(void* s, const int c, const size_t size)
+static inline void* darwin_memset(void* s, const int32_t c, const size_t size)
 {
     return memset(s, c, size);
 }

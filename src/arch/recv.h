@@ -8,7 +8,7 @@
 #endif
 
 static inline ssize_t internal_recvfrom(
-    const int        sock_fd,
+    const int32_t    sock_fd,
     void*            buf,
     const size_t     len,
     const int        flags,

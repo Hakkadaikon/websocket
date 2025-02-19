@@ -38,7 +38,7 @@ static inline void* websocket_memcpy(void* dest, const void* src, size_t size)
 /*
  * websocket_memset
  */
-static inline void* websocket_memset(void* s, const int c, const size_t size)
+static inline void* websocket_memset(void* s, const int32_t c, const size_t size)
 {
     return internal_memset(s, c, size);
 }
@@ -46,7 +46,7 @@ static inline void* websocket_memset(void* s, const int c, const size_t size)
 /*
  * websocket_memset_s
  */
-static inline int websocket_memset_s(void* s, const size_t smax, const int c, const size_t n)
+static inline int32_t websocket_memset_s(void* s, const size_t smax, const int32_t c, const size_t n)
 {
     return internal_memset_s(s, smax, c, n);
 }

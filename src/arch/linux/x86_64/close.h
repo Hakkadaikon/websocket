@@ -4,7 +4,7 @@
 #include "../errno.h"
 #include "./asm.h"
 
-static inline int linux_x8664_close(const int fd)
+static inline int32_t linux_x8664_close(const int fd)
 {
     long ret = linux_x8664_asm_syscall1(
         __NR_close,

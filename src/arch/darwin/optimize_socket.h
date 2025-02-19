@@ -5,15 +5,17 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 
-static inline int darwin_fcntl(const int fd, const int cmd, const long arg)
+#include "../../util/types.h"
+
+static inline int32_t darwin_fcntl(const int32_t fd, const int32_t cmd, const long arg)
 {
     return fcntl(fd, cmd, arg);
 }
 
-static inline int darwin_setsockopt(
-    const int       sock_fd,
-    const int       level,
-    const int       optname,
+static inline int32_t darwin_setsockopt(
+    const int32_t   sock_fd,
+    const int32_t   level,
+    const int32_t   optname,
     const void*     optval,
     const socklen_t optlen)
 {

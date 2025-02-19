@@ -2,13 +2,14 @@
 #define NOSTR_DARWIN_RECV_H_
 
 #include <sys/socket.h>
-#include <sys/types.h>
+
+#include "../../util/types.h"
 
 static inline ssize_t darwin_recvfrom(
-    const int        sock_fd,
+    const int32_t    sock_fd,
     void*            buf,
     const size_t     len,
-    const int        flags,
+    const int32_t    flags,
     struct sockaddr* src_addr,
     socklen_t*       addr_len)
 {

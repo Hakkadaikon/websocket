@@ -3,16 +3,18 @@
 #include <errno.h>
 #include <netinet/in.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 #include <sys/event.h>
 #include <sys/syscall.h>
 #include <time.h>
 
 #include "../../util/signal.h"
+#include "../../util/types.h"
 #include "../../websocket/websocket_local.h"
 #include "./epoll.h"
 
-bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event)
+bool websocket_epoll_add(const int32_t epoll_fd, const int32_t sock_fd, PWebSocketEpollEvent event)
 {
     EV_SET(event, sock_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 
@@ -35,7 +37,7 @@ bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollE
     return true;
 }
 
-bool websocket_epoll_del(const int epoll_fd, const int sock_fd)
+bool websocket_epoll_del(const int32_t epoll_fd, const int32_t sock_fd)
 {
     struct kevent event;
     EV_SET(&event, sock_fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
@@ -48,9 +50,9 @@ bool websocket_epoll_del(const int epoll_fd, const int sock_fd)
     return true;
 }
 
-int websocket_epoll_create()
+int32_t websocket_epoll_create()
 {
-    int epoll_fd = kqueue();
+    int32_t epoll_fd = kqueue();
     if (epoll_fd == -1) {
         str_error("Failed to kqueue(). reason : ", strerror(errno));
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
@@ -59,7 +61,7 @@ int websocket_epoll_create()
     return epoll_fd;
 }
 
-int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const int max_events)
+int32_t websocket_epoll_wait(const int32_t epoll_fd, PWebSocketEpollEvent events, const int32_t max_events)
 {
     if (is_rise_signal()) {
         log_info("A signal was raised during kevent(). The system will abort processing.\n");
@@ -67,7 +69,7 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const 
     }
 
     struct timespec timeout      = {0, 0};  // Non-blocking
-    int             num_of_event = kevent(epoll_fd, NULL, 0, events, max_events, &timeout);
+    int32_t         num_of_event = kevent(epoll_fd, NULL, 0, events, max_events, &timeout);
 
     if (num_of_event < 0) {
         if (errno == EINTR || errno == EAGAIN) {
@@ -82,12 +84,12 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const 
     return num_of_event;
 }
 
-int websocket_epoll_getfd(PWebSocketEpollEvent event)
+int32_t websocket_epoll_getfd(PWebSocketEpollEvent event)
 {
     return event->ident;
 }
 
-int websocket_epoll_rise_error(PWebSocketEpollEvent event)
+int32_t websocket_epoll_rise_error(PWebSocketEpollEvent event)
 {
     if (event->flags & EV_ERROR) {
         str_error("EV_ERROR : ", strerror((int)event->data));
@@ -97,7 +99,7 @@ int websocket_epoll_rise_error(PWebSocketEpollEvent event)
     return WEBSOCKET_ERRORCODE_NONE;
 }
 
-int websocket_epoll_rise_input(PWebSocketEpollEvent event)
+int32_t websocket_epoll_rise_input(PWebSocketEpollEvent event)
 {
     if (!(event->filter | EVFILT_READ)) {
         return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;

@@ -13,9 +13,9 @@
 #endif
 #endif
 
-int websocket_listen(const int port_num, const int backlog)
+int32_t websocket_listen(const int32_t port_num, const int32_t backlog)
 {
-    int                server_sock;
+    int32_t            server_sock;
     struct sockaddr_in server_addr;
 
     server_sock = internal_socket(AF_INET, SOCK_STREAM, 0);

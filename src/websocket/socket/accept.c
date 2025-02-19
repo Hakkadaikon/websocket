@@ -3,7 +3,7 @@
 #include "../websocket_local.h"
 #include "./optimize_socket.h"
 
-int websocket_accept(const int sock_fd)
+int32_t websocket_accept(const int32_t sock_fd)
 {
     struct sockaddr_in client_addr;
     socklen_t          addr_len = sizeof(client_addr);

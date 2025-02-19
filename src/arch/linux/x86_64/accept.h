@@ -5,7 +5,7 @@
 #include "../sockaddr.h"
 #include "./asm.h"
 
-static inline int linux_x8664_accept4(const int sock_fd, const struct sockaddr* addr, const socklen_t* addrlen, const int flags)
+static inline int32_t linux_x8664_accept4(const int32_t sock_fd, const struct sockaddr* addr, const socklen_t* addrlen, const int32_t flags)
 {
     long ret = linux_x8664_asm_syscall4(
         __NR_accept4,

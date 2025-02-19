@@ -6,9 +6,9 @@
 #include "./asm.h"
 
 static inline long linux_x8664_epoll_ctl(
-    const int            epoll_fd,
-    const int            op,
-    const int            fd,
+    const int32_t        epoll_fd,
+    const int32_t        op,
+    const int32_t        fd,
     PWebSocketEpollEvent event)
 {
     long ret = linux_x8664_asm_syscall4(
@@ -25,7 +25,7 @@ static inline long linux_x8664_epoll_ctl(
     return ret;
 }
 
-static inline long linux_x8664_epoll_create1(const int flags)
+static inline long linux_x8664_epoll_create1(const int32_t flags)
 {
     long ret = linux_x8664_asm_syscall1(
         __NR_epoll_create1,
@@ -39,10 +39,10 @@ static inline long linux_x8664_epoll_create1(const int flags)
 }
 
 static inline long linux_x8664_epoll_wait(
-    const int            epfd,
+    const int32_t        epfd,
     PWebSocketEpollEvent events,
-    const int            maxevents,
-    const int            timeout)
+    const int32_t        maxevents,
+    const int32_t        timeout)
 {
     long ret = linux_x8664_asm_syscall4(
         __NR_epoll_wait,

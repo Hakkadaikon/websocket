@@ -4,7 +4,7 @@
 #include "../../util/types.h"
 
 typedef unsigned long  sigset_t;
-typedef void           signalfunc_t(int);
+typedef void           signalfunc_t(int32_t);
 typedef void           restorefunc_t(void);
 typedef signalfunc_t*  sighandler_t;
 typedef restorefunc_t* sigrestore_t;

@@ -7,7 +7,7 @@
 #include "../sockoption.h"
 #include "./asm.h"
 
-static inline int linux_x8664_fcntl(const int fd, const int cmd, const long arg)
+static inline int32_t linux_x8664_fcntl(const int32_t fd, const int32_t cmd, const long arg)
 {
     long ret = linux_x8664_asm_syscall3(
         __NR_fcntl,
@@ -22,10 +22,10 @@ static inline int linux_x8664_fcntl(const int fd, const int cmd, const long arg)
     return ret;
 }
 
-static inline int linux_x8664_setsockopt(
-    const int       sockfd,
-    const int       level,
-    const int       optname,
+static inline int32_t linux_x8664_setsockopt(
+    const int32_t   sockfd,
+    const int32_t   level,
+    const int32_t   optname,
     const void*     optval,
     const socklen_t optlen)
 {

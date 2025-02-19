@@ -1,7 +1,9 @@
 #ifndef NOSTR_LINUX_X86_64_ASM_H_
 #define NOSTR_LINUX_X86_64_ASM_H_
 
-extern int linux_x8664_asm_syscall(
+#include "../../../util/types.h"
+
+extern int32_t linux_x8664_asm_syscall(
     long syscall_num,
     long arg1,
     long arg2,

@@ -3,7 +3,9 @@
 
 #include <unistd.h>
 
-static inline int darwin_close(int fd)
+#include "../../util/types.h"
+
+static inline int32_t darwin_close(int32_t fd)
 {
     return close(fd);
 }

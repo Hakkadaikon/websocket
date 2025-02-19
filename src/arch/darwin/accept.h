@@ -3,7 +3,9 @@
 
 #include <netinet/in.h>
 
-static inline int darwin_accept(const int sock_fd, struct sockaddr* addr, socklen_t* addrlen, const int flags)
+#include "../../util/types.h"
+
+static inline int32_t darwin_accept(const int32_t sock_fd, struct sockaddr* addr, socklen_t* addrlen, const int32_t flags)
 {
     return accept(sock_fd, addr, addrlen);
 }

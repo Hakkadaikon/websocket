@@ -14,16 +14,16 @@ struct in_addr {
 };
 
 struct sockaddr_in {
-    unsigned short sin_family;
-    unsigned short sin_port;
+    uint16_t       sin_family;
+    uint16_t       sin_port;
     struct in_addr sin_addr;
     char           sin_zero[8];
 };
 
 struct sockaddr {
-    unsigned short sa_family;
-    char           sa_data[14];
+    uint16_t sa_family;
+    char     sa_data[14];
 };
 
-typedef unsigned int socklen_t;
+typedef uint32_t socklen_t;
 #endif

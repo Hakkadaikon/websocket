@@ -8,7 +8,7 @@ static inline size_t extract_keyword(
     const char           token,
     char* restrict       output)
 {
-    int keyword_length = skip_token(buffer, buffer_size, token);
+    int32_t keyword_length = skip_token(buffer, buffer_size, token);
     if (keyword_length == -1) {
         return -1;
     }
@@ -23,8 +23,8 @@ static inline bool extract_http_request_line(
     const size_t              buffer_size,
     PHTTPRequestLine restrict line)
 {
-    size_t remain_buffer_size = buffer_size;
-    int    keyword_length;
+    size_t  remain_buffer_size = buffer_size;
+    int32_t keyword_length;
 
     // method
     keyword_length = extract_keyword(buffer, remain_buffer_size, ' ', line->method);
@@ -56,8 +56,8 @@ static inline bool extract_http_request_header_line(
     const size_t                    buffer_size,
     PHTTPRequestHeaderLine restrict line)
 {
-    size_t remain_buffer_size = buffer_size;
-    int    keyword_length;
+    size_t  remain_buffer_size = buffer_size;
+    int32_t keyword_length;
 
     // Key
     keyword_length = extract_keyword(buffer, remain_buffer_size, ':', line->key);

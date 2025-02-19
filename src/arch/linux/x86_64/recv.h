@@ -7,10 +7,10 @@
 #include "./asm.h"
 
 static inline ssize_t linux_x8664_recvfrom(
-    const int        sock_fd,
+    const int32_t    sock_fd,
     void*            buf,
     const size_t     len,
-    const int        flags,
+    const int32_t    flags,
     struct sockaddr* src_addr,
     socklen_t*       addrlen)
 {

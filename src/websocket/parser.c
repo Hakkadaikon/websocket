@@ -105,7 +105,7 @@ bool parse_websocket_frame(const char* restrict raw, const size_t capacity, PWeb
             return false;
         }
 
-        for (int i = 0; i < 8; i++) {
+        for (int32_t i = 0; i < 8; i++) {
             frame->ext_payload_len = (frame->ext_payload_len << 8) | raw[2 + i];
         }
         frame_offset += 8;
@@ -200,7 +200,7 @@ size_t create_websocket_frame(PWebSocketFrame restrict frame, const size_t capac
         if (capacity < offset + 8) {
             return 0;
         }
-        for (int i = 7; i >= 0; i--) {
+        for (int32_t i = 7; i >= 0; i--) {
             raw[offset + i] = frame->ext_payload_len & 0xFF;
             frame->ext_payload_len >>= 8;
         }

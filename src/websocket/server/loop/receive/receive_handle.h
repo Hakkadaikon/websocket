@@ -5,8 +5,8 @@
 #include "../../../websocket_local.h"
 #include "opcode_handle.h"
 
-static inline int receive_handle(
-    const int           client_sock,
+static inline int32_t receive_handle(
+    const int32_t       client_sock,
     const size_t        read_size,
     PWebSocketRawBuffer buffer,
     PWebSocketCallbacks callbacks)
@@ -16,7 +16,7 @@ static inline int receive_handle(
 
     frame.payload = (char*)websocket_alloc(read_size);
 
-    int rtn = 0;
+    int32_t rtn = 0;
 
     if (!parse_websocket_frame(buffer->request, read_size, &frame)) {
         rtn = WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;

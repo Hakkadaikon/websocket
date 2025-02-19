@@ -5,8 +5,8 @@
 #include "../../../websocket_local.h"
 
 static inline bool accept_handle(
-    const int            epoll_fd,
-    const int            server_sock,
+    const int32_t        epoll_fd,
+    const int32_t        server_sock,
     PWebSocketRawBuffer  buffer,
     PWebSocketEpollEvent event,
     PWebSocketCallbacks  callbacks)
@@ -17,7 +17,7 @@ static inline bool accept_handle(
     bool err = false;
 
     log_debug("accept...\n");
-    int client_sock = websocket_accept(server_sock);
+    int32_t client_sock = websocket_accept(server_sock);
     if (client_sock < 0) {
         if (client_sock == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
             err = true;

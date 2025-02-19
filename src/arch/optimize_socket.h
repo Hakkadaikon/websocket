@@ -7,7 +7,7 @@
 #include "linux/x86_64/optimize_socket.h"
 #endif
 
-static inline int internal_fcntl(const int fd, const int cmd, const long arg)
+static inline int32_t internal_fcntl(const int32_t fd, const int32_t cmd, const long arg)
 {
 #ifdef __APPLE__
     return darwin_fcntl(fd, cmd, arg);
@@ -16,7 +16,7 @@ static inline int internal_fcntl(const int fd, const int cmd, const long arg)
 #endif
 }
 
-static inline int internal_setsockopt(
+static inline int32_t internal_setsockopt(
     const int       sock_fd,
     const int       level,
     const int       optname,

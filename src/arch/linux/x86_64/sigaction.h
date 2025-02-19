@@ -9,7 +9,7 @@
 
 extern void linux_x8664_restore_rt(void);
 
-static inline int linux_x8664_sigaction(const int signum, struct sigaction* act, struct sigaction* oldact)
+static inline int32_t linux_x8664_sigaction(const int32_t signum, struct sigaction* act, struct sigaction* oldact)
 {
     act->sa_flags |= SA_RESTORER;
     act->sa_restorer = &linux_x8664_restore_rt;
@@ -29,7 +29,7 @@ static inline int linux_x8664_sigaction(const int signum, struct sigaction* act,
     return ret;
 }
 
-static inline int linux_x8664_sigemptyset(sigset_t* set)
+static inline int32_t linux_x8664_sigemptyset(sigset_t* set)
 {
     websocket_memset_s(set, sizeof(sigset_t), 0x00, sizeof(sigset_t));
     return 1;
