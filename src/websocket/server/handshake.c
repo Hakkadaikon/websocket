@@ -218,7 +218,7 @@ bool client_handshake(
 {
     bool has_error = false;
 
-    if (!extract_http_request(buffer->request, bytes_read, HTTP_HEADER_CAPACITY, request)) {
+    if (!extract_http_request(buffer->request, bytes_read, request)) {
         has_error = true;
         goto FINALIZE;
     }

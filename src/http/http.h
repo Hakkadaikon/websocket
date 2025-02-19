@@ -25,30 +25,14 @@ typedef struct {
 } HTTPRequestHeaderLine, *PHTTPRequestHeaderLine;
 
 typedef struct {
-    HTTPRequestLine        line;
-    PHTTPRequestHeaderLine headers;
-    size_t                 header_size;
+    HTTPRequestLine       line;
+    HTTPRequestHeaderLine headers[HTTP_HEADER_CAPACITY];
+    size_t                header_size;
 } HTTPRequest, *PHTTPRequest;
 
 bool extract_http_request(
     const char*  buffer,
     const size_t buffer_size,
-    const size_t header_capacity,
     PHTTPRequest request);
-
-#define ALLOCATE_HTTP_HEADER_LINE(HEADER_LINE, ALLOCATOR)    \
-    HEADER_LINE.key   = ALLOCATOR(HTTP_HEADER_KEY_CAPACITY); \
-    HEADER_LINE.value = ALLOCATOR(HTTP_HEADER_VALUE_CAPACITY);
-
-#define ALLOCATE_HTTP_REQUEST(REQUEST, ALLOCATOR) \
-    REQUEST.headers = (PHTTPRequestHeaderLine)ALLOCATOR(sizeof(HTTPRequestHeaderLine) * HTTP_HEADER_CAPACITY);
-
-#define FREE_HTTP_REQUEST(REQUEST, FREE)                       \
-    websocket_memset_s(                                        \
-        REQUEST.headers,                                       \
-        sizeof(HTTPRequestHeaderLine) * HTTP_HEADER_CAPACITY,  \
-        0x00,                                                  \
-        sizeof(HTTPRequestHeaderLine) * HTTP_HEADER_CAPACITY); \
-    FREE(REQUEST.headers);
 
 #endif

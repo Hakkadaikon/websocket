@@ -4,9 +4,9 @@
 #include <netinet/in.h>
 #include <stdbool.h>
 #include <string.h>
-#include <time.h>
 #include <sys/event.h>
 #include <sys/syscall.h>
+#include <time.h>
 
 #include "../../util/signal.h"
 #include "../../websocket/websocket_local.h"

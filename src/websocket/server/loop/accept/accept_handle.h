@@ -14,8 +14,6 @@ static inline bool accept_handle(
     HTTPRequest request;
     ssize_t     bytes_read;
 
-    ALLOCATE_HTTP_REQUEST(request, websocket_alloc);
-
     bool err = false;
 
     log_debug("accept...\n");
@@ -59,8 +57,6 @@ static inline bool accept_handle(
     }
 
 FINALIZE:
-    FREE_HTTP_REQUEST(request, websocket_free);
-
     if (err) {
         log_debug("websocket_accept error. finalize...\n");
         if (client_sock >= 0) {
