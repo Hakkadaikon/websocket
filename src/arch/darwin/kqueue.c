@@ -7,7 +7,6 @@
 #include <sys/event.h>
 #include <sys/syscall.h>
 
-#include "../../util/log.h"
 #include "../../util/signal.h"
 #include "../../websocket/websocket_local.h"
 #include "./epoll.h"
