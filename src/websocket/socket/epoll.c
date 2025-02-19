@@ -1,13 +1,9 @@
 #ifndef __APPLE__
 
-#include <errno.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <sys/epoll.h>
-#include <sys/syscall.h>
+#include "../../arch/epoll.h"
 
 #include "../websocket_local.h"
-#include "optimize_socket.h"
+#include "./optimize_socket.h"
 
 bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event)
 {
@@ -20,7 +16,7 @@ bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollE
             return false;
         }
 
-        if (syscall(SYS_epoll_ctl, epoll_fd, EPOLL_CTL_ADD, sock_fd, event) == 0) {
+        if (internal_epoll_ctl(epoll_fd, EPOLL_CTL_ADD, sock_fd, event) == 0) {
             break;
         }
 
@@ -35,7 +31,7 @@ bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollE
 
 bool websocket_epoll_del(const int epoll_fd, const int sock_fd)
 {
-    if (syscall(SYS_epoll_ctl, epoll_fd, EPOLL_CTL_DEL, sock_fd, NULL) == WEBSOCKET_SYSCALL_ERROR) {
+    if (internal_epoll_ctl(epoll_fd, EPOLL_CTL_DEL, sock_fd, NULL) == WEBSOCKET_SYSCALL_ERROR) {
         str_error("Failed to epoll_ctl(CTL_DEL). reason : ", strerror(errno));
         return false;
     }
@@ -45,7 +41,7 @@ bool websocket_epoll_del(const int epoll_fd, const int sock_fd)
 
 int websocket_epoll_create()
 {
-    int epoll_fd = syscall(SYS_epoll_create1, 0);
+    int epoll_fd = internal_epoll_create1(0);
     if (epoll_fd == WEBSOCKET_SYSCALL_ERROR) {
         str_error("Failed to epoll_create1(). reason : ", strerror(errno));
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
@@ -66,8 +62,7 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const 
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
-    // int num_of_event = syscall(SYS_epoll_wait, epoll_fd, events, max_events, -1);  // blocking
-    int num_of_event = syscall(SYS_epoll_wait, epoll_fd, events, max_events, 0);  // non blocking
+    int num_of_event = internal_epoll_wait(epoll_fd, events, max_events, 0);
     if (num_of_event < 0) {
         if (errno == EINTR || errno == EAGAIN) {
             return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;

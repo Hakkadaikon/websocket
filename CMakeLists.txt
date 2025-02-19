@@ -1,16 +1,25 @@
 cmake_minimum_required(VERSION 3.13)
 project(wsserver C)
+enable_language(ASM)
 
 # Set a default build type if not specified (for single-config generators)
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
 endif()
 
-# Collect all .c files from the src directory and its subdirectories
-file(GLOB_RECURSE SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    # Collect all .c files from the src directory and its subdirectories
+    file(GLOB_RECURSE SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
+else()
+    # Collect all .c files from the src directory and its subdirectories
+    file(GLOB_RECURSE SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
+    # Collect all assembly files (*.S) from the src directory and its subdirectories
+    file(GLOB_RECURSE ASM_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.S")
+endif()
 
-# Create the static library target
-add_library(wsserver STATIC ${SRC_FILES})
+# Create the static library target including C and assembly files
+add_library(wsserver STATIC ${SRC_FILES} ${ASM_FILES})
+add_library(wsserver_shared SHARED ${SRC_FILES} ${ASM_FILES})
 
 # Set the output directory for the static library to the "lib" folder in the build directory
 set_target_properties(wsserver PROPERTIES
@@ -28,17 +37,28 @@ else()
     set(DEBUG_COMPILE_OPTIONS "-O0" "-static-libasan" "-g")
 endif()
 
-# Add compile options and definitions for each build type using generator expressions
-target_compile_options(wsserver PRIVATE
-  $<$<CONFIG:Debug>:${DEBUG_COMPILE_OPTIONS}>
-  $<$<CONFIG:Release>:-O3>
-  $<$<CONFIG:Release>:-fno-lto>
-  $<$<CONFIG:Release>:-mtune=native>
-  $<$<CONFIG:Release>:-ffast-math>
-  $<$<CONFIG:Release>:-fno-math-errno>
-  $<$<CONFIG:Release>:-falign-functions>
-  $<$<CONFIG:Release>:-flto=auto>
-)
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+    # Add compile options and definitions for each build type using generator expressions
+    target_compile_options(wsserver PRIVATE
+      $<$<CONFIG:Debug>:${DEBUG_COMPILE_OPTIONS}>
+      $<$<CONFIG:Release>:-O3>
+      $<$<CONFIG:Release>:-mtune=native>
+      $<$<CONFIG:Release>:-ffast-math>
+      $<$<CONFIG:Release>:-fno-math-errno>
+      $<$<CONFIG:Release>:-falign-functions>
+    )
+else()
+    # Add compile options and definitions for each build type using generator expressions
+    target_compile_options(wsserver PRIVATE
+      $<$<CONFIG:Debug>:${DEBUG_COMPILE_OPTIONS}>
+      $<$<CONFIG:Release>:-O3>
+      $<$<CONFIG:Release>:-mtune=native>
+      $<$<CONFIG:Release>:-ffast-math>
+      $<$<CONFIG:Release>:-fno-math-errno>
+      $<$<CONFIG:Release>:-falign-functions>
+      $<$<CONFIG:Release>:-flto=auto>
+    )
+endif()
 
 target_compile_definitions(wsserver PRIVATE
   $<$<CONFIG:Debug>:LOG_LEVEL_DEBUG>

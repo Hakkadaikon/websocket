@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "../crypto/base64.h"
 #include "../crypto/sha1.h"
 #include "../util/allocator.h"
@@ -16,22 +14,26 @@ bool generate_websocket_acceptkey(const char* client_key, const size_t accept_ke
     char        concatenated[256];
     bool        has_error = false;
 
-    // TODO: snprintf consumes a lot of stack space, so switch to a different algorithm.
-    snprintf(concatenated, sizeof(concatenated), "%s%s", client_key, websocket_accept_guid);
+    size_t client_key_size = get_str_len(client_key);
+    size_t guid_size       = get_str_len(websocket_accept_guid);
+
+    websocket_memcpy(concatenated, client_key, client_key_size);
+    websocket_memcpy(concatenated + client_key_size, websocket_accept_guid, guid_size);
+    concatenated[client_key_size + guid_size] = '\0';
 
     uint8_t sha1_result[SHA1_DIGEST_LENGTH];
-    memset(sha1_result, 0x00, sizeof(sha1_result));
-    sha1(concatenated, strnlen(concatenated, sizeof(concatenated)), sha1_result);
+    websocket_memset(sha1_result, 0x00, sizeof(sha1_result));
+    sha1(concatenated, get_str_nlen(concatenated, sizeof(concatenated)), sha1_result);
 
     if (!base64_encode(sha1_result, SHA1_DIGEST_LENGTH, accept_key, accept_key_size)) {
-        has_error = false;
+        has_error = true;
         goto FINALIZE;
     }
 
 FINALIZE:
     // Wipe variables
-    memset_s(concatenated, sizeof(concatenated), 0x00, sizeof(concatenated));
-    memset_s(sha1_result, sizeof(sha1_result), 0x00, sizeof(sha1_result));
+    websocket_memset_s(concatenated, sizeof(concatenated), 0x00, sizeof(concatenated));
+    websocket_memset_s(sha1_result, sizeof(sha1_result), 0x00, sizeof(sha1_result));
 
     return !has_error;
 }

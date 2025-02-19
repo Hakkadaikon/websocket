@@ -1,8 +1,9 @@
 #ifndef NOSTR_SHA1_H_
 #define NOSTR_SHA1_H_
 
-#include <stddef.h>
 #include <stdint.h>
+
+#include "../util/types.h"
 
 #define SHA1_DIGEST_LENGTH 20
 

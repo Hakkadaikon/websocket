@@ -12,7 +12,7 @@ static inline int receive_handle(
     PWebSocketCallbacks callbacks)
 {
     WebSocketFrame frame;
-    memset(&frame, 0x00, sizeof(frame));
+    websocket_memset(&frame, 0x00, sizeof(frame));
 
     frame.payload = (char*)websocket_alloc(read_size);
 

@@ -1,6 +1,5 @@
-#include <stddef.h>
-#include <stdio.h>
 //#include <websocket.h>
+//#include <stdio.h>
 #include "../../../src/websocket/websocket.h"
 
 void websocket_receive_callback(

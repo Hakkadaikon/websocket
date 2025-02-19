@@ -1,8 +1,11 @@
 #ifndef NOSTR_STRING_H_
 #define NOSTR_STRING_H_
 
-#include <stdbool.h>
+#include "../util/types.h"
+#ifdef __APPLE__
 #include <stddef.h>
+#else
+#endif
 
 #define ptr_value(ptr) (*ptr)
 #define is_null(str) (str == NULL)
@@ -177,6 +180,24 @@ static inline int skip_token(const char* buffer, const size_t buffer_size, const
     }
 
     return -1;
+}
+
+static size_t inline get_str_len(const char* str)
+{
+    int len = 0;
+    while (str[len++] != '\0')
+        ;
+
+    return len - 1;
+}
+
+static size_t inline get_str_nlen(const char* str, const size_t capacity)
+{
+    int len = 0;
+    while (str[len++] != '\0' && len < capacity)
+        ;
+
+    return len - 1;
 }
 
 #endif

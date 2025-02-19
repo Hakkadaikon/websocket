@@ -1,8 +1,6 @@
 #ifndef NOSTR_SERVER_LOOP_EPOLL_ACCEPT_H_
 #define NOSTR_SERVER_LOOP_EPOLL_ACCEPT_H_
 
-#include <string.h>
-
 #include "../../../websocket_local.h"
 #include "accept_handle.h"
 

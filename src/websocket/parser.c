@@ -4,8 +4,8 @@
  * @brief Parses each parameter of a websocket frame stored in network byte order.
  * @see RFC6455 (https://datatracker.ietf.org/doc/html/rfc6455)
  */
-#include <string.h>
 
+#include "../util/allocator.h"
 #include "websocket_local.h"
 
 /**
@@ -130,7 +130,7 @@ bool parse_websocket_frame(const char* restrict raw, const size_t capacity, PWeb
             return false;
         }
 
-        memcpy(frame->masking_key, &raw[frame_offset], 4);
+        websocket_memcpy(frame->masking_key, &raw[frame_offset], 4);
         frame_offset += sizeof(frame->masking_key);
     }
 
@@ -181,7 +181,7 @@ size_t create_websocket_frame(PWebSocketFrame restrict frame, const size_t capac
     if (frame->ext_payload_len <= 125 && !frame->mask) {
         raw[offset] = frame->ext_payload_len & 0x7F;
         offset++;
-        memcpy(&raw[offset], frame->payload, frame->ext_payload_len);
+        websocket_memcpy(&raw[offset], frame->payload, frame->ext_payload_len);
         return offset + frame->ext_payload_len;
     }
 
@@ -215,7 +215,7 @@ size_t create_websocket_frame(PWebSocketFrame restrict frame, const size_t capac
         if (capacity < offset + 4) {
             return 0;
         }
-        memcpy(&raw[offset], frame->masking_key, 4);
+        websocket_memcpy(&raw[offset], frame->masking_key, 4);
         offset += 4;
     }
 
@@ -237,7 +237,7 @@ size_t create_websocket_frame(PWebSocketFrame restrict frame, const size_t capac
             raw[offset + i] = frame->payload[i] ^ frame->masking_key[i % 4];
         }
     } else {
-        memcpy(&raw[offset], &frame->payload[0], frame->ext_payload_len);
+        websocket_memcpy(&raw[offset], &frame->payload[0], frame->ext_payload_len);
     }
 
     offset += frame->ext_payload_len;

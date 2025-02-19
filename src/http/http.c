@@ -1,9 +1,5 @@
 #include "http.h"
 
-#include <stdbool.h>
-#include <stddef.h>
-#include <string.h>
-
 #include "../util/string.h"
 
 static inline size_t extract_keyword(
@@ -17,7 +13,7 @@ static inline size_t extract_keyword(
         return -1;
     }
 
-    memcpy(output, buffer, keyword_length);
+    websocket_memcpy(output, buffer, keyword_length);
     output[keyword_length] = '\0';
     return keyword_length;
 }

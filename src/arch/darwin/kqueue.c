@@ -2,13 +2,17 @@
 
 #include <errno.h>
 #include <netinet/in.h>
+#include <stdbool.h>
 #include <string.h>
+#include <time.h>
 #include <sys/event.h>
 #include <sys/syscall.h>
 
-#include "../websocket_local.h"
+#include "../../util/signal.h"
+#include "../../websocket/websocket_local.h"
+#include "./epoll.h"
 
-bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent restrict event)
+bool websocket_epoll_add(const int epoll_fd, const int sock_fd, PWebSocketEpollEvent event)
 {
     EV_SET(event, sock_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
 
@@ -55,7 +59,7 @@ int websocket_epoll_create()
     return epoll_fd;
 }
 
-int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent restrict events, const int max_events)
+int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent events, const int max_events)
 {
     if (is_rise_signal()) {
         log_info("A signal was raised during kevent(). The system will abort processing.\n");
@@ -78,12 +82,12 @@ int websocket_epoll_wait(const int epoll_fd, PWebSocketEpollEvent restrict event
     return num_of_event;
 }
 
-int websocket_epoll_getfd(PWebSocketEpollEvent restrict event)
+int websocket_epoll_getfd(PWebSocketEpollEvent event)
 {
     return event->ident;
 }
 
-int websocket_epoll_rise_error(PWebSocketEpollEvent restrict event)
+int websocket_epoll_rise_error(PWebSocketEpollEvent event)
 {
     if (event->flags & EV_ERROR) {
         str_error("EV_ERROR : ", strerror((int)event->data));
@@ -93,7 +97,7 @@ int websocket_epoll_rise_error(PWebSocketEpollEvent restrict event)
     return WEBSOCKET_ERRORCODE_NONE;
 }
 
-int websocket_epoll_rise_input(PWebSocketEpollEvent restrict event)
+int websocket_epoll_rise_input(PWebSocketEpollEvent event)
 {
     if (!(event->filter | EVFILT_READ)) {
         return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;

@@ -1,5 +1,4 @@
-#include <sys/syscall.h>
-#include <unistd.h>
+#include "../../arch/close.h"
 
 #include "../websocket_local.h"
 
@@ -10,7 +9,7 @@ int websocket_close(const int sock_fd)
         return WEBSOCKET_ERRORCODE_NONE;
     }
 
-    if (close(sock_fd) == WEBSOCKET_SYSCALL_ERROR) {
+    if (internal_close(sock_fd) == WEBSOCKET_SYSCALL_ERROR) {
         str_info("WebSocket close error: ", strerror(errno));
         return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
     }

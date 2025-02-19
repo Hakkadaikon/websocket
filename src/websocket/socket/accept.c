@@ -1,9 +1,7 @@
-#include <errno.h>
-#include <string.h>
-#include <sys/syscall.h>
+#include "../../arch/accept.h"
 
 #include "../websocket_local.h"
-#include "optimize_socket.h"
+#include "./optimize_socket.h"
 
 int websocket_accept(const int sock_fd)
 {
@@ -16,7 +14,7 @@ int websocket_accept(const int sock_fd)
     }
 
     log_debug("accept...\n");
-    int client_sock = accept(sock_fd, (struct sockaddr*)&client_addr, &addr_len);
+    int client_sock = internal_accept(sock_fd, (struct sockaddr*)&client_addr, &addr_len, 0);
     if (client_sock < 0) {
         if (errno == EINTR || errno == EAGAIN) {
             return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;

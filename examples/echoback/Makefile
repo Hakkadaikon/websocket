@@ -44,30 +44,49 @@ CFLAGS := \
 	-O0 \
 	-g \
 	-DLOG_LEVEL_DEBUG
+
+LDLIBS  := -L../../build/lib
+LDFLAGS := -lwsserver
 else
 CFLAGS := \
 	-I../../src \
 	-O0 \
 	-static-libasan \
 	-g \
+	-fPIC \
 	-DLOG_LEVEL_DEBUG
-endif
 
 LDLIBS  := -L../../build/lib
-LDFLAGS := -flto -lwsserver
+LDFLAGS := -lwsserver
+endif
 
 else
 ifeq ($(BUILD), release)
+ifeq ($(OS), Darwin)
 CFLAGS := \
 	-I../../src \
 	-O3 \
-	-fno-lto \
+	-flto=auto \
 	-mtune=native \
 	-ffast-math \
 	-fno-math-errno \
 	-falign-functions \
-	-flto=auto \
 	-DLOG_LEVEL_ERROR
+
+LDLIBS  := -L../../build/lib
+LDFLAGS := -flto -lwsserver
+else
+CFLAGS := \
+	-I../../src \
+	-O3 \
+	-flto=auto \
+	-mtune=native \
+	-ffast-math \
+	-fno-math-errno \
+	-falign-functions \
+	-fPIC \
+	-DLOG_LEVEL_ERROR
+endif
 
 LDLIBS  := -L../../build/lib
 LDFLAGS := -flto -lwsserver

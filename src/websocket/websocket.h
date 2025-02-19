@@ -8,7 +8,15 @@
  */
 #include <stdbool.h>
 #include <stdint.h>
-#include <unistd.h>
+#include <sys/types.h>
+
+#ifndef STDOUT_FILENO
+#define STDOUT_FILENO 1  // Standard output.
+#endif
+
+#ifndef STDERR_FILENO
+#define STDERR_FILENO 2  // Standard error output.
+#endif
 
 /**
  * @enum WebSocketOpCode
@@ -195,7 +203,7 @@ int websocket_close(const int sock_fd);
 bool websocket_server_loop(PWebSocketLoopArgs args);
 
 void log_dump_local(const int fd, const char* str);
-void var_dump_local(const int fd, const char* str, int value);
+void var_dump_local(const int fd, const char* str, const int value);
 void str_dump_local(const int fd, const char* str, const char* value);
 
 #if !defined(LOG_LEVEL_DEBUG) && !defined(LOG_LEVEL_INFO) && !defined(LOG_LEVEL_ERROR)

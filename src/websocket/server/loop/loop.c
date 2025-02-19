@@ -15,8 +15,8 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
     WebSocketEpollEvent epoll_events[MAX_EVENTS];
     WebSocketRawBuffer  buffer;
 
-    memset(&register_event, 0x00, sizeof(register_event));
-    memset(epoll_events, 0x00, sizeof(epoll_events));
+    websocket_memset(&register_event, 0x00, sizeof(register_event));
+    websocket_memset(epoll_events, 0x00, sizeof(epoll_events));
 
     if (!websocket_epoll_add(epoll_fd, args->server_sock, &register_event)) {
         websocket_close(epoll_fd);
@@ -36,8 +36,8 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
         return false;
     }
 
-    memset(buffer.request, 0x00, buffer.capacity);
-    memset(buffer.response, 0x00, buffer.capacity);
+    websocket_memset(buffer.request, 0x00, buffer.capacity);
+    websocket_memset(buffer.response, 0x00, buffer.capacity);
 
     while (1) {
         int num_of_events = websocket_epoll_wait(epoll_fd, epoll_events, MAX_EVENTS);
@@ -98,8 +98,8 @@ FINALIZE:
     websocket_close(epoll_fd);
 
     // Wipe buffer
-    memset(buffer.request, 0x00, buffer.capacity);
-    memset(buffer.response, 0x00, buffer.capacity);
+    websocket_memset_s(buffer.request, buffer.capacity, 0x00, buffer.capacity);
+    websocket_memset_s(buffer.response, buffer.capacity, 0x00, buffer.capacity);
 
     // Free buffer
     websocket_free(buffer.request);

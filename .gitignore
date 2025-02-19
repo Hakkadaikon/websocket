@@ -60,6 +60,9 @@ perf.data.old
 examples/echoback/bin/*
 examples/echoback/obj/*
 
+# Log
+*.txt
+
 # Other
 tests/build
 build
@@ -70,3 +73,6 @@ tmp/
 native/src
 native/lib
 native/obj
+
+!CMakeLists.txt
+!.gitignore

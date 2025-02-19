@@ -8,13 +8,15 @@
  * @see RFC6455 (https://datatracker.ietf.org/doc/html/rfc6455)
  */
 
-#ifndef __APPLE__
-#include <sys/epoll.h>
-typedef struct epoll_event WebSocketEpollEvent, *PWebSocketEpollEvent;
+#ifdef __APPLE__
+#include "../arch/darwin/epoll.h"
 #else
-#include <sys/event.h>
-typedef struct kevent WebSocketEpollEvent, *PWebSocketEpollEvent;
+#include "../arch/linux/epoll.h"
 #endif
+#include "../http/http.h"
+#include "../util/signal.h"
+#include "../util/string.h"
+#include "websocket.h"
 
 typedef struct {
     int                  epoll_fd;
@@ -26,11 +28,6 @@ typedef struct {
     char*  request;
     char*  response;
 } WebSocketRawBuffer, *PWebSocketRawBuffer;
-
-#include "../http/http.h"
-#include "../util/signal.h"
-#include "../util/string.h"
-#include "websocket.h"
 
 typedef enum {
     WEBSOCKET_SYSCALL_ERROR = -1

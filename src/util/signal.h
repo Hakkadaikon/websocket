@@ -4,6 +4,6 @@
 #include <stdbool.h>
 
 bool is_rise_signal();
-void signal_init();
+bool signal_init();
 
 #endif
