@@ -2,7 +2,7 @@
 #define NOSTR_LINUX_X86_64_MEMORY_H_
 
 #include "../../../util/types.h"
-#include "./errno.h"
+#include "../errno.h"
 
 static inline void* linux_x8664_memcpy(void* dest, const void* src, size_t size)
 {
