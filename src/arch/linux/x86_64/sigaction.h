@@ -9,7 +9,7 @@
 
 extern void linux_x8664_restore_rt(void);
 
-static int linux_x8664_sigaction(const int signum, struct sigaction* act, struct sigaction* oldact)
+static inline int linux_x8664_sigaction(const int signum, struct sigaction* act, struct sigaction* oldact)
 {
     act->sa_flags |= SA_RESTORER;
     act->sa_restorer = &linux_x8664_restore_rt;
