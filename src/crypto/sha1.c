@@ -14,12 +14,7 @@
 #include "sha1.h"
 
 #include <stdint.h>
-
-#ifdef __APPLE__
-#include <string.h>
-#else
 #include "../util/allocator.h"
-#endif
 #include "sha1_def.h"
 
 void sha1Transform(uint32_t state[5], const uint8_t buffer[64]);

@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 #include <sys/event.h>
 #include <sys/syscall.h>
 

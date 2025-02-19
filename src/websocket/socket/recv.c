@@ -2,7 +2,9 @@
 
 #include "../websocket_local.h"
 
+#ifndef __APPLE__
 #define MSG_DONTWAIT 0x40
+#endif
 
 ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict buffer)
 {
