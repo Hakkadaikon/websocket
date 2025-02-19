@@ -1,6 +1,7 @@
 #ifndef NOSTR_UTIL_TYPES_H_
 #define NOSTR_UTIL_TYPES_H_
 
+#include <stdint.h>
 #ifdef __APPLE__
 #include <stdbool.h>
 #include <sys/types.h>

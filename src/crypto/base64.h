@@ -1,8 +1,6 @@
 #ifndef NOSTR_BASE64_H_
 #define NOSTR_BASE64_H_
 
-#include <stdint.h>
-
 #include "../util/string.h"
 
 #define base64_padding_char ('=')

@@ -1,7 +1,7 @@
 #ifndef NOSTR_LINUX_SIGACTION_DEF_H_
 #define NOSTR_LINUX_SIGACTION_DEF_H_
 
-#include <stdint.h>
+#include "../../util/types.h"
 
 typedef unsigned long  sigset_t;
 typedef void           signalfunc_t(int);

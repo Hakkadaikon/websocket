@@ -1,7 +1,7 @@
 #ifndef NOSTR_LINUX_SOCKADDR_H_
 #define NOSTR_LINUX_SOCKADDR_H_
 
-#include <stdint.h>
+#include "../../util/types.h"
 
 #define AF_INET 2
 #define SOCK_STREAM 1

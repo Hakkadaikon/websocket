@@ -1,7 +1,7 @@
 #ifndef NOSTR_LINUX_EPOLL_H_
 #define NOSTR_LINUX_EPOLL_H_
 
-#include <stdint.h>
+#include "../../util/types.h"
 
 #define EPOLL_CTL_ADD 1  // Add a file descriptor to the interface.
 #define EPOLL_CTL_DEL 2  // Remove a file descriptor from the interface.
