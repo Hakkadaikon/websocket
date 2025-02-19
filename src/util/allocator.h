@@ -1,16 +1,16 @@
 #ifndef NOSTR_ALLOCATOR_H_
 #define NOSTR_ALLOCATOR_H_
 
-#include <alloca.h>
-
 #include "./types.h"
 #ifdef __APPLE__
+#include <alloca.h>
 #include <errno.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>  // for memset
 #else
 #include "../arch/linux/errno.h"
+extern void* alloca(size_t __size);
 #endif
 #include "../arch/memory.h"
 

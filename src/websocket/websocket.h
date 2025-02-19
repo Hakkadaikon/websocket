@@ -6,16 +6,38 @@
  * @brief Parses each parameter of a websocket frame stored in network byte order.
  * @see RFC6455 (https://datatracker.ietf.org/doc/html/rfc6455)
  */
+#include <stdint.h>
+#ifdef __APPLE__
 #include <stdbool.h>
 #include <stdint.h>
 #include <sys/types.h>
-
+#else
 #ifndef STDOUT_FILENO
 #define STDOUT_FILENO 1  // Standard output.
 #endif
 
 #ifndef STDERR_FILENO
 #define STDERR_FILENO 2  // Standard error output.
+#endif
+
+typedef unsigned long size_t;
+typedef long          ssize_t;
+
+#ifndef bool
+#define bool int
+#endif
+
+#ifndef true
+#define true 1
+#endif
+
+#ifndef false
+#define false 0
+#endif
+
+#ifndef NULL
+#define NULL ((void*)0)
+#endif
 #endif
 
 /**
