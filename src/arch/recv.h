@@ -11,7 +11,7 @@ static inline ssize_t internal_recvfrom(
     const int32_t    sock_fd,
     void*            buf,
     const size_t     len,
-    const int        flags,
+    const int32_t    flags,
     struct sockaddr* src_addr,
     socklen_t*       addr_len)
 {

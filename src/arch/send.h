@@ -11,7 +11,7 @@ static inline ssize_t internal_sendto(
     const int32_t    sock_fd,
     const void*      buf,
     const size_t     len,
-    const int        flags,
+    const int32_t    flags,
     struct sockaddr* dest_addr,
     const socklen_t  addr_len)
 {

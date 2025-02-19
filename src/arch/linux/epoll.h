@@ -27,7 +27,7 @@ enum EPOLL_EVENTS {
 
 typedef union {
     void*    ptr;
-    int      fd;
+    int32_t  fd;
     uint32_t u32;
     uint64_t u64;
 } WebSocketEpollData, *PWebSocketEpollData;

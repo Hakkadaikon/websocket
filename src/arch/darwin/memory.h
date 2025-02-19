@@ -25,7 +25,7 @@ static inline void* darwin_memset(void* s, const int32_t c, const size_t size)
  *
  * Note: A compiler barrier is inserted to ensure that the memset call is not optimized away.
  */
-static inline int darwin_memset_s(void* s, const size_t smax, const int c, const size_t n)
+static inline int32_t darwin_memset_s(void* s, const size_t smax, const int32_t c, const size_t n)
 {
     return memset_s(s, smax, c, n);
 }

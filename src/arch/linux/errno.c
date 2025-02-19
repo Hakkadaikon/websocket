@@ -1,3 +1,3 @@
 #include "./errno.h"
 
-int errno;
+int32_t errno;

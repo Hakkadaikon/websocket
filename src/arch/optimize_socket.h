@@ -17,9 +17,9 @@ static inline int32_t internal_fcntl(const int32_t fd, const int32_t cmd, const 
 }
 
 static inline int32_t internal_setsockopt(
-    const int       sock_fd,
-    const int       level,
-    const int       optname,
+    const int32_t   sock_fd,
+    const int32_t   level,
+    const int32_t   optname,
     const void*     optval,
     const socklen_t optlen)
 {
