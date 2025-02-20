@@ -56,7 +56,7 @@ else()
       $<$<CONFIG:Release>:-ffast-math>
       $<$<CONFIG:Release>:-fno-math-errno>
       $<$<CONFIG:Release>:-falign-functions>
-      $<$<CONFIG:Release>:-flto=auto>
+      #$<$<CONFIG:Release>:-flto=auto>
     )
 endif()
 
@@ -64,6 +64,11 @@ target_compile_definitions(wsserver PRIVATE
   $<$<CONFIG:Debug>:LOG_LEVEL_DEBUG>
   $<$<CONFIG:Release>:LOG_LEVEL_ERROR>
 )
+
+# Add link options (applied to both Debug and Release configurations)
+#target_link_options(wsserver PRIVATE -flto)
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+set(BUILD_SHARED_LIBS OFF)
 
 install(TARGETS wsserver
         ARCHIVE DESTINATION lib
@@ -73,5 +78,3 @@ install(TARGETS wsserver
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/websocket/websocket.h"
         DESTINATION include)
 
-# Add link options (applied to both Debug and Release configurations)
-target_link_options(wsserver PRIVATE -flto)

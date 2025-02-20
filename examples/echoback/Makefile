@@ -79,7 +79,7 @@ else
 CFLAGS := \
 	-I../../src \
 	-O3 \
-	-flto=auto \
+	-fno-lto \
 	-mtune=native \
 	-ffast-math \
 	-fno-math-errno \
@@ -89,7 +89,7 @@ CFLAGS := \
 endif
 
 LDLIBS  := -L../../build/lib
-LDFLAGS := -flto -lwsserver
+LDFLAGS := -lwsserver -static
 endif
 endif
 

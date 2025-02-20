@@ -9,16 +9,16 @@ wsDebugBuild() {
   rm -rf ../build 1>/dev/null
   make clean -C ${ECHOBACK_SERVER_PATH} 1>/dev/null
   cmake -S .. -B ../build -DCMAKE_BUILD_TYPE=Debug 1>/dev/null
-  cmake --build ../build 1>/dev/null
-  BUILD=debug make -C ${ECHOBACK_SERVER_PATH} 1>/dev/null
+  cmake --build ../build
+  BUILD=debug make -C ${ECHOBACK_SERVER_PATH}
 }
 
 wsReleaseBuild() {
   rm -rf ../build 1>/dev/null
   make clean -C ${ECHOBACK_SERVER_PATH} 1>/dev/null
   cmake -S .. -B ../build -DCMAKE_BUILD_TYPE=Release 1>/dev/null
-  cmake --build ../build 1>/dev/null
-  BUILD=release make -C ${ECHOBACK_SERVER_PATH} 1>/dev/null
+  cmake --build ../build
+  BUILD=release make -C ${ECHOBACK_SERVER_PATH}
 }
 
 case "$1" in

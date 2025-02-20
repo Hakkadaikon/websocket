@@ -1,7 +1,13 @@
 #ifndef NOSTR_LINUX_ERRNO_H_
 #define NOSTR_LINUX_ERRNO_H_
 
-extern int errno;
+#define errno (*__errno_location())
+
+static inline int* __errno_location(void)
+{
+    static int my_errno = 0;
+    return &my_errno;
+}
 
 #define EPERM 1             // Operation not permitted
 #define ENOENT 2            // No such file or directory
