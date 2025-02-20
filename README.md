@@ -22,6 +22,9 @@ make BUILD=release -C examples/echoback
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 make BUILD=debug -C examples/echoback 
+
+# musl build (release) (x86/64 & linux only)
+./shell/musl_build.sh
 ```
 
 ## Install  
