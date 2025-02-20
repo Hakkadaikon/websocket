@@ -6,8 +6,8 @@
 #include <stdbool.h>
 #include <sys/types.h>
 #else
-typedef unsigned long size_t;
-typedef long          ssize_t;
+typedef uint64_t size_t;
+typedef int64_t  ssize_t;
 
 #ifndef bool
 #define bool int32_t

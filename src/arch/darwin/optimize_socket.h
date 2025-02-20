@@ -7,7 +7,7 @@
 
 #include "../../util/types.h"
 
-static inline int32_t darwin_fcntl(const int32_t fd, const int32_t cmd, const long arg)
+static inline int32_t darwin_fcntl(const int32_t fd, const int32_t cmd, const int64_t arg)
 {
     return fcntl(fd, cmd, arg);
 }

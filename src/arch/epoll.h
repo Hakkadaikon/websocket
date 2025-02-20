@@ -5,7 +5,7 @@
 #include "./linux/epoll.h"
 #include "./linux/x86_64/epoll.h"
 
-static inline long internal_epoll_ctl(
+static inline int32_t internal_epoll_ctl(
     const int32_t        epoll_fd,
     const int32_t        op,
     const int32_t        fd,
@@ -14,12 +14,12 @@ static inline long internal_epoll_ctl(
     return linux_x8664_epoll_ctl(epoll_fd, op, fd, event);
 }
 
-static inline long internal_epoll_create1(const int32_t flags)
+static inline int32_t internal_epoll_create1(const int32_t flags)
 {
     return linux_x8664_epoll_create1(flags);
 }
 
-static inline long internal_epoll_wait(
+static inline int32_t internal_epoll_wait(
     const int32_t        epfd,
     PWebSocketEpollEvent events,
     const int32_t        maxevents,

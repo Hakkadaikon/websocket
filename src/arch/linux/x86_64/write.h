@@ -7,17 +7,17 @@
 
 static inline ssize_t linux_x8664_write(const int32_t fd, const void* buf, const size_t count)
 {
-    long ret = linux_x8664_asm_syscall3(
+    int32_t ret = linux_x8664_asm_syscall3(
         __NR_write,
         fd,
         buf,
         count);
 
-    if ((unsigned long)ret >= (unsigned long)-4095) {
+    if ((uint64_t)ret >= (uint64_t)-4095) {
         errno = -ret;
         ret   = -1;
     }
-    return ret;
+    return (ssize_t)ret;
 }
 
 #endif

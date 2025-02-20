@@ -7,15 +7,15 @@
 #include "../sockoption.h"
 #include "./asm.h"
 
-static inline int32_t linux_x8664_fcntl(const int32_t fd, const int32_t cmd, const long arg)
+static inline int32_t linux_x8664_fcntl(const int32_t fd, const int32_t cmd, const int64_t arg)
 {
-    long ret = linux_x8664_asm_syscall3(
+    int32_t ret = linux_x8664_asm_syscall3(
         __NR_fcntl,
         fd,
         cmd,
         arg);
 
-    if ((unsigned long)ret >= (unsigned long)-4095) {
+    if ((uint64_t)ret >= (uint64_t)-4095) {
         errno = -ret;
         ret   = -1;
     }
@@ -29,7 +29,7 @@ static inline int32_t linux_x8664_setsockopt(
     const void*     optval,
     const socklen_t optlen)
 {
-    long ret = linux_x8664_asm_syscall5(
+    int32_t ret = linux_x8664_asm_syscall5(
         __NR_setsockopt,
         sockfd,
         level,
@@ -37,7 +37,7 @@ static inline int32_t linux_x8664_setsockopt(
         optval,
         optlen);
 
-    if ((unsigned long)ret >= (unsigned long)-4095) {
+    if ((uint64_t)ret >= (uint64_t)-4095) {
         errno = -ret;
         ret   = -1;
     }

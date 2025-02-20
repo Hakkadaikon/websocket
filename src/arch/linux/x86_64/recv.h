@@ -14,7 +14,7 @@ static inline ssize_t linux_x8664_recvfrom(
     struct sockaddr* src_addr,
     socklen_t*       addrlen)
 {
-    long ret = linux_x8664_asm_syscall6(
+    int32_t ret = linux_x8664_asm_syscall6(
         __NR_recvfrom,
         sock_fd,
         buf,
@@ -23,7 +23,7 @@ static inline ssize_t linux_x8664_recvfrom(
         src_addr,
         addrlen);
 
-    if ((unsigned long)ret >= (unsigned long)-4095) {
+    if ((uint64_t)ret >= (uint64_t)-4095) {
         errno = -ret;
         ret   = -1;
     }
