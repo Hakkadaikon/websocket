@@ -5,6 +5,11 @@ cd $(dirname $0)
 ECHOBACK_SERVER_PATH=../examples/echoback
 ECHOBACK_SERVER_BIN_PATH=${ECHOBACK_SERVER_PATH}/bin/wsserver
 
+clean() {
+  rm -rf ../build 1>/dev/null
+  make clean -C ${ECHOBACK_SERVER_PATH} 1>/dev/null
+}
+
 wsDebugBuild() {
   rm -rf ../build 1>/dev/null
   make clean -C ${ECHOBACK_SERVER_PATH} 1>/dev/null
@@ -42,6 +47,9 @@ case "$1" in
     wsReleaseBuild
     echo "release run"
     ${ECHOBACK_SERVER_BIN_PATH}
+    ;;
+  clean)
+    clean
     ;;
   *)
     wsReleaseBuild

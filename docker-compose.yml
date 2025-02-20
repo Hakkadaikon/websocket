@@ -1,5 +1,8 @@
 services:
-  nostr-relay:
-    build: .
+  websocket:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
     ports:
       - "8080:8080"
