@@ -3,15 +3,7 @@
 #include "../websocket_local.h"
 #include "./optimize_socket.h"
 
-#ifndef __APPLE__
-#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define htons(x) ((((x)&0x00ff) << 8) | (((x)&0xff00) >> 8))
-#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define htons(x) (x)
-#else
-#error "Unknown endianness"
-#endif
-#endif
+static void set_sockaddr(const int port_num, struct sockaddr_in* server_addr);
 
 int32_t websocket_listen(const int32_t port_num, const int32_t backlog)
 {
@@ -24,10 +16,7 @@ int32_t websocket_listen(const int32_t port_num, const int32_t backlog)
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
-    websocket_memset(&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family      = AF_INET;
-    server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port        = htons(port_num);
+    set_sockaddr(port_num, &server_addr);
 
     bool err = false;
 
@@ -61,4 +50,22 @@ FINALIZE:
     }
 
     return server_sock;
+}
+
+static void set_sockaddr(const int port_num, struct sockaddr_in* server_addr)
+{
+#ifndef __APPLE__
+#if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#define htons(x) ((((x)&0x00ff) << 8) | (((x)&0xff00) >> 8))
+#elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#define htons(x) (x)
+#else
+#error "Unknown endianness"
+#endif
+#endif
+
+    websocket_memset(server_addr, 0, sizeof(struct sockaddr_in));
+    server_addr->sin_family      = AF_INET;
+    server_addr->sin_addr.s_addr = INADDR_ANY;
+    server_addr->sin_port        = htons(port_num);
 }

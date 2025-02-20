@@ -5,25 +5,21 @@
 #include "../websocket_local.h"
 #include "./optimize_socket.h"
 
+static int32_t get_epoll_wait_err(const int32_t num_of_event);
+
 bool websocket_epoll_add(const int32_t epoll_fd, const int32_t sock_fd, PWebSocketEpollEvent event)
 {
     event->data.fd = sock_fd;
     event->events  = EPOLLIN | EPOLLHUP | EPOLLERR | EPOLLRDHUP | EPOLLET;
 
-    while (1) {
-        if (is_rise_signal()) {
-            log_info("A signal was raised during epoll_wait(). The system will abort processing.\n");
-            return false;
-        }
+    if (is_rise_signal()) {
+        log_info("A signal was raised during epoll_wait(). The system will abort processing.\n");
+        return false;
+    }
 
-        if (internal_epoll_ctl(epoll_fd, EPOLL_CTL_ADD, sock_fd, event) == 0) {
-            break;
-        }
-
-        if (errno != EINTR) {
-            str_error("Failed to epoll_ctl(CTL_ADD). reason : ", strerror(errno));
-            return false;
-        }
+    if (internal_epoll_ctl(epoll_fd, EPOLL_CTL_ADD, sock_fd, event) == WEBSOCKET_SYSCALL_ERROR) {
+        str_error("Failed to epoll_ctl(CTL_ADD). reason : ", strerror(errno));
+        return false;
     }
 
     return true;
@@ -62,7 +58,17 @@ int32_t websocket_epoll_wait(const int32_t epoll_fd, PWebSocketEpollEvent events
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
+    int32_t errcode;
     int32_t num_of_event = internal_epoll_wait(epoll_fd, events, max_events, 0);
+    if ((errcode = get_epoll_wait_err(num_of_event)) != WEBSOCKET_ERRORCODE_NONE) {
+        return errcode;
+    }
+
+    return num_of_event;
+}
+
+static int32_t get_epoll_wait_err(const int32_t num_of_event)
+{
     if (num_of_event < 0) {
         if (errno == EINTR || errno == EAGAIN) {
             return WEBSOCKET_ERRORCODE_CONTINUABLE_ERROR;
@@ -73,7 +79,7 @@ int32_t websocket_epoll_wait(const int32_t epoll_fd, PWebSocketEpollEvent events
         return WEBSOCKET_ERRORCODE_FATAL_ERROR;
     }
 
-    return num_of_event;
+    return WEBSOCKET_ERRORCODE_NONE;
 }
 
 int32_t websocket_epoll_getfd(PWebSocketEpollEvent event)
