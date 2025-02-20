@@ -9,6 +9,14 @@
 typedef uint64_t size_t;
 typedef int64_t  ssize_t;
 
+#ifndef STDOUT_FILENO
+#define STDOUT_FILENO 1  // Standard output.
+#endif
+
+#ifndef STDERR_FILENO
+#define STDERR_FILENO 2  // Standard error output.
+#endif
+
 #ifndef bool
 #define bool int32_t
 #endif
