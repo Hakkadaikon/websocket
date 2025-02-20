@@ -180,7 +180,7 @@ static inline char* select_websocket_client_key(PHTTPRequest restrict request)
 
 static inline bool build_response_frame(
     const char* restrict accept_key,
-    const int            accept_key_capacity,
+    const int32_t        accept_key_capacity,
     char* restrict       buffer,
     const size_t         capacity)
 {
@@ -211,14 +211,14 @@ static inline bool build_response_frame(
 }
 
 bool client_handshake(
-    const int             client_sock,
+    const int32_t         client_sock,
     const size_t          bytes_read,
     PWebSocketRawBuffer   buffer,
     PHTTPRequest restrict request)
 {
     bool has_error = false;
 
-    if (!extract_http_request(buffer->request, bytes_read, HTTP_HEADER_CAPACITY, request)) {
+    if (!extract_http_request(buffer->request, bytes_read, request)) {
         has_error = true;
         goto FINALIZE;
     }

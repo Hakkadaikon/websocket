@@ -5,7 +5,7 @@
 
 bool websocket_server_loop(PWebSocketLoopArgs args)
 {
-    int epoll_fd = websocket_epoll_create();
+    int32_t epoll_fd = websocket_epoll_create();
     if (epoll_fd < 0) {
         return false;
     }
@@ -40,7 +40,7 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
     websocket_memset(buffer.response, 0x00, buffer.capacity);
 
     while (1) {
-        int num_of_events = websocket_epoll_wait(epoll_fd, epoll_events, MAX_EVENTS);
+        int32_t num_of_events = websocket_epoll_wait(epoll_fd, epoll_events, MAX_EVENTS);
         if (num_of_events <= 0) {
             if (num_of_events != WEBSOCKET_ERRORCODE_FATAL_ERROR) {
                 continue;
@@ -52,12 +52,12 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
 
         var_debug("Escaped from epoll wait. num of events: ", num_of_events);
 
-        for (int i = 0; i < num_of_events; ++i) {
+        for (int32_t i = 0; i < num_of_events; ++i) {
             WebSocketEpollLoopArgs epoll_args;
             epoll_args.event    = &epoll_events[i];
             epoll_args.epoll_fd = epoll_fd;
 
-            int fd = websocket_epoll_getfd(epoll_args.event);
+            int32_t fd = websocket_epoll_getfd(epoll_args.event);
 
             if (fd == args->server_sock) {
                 if (epoll_accept(
@@ -73,9 +73,9 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
                 continue;
             }
 
-            int client_sock = fd;
+            int32_t client_sock = fd;
 
-            int ret = epoll_receive(&epoll_args, &buffer, &args->callbacks);
+            int32_t ret = epoll_receive(&epoll_args, &buffer, &args->callbacks);
 
             if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR || ret == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
                 websocket_epoll_del(epoll_fd, client_sock);

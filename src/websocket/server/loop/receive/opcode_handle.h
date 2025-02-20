@@ -4,8 +4,8 @@
 #include "../../../../util/allocator.h"
 #include "../../../websocket_local.h"
 
-static inline int opcode_handle(
-    const int           client_sock,
+static inline int32_t opcode_handle(
+    const int32_t       client_sock,
     PWebSocketRawBuffer buffer,
     PWebSocketCallbacks callbacks,
     PWebSocketFrame     frame)
@@ -30,7 +30,7 @@ static inline int opcode_handle(
                 return WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR;
             }
 
-            int rtn = websocket_send(client_sock, frame_size, buffer->response);
+            int32_t rtn = websocket_send(client_sock, frame_size, buffer->response);
             if (rtn != WEBSOCKET_ERRORCODE_NONE) {
                 return rtn;
             }

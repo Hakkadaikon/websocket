@@ -15,10 +15,12 @@ Websocket server that complies with RFC6455.(The WebSocket Protocol)
 ```shell  
 # release build
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
 make BUILD=release -C examples/echoback 
 
 # debug build
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
 make BUILD=debug -C examples/echoback 
 ```
 

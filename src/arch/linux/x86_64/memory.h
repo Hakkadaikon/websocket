@@ -45,7 +45,7 @@ static inline void* linux_x8664_memset(void* s, const int c, const size_t size)
  *
  * Note: A compiler barrier is inserted to ensure that the memset call is not optimized away.
  */
-static inline int linux_x8664_memset_s(void* s, const size_t smax, const int c, const size_t n)
+static inline int32_t linux_x8664_memset_s(void* s, const size_t smax, const int32_t c, const size_t n)
 {
     if (s == NULL && n != 0) {
         return EINVAL;

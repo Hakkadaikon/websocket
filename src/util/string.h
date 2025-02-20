@@ -72,7 +72,7 @@ static inline bool is_compare_str(const char* str1, const char* str2, const size
     return true;
 }
 
-static inline int search_str(const char* base, const size_t base_len, const char* target, const size_t target_len, const bool case_sensitive)
+static inline int32_t search_str(const char* base, const size_t base_len, const char* target, const size_t target_len, const bool case_sensitive)
 {
     if (is_null_or_empty(base) || base_len <= 0 || target_len > base_len) {
         return -1;
@@ -96,7 +96,7 @@ static inline bool is_contain_str(const char* base, const size_t base_len, const
     return (search_str(base, base_len, target, target_len, case_sensitive) != -1);
 }
 
-static inline int skip_white_space(const char* buffer, const size_t buffer_size)
+static inline int32_t skip_white_space(const char* buffer, const size_t buffer_size)
 {
     if (is_null(buffer) || buffer_size <= 0) {
         return -1;
@@ -123,7 +123,7 @@ static inline int skip_white_space(const char* buffer, const size_t buffer_size)
     return pos;
 }
 
-static inline int skip_word(const char* buffer, const size_t buffer_size)
+static inline int32_t skip_word(const char* buffer, const size_t buffer_size)
 {
     for (size_t i = 0; i < buffer_size; i++) {
         if (is_white_space(buffer[i])) {
@@ -146,7 +146,7 @@ static inline int skip_word(const char* buffer, const size_t buffer_size)
     return buffer_size;
 }
 
-static inline int skip_next_line(const char* buffer, const size_t buffer_len)
+static inline int32_t skip_next_line(const char* buffer, const size_t buffer_len)
 {
     if (is_null(buffer) || buffer_len < 2) {
         return 0;
@@ -171,7 +171,7 @@ static inline int skip_next_line(const char* buffer, const size_t buffer_len)
     return buffer_pos;
 }
 
-static inline int skip_token(const char* buffer, const size_t buffer_size, const char token)
+static inline int32_t skip_token(const char* buffer, const size_t buffer_size, const char token)
 {
     for (size_t i = 0; i < buffer_size; i++) {
         if (buffer[i] == token) {
@@ -184,7 +184,7 @@ static inline int skip_token(const char* buffer, const size_t buffer_size, const
 
 static size_t inline get_str_len(const char* str)
 {
-    int len = 0;
+    int32_t len = 0;
     while (str[len++] != '\0')
         ;
 
@@ -193,7 +193,7 @@ static size_t inline get_str_len(const char* str)
 
 static size_t inline get_str_nlen(const char* str, const size_t capacity)
 {
-    int len = 0;
+    int32_t len = 0;
     while (str[len++] != '\0' && len < capacity)
         ;
 

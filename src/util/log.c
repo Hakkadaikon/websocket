@@ -2,14 +2,14 @@
 #include "../websocket/websocket.h"
 #include "./string.h"
 
-static inline int calc_digit(int value)
+static inline int32_t calc_digit(int32_t value)
 {
-    int is_negative = (value < 0);
+    int32_t is_negative = (value < 0);
     if (is_negative) {
         value = -value;
     }
 
-    for (int i = 10, j = 1; i < 1000000000; i *= 10, j++) {
+    for (int32_t i = 10, j = 1; i < 1000000000; i *= 10, j++) {
         if (value < i) {
             return j;
         }
@@ -18,12 +18,12 @@ static inline int calc_digit(int value)
     return 10 + is_negative;
 }
 
-static inline size_t safe_itoa(int value, char* restrict buffer, size_t buffer_capacity)
+static inline size_t safe_itoa(int32_t value, char* restrict buffer, size_t buffer_capacity)
 {
-    int   digit       = calc_digit(value);
-    char* end         = buffer + digit;
-    char* current     = end;
-    int   is_negative = (value < 0);
+    int32_t digit       = calc_digit(value);
+    char*   end         = buffer + digit;
+    char*   current     = end;
+    int32_t is_negative = (value < 0);
 
     if (is_negative) {
         value = -value;
@@ -71,7 +71,7 @@ void hex_dump_local(const void* restrict data, size_t size)
     }
 }
 
-void log_dump_local(const int fd, const char* restrict str)
+void log_dump_local(const int32_t fd, const char* restrict str)
 {
     if (is_null(str) || fd <= 0) {
         return;
@@ -85,7 +85,7 @@ void log_dump_local(const int fd, const char* restrict str)
     (void)internal_write(fd, str, len);
 }
 
-void var_dump_local(const int fd, const char* restrict str, const int value)
+void var_dump_local(const int32_t fd, const char* restrict str, const int32_t value)
 {
     if (is_null(str) || fd <= 0) {
         return;
@@ -106,7 +106,7 @@ void var_dump_local(const int fd, const char* restrict str, const int value)
     (void)internal_write(fd, buffer, buffer_size + 1);
 }
 
-void str_dump_local(const int fd, const char* restrict str, const char* restrict value)
+void str_dump_local(const int32_t fd, const char* restrict str, const char* restrict value)
 {
     if (is_null(str) || is_null(value) || fd <= 0) {
         return;

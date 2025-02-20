@@ -7,7 +7,7 @@
 #include "linux/x86_64/sigaction.h"
 #endif
 
-static inline int internal_sigaction(const int signum, struct sigaction* act, struct sigaction* oldact)
+static inline int32_t internal_sigaction(const int32_t signum, struct sigaction* act, struct sigaction* oldact)
 {
 #ifdef __APPLE__
     return darwin_sigaction(signum, act, oldact);
@@ -16,7 +16,7 @@ static inline int internal_sigaction(const int signum, struct sigaction* act, st
 #endif
 }
 
-static inline int internal_sigemptyset(sigset_t* set)
+static inline int32_t internal_sigemptyset(sigset_t* set)
 {
 #ifdef __APPLE__
     return darwin_sigemptyset(set);

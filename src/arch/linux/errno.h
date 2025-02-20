@@ -1,11 +1,12 @@
 #ifndef NOSTR_LINUX_ERRNO_H_
 #define NOSTR_LINUX_ERRNO_H_
 
+#include "../../util/types.h"
 #define errno (*__errno_location())
 
-static inline int* __errno_location(void)
+static inline int32_t* __errno_location(void)
 {
-    static int my_errno = 0;
+    static int32_t my_errno = 0;
     return &my_errno;
 }
 

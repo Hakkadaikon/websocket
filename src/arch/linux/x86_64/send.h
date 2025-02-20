@@ -7,14 +7,14 @@
 #include "./asm.h"
 
 static inline ssize_t linux_x8664_sendto(
-    const int        sock_fd,
+    const int32_t    sock_fd,
     const void*      buf,
     const size_t     len,
-    const int        flags,
+    const int32_t    flags,
     struct sockaddr* dest_addr,
     const socklen_t  addrlen)
 {
-    long ret = linux_x8664_asm_syscall6(
+    int32_t ret = linux_x8664_asm_syscall6(
         __NR_sendto,
         sock_fd,
         buf,
@@ -23,11 +23,11 @@ static inline ssize_t linux_x8664_sendto(
         dest_addr,
         addrlen);
 
-    if ((unsigned long)ret >= (unsigned long)-4095) {
+    if ((uint64_t)ret >= (uint64_t)-4095) {
         errno = -ret;
         ret   = -1;
     }
-    return ret;
+    return (ssize_t)ret;
 }
 
 #endif

@@ -1,84 +1,86 @@
 #ifndef NOSTR_LINUX_X86_64_ASM_H_
 #define NOSTR_LINUX_X86_64_ASM_H_
 
-extern int linux_x8664_asm_syscall(
-    long syscall_num,
-    long arg1,
-    long arg2,
-    long arg3,
-    long arg4,
-    long arg5,
-    long arg6);
+#include "../../../util/types.h"
+
+extern int32_t linux_x8664_asm_syscall(
+    int64_t syscall_num,
+    int64_t arg1,
+    int64_t arg2,
+    int64_t arg3,
+    int64_t arg4,
+    int64_t arg5,
+    int64_t arg6);
 
 #define linux_x8664_asm_syscall0(syscall_num) \
     linux_x8664_asm_syscall(                  \
-        (long)syscall_num,                    \
-        (long)0,                              \
-        (long)0,                              \
-        (long)0,                              \
-        (long)0,                              \
-        (long)0,                              \
-        (long)0)
+        (int64_t)syscall_num,                 \
+        (int64_t)0,                           \
+        (int64_t)0,                           \
+        (int64_t)0,                           \
+        (int64_t)0,                           \
+        (int64_t)0,                           \
+        (int64_t)0)
 
 #define linux_x8664_asm_syscall1(syscall_num, arg1) \
     linux_x8664_asm_syscall(                        \
-        (long)syscall_num,                          \
-        (long)arg1,                                 \
-        (long)0,                                    \
-        (long)0,                                    \
-        (long)0,                                    \
-        (long)0,                                    \
-        (long)0)
+        (int64_t)syscall_num,                       \
+        (int64_t)arg1,                              \
+        (int64_t)0,                                 \
+        (int64_t)0,                                 \
+        (int64_t)0,                                 \
+        (int64_t)0,                                 \
+        (int64_t)0)
 
 #define linux_x8664_asm_syscall2(syscall_num, arg1, arg2) \
     linux_x8664_asm_syscall(                              \
-        (long)syscall_num,                                \
-        (long)arg1,                                       \
-        (long)arg2,                                       \
-        (long)0,                                          \
-        (long)0,                                          \
-        (long)0,                                          \
-        (long)0)
+        (int64_t)syscall_num,                             \
+        (int64_t)arg1,                                    \
+        (int64_t)arg2,                                    \
+        (int64_t)0,                                       \
+        (int64_t)0,                                       \
+        (int64_t)0,                                       \
+        (int64_t)0)
 
 #define linux_x8664_asm_syscall3(syscall_num, arg1, arg2, arg3) \
     linux_x8664_asm_syscall(                                    \
-        (long)syscall_num,                                      \
-        (long)arg1,                                             \
-        (long)arg2,                                             \
-        (long)arg3,                                             \
-        (long)0,                                                \
-        (long)0,                                                \
-        (long)0)
+        (int64_t)syscall_num,                                   \
+        (int64_t)arg1,                                          \
+        (int64_t)arg2,                                          \
+        (int64_t)arg3,                                          \
+        (int64_t)0,                                             \
+        (int64_t)0,                                             \
+        (int64_t)0)
 
 #define linux_x8664_asm_syscall4(syscall_num, arg1, arg2, arg3, arg4) \
     linux_x8664_asm_syscall(                                          \
-        (long)syscall_num,                                            \
-        (long)arg1,                                                   \
-        (long)arg2,                                                   \
-        (long)arg3,                                                   \
-        (long)arg4,                                                   \
-        (long)0,                                                      \
-        (long)0)
+        (int64_t)syscall_num,                                         \
+        (int64_t)arg1,                                                \
+        (int64_t)arg2,                                                \
+        (int64_t)arg3,                                                \
+        (int64_t)arg4,                                                \
+        (int64_t)0,                                                   \
+        (int64_t)0)
 
 #define linux_x8664_asm_syscall5(syscall_num, arg1, arg2, arg3, arg4, arg5) \
     linux_x8664_asm_syscall(                                                \
-        (long)syscall_num,                                                  \
-        (long)arg1,                                                         \
-        (long)arg2,                                                         \
-        (long)arg3,                                                         \
-        (long)arg4,                                                         \
-        (long)arg5,                                                         \
-        (long)0)
+        (int64_t)syscall_num,                                               \
+        (int64_t)arg1,                                                      \
+        (int64_t)arg2,                                                      \
+        (int64_t)arg3,                                                      \
+        (int64_t)arg4,                                                      \
+        (int64_t)arg5,                                                      \
+        (int64_t)0)
 
 #define linux_x8664_asm_syscall6(syscall_num, arg1, arg2, arg3, arg4, arg5, arg6) \
     linux_x8664_asm_syscall(                                                      \
-        (long)syscall_num,                                                        \
-        (long)arg1,                                                               \
-        (long)arg2,                                                               \
-        (long)arg3,                                                               \
-        (long)arg4,                                                               \
-        (long)arg5,                                                               \
-        (long)arg6)
+        (int64_t)syscall_num,                                                     \
+        (int64_t)arg1,                                                            \
+        (int64_t)arg2,                                                            \
+        (int64_t)arg3,                                                            \
+        (int64_t)arg4,                                                            \
+        (int64_t)arg5,                                                            \
+        (int64_t)arg6)
 
 #define __NR_read 0
 #define __NR_write 1

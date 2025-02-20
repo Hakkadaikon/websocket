@@ -8,7 +8,7 @@ static inline size_t extract_keyword(
     const char           token,
     char* restrict       output)
 {
-    int keyword_length = skip_token(buffer, buffer_size, token);
+    int32_t keyword_length = skip_token(buffer, buffer_size, token);
     if (keyword_length == -1) {
         return -1;
     }
@@ -23,8 +23,8 @@ static inline bool extract_http_request_line(
     const size_t              buffer_size,
     PHTTPRequestLine restrict line)
 {
-    size_t remain_buffer_size = buffer_size;
-    int    keyword_length;
+    size_t  remain_buffer_size = buffer_size;
+    int32_t keyword_length;
 
     // method
     keyword_length = extract_keyword(buffer, remain_buffer_size, ' ', line->method);
@@ -56,8 +56,8 @@ static inline bool extract_http_request_header_line(
     const size_t                    buffer_size,
     PHTTPRequestHeaderLine restrict line)
 {
-    size_t remain_buffer_size = buffer_size;
-    int    keyword_length;
+    size_t  remain_buffer_size = buffer_size;
+    int32_t keyword_length;
 
     // Key
     keyword_length = extract_keyword(buffer, remain_buffer_size, ':', line->key);
@@ -77,17 +77,16 @@ static inline bool extract_http_request_header_line(
 }
 
 bool extract_http_request_header(
-    const char* restrict            buffer,
-    const size_t                    buffer_size,
-    const size_t                    header_capacity,
-    size_t*                         header_size,
-    PHTTPRequestHeaderLine restrict lines)
+    const char* restrict  buffer,
+    const size_t          buffer_size,
+    size_t*               header_size,
+    HTTPRequestHeaderLine lines[])
 {
     size_t buffer_pos         = 0;
     size_t header_pos         = 0;
     size_t remain_buffer_size = buffer_size;
 
-    while ((buffer_pos < buffer_size) && (header_pos < header_capacity)) {
+    while ((buffer_pos < buffer_size) && (header_pos < HTTP_HEADER_CAPACITY)) {
         const char*            current_buffer = &buffer[buffer_pos];
         PHTTPRequestHeaderLine current_line   = &lines[header_pos];
 
@@ -118,14 +117,12 @@ bool extract_http_request_header(
 bool extract_http_request(
     const char* restrict  buffer,
     const size_t          buffer_size,
-    const size_t          header_capacity,
     PHTTPRequest restrict request)
 {
     if (
         is_null(buffer) ||
         is_null((char*)request->headers) ||
-        buffer_size <= 0 ||
-        header_capacity <= 0) {
+        buffer_size <= 0) {
         return false;
     }
 
@@ -143,7 +140,6 @@ bool extract_http_request(
     if (!extract_http_request_header(
             &buffer[new_pos],
             remain_buffer_size,
-            header_capacity,
             &request->header_size,
             request->headers)) {
         return false;

@@ -17,7 +17,7 @@ void websocket_frame_dump(PWebSocketFrame restrict frame)
     str_debug("payload         : ", frame->payload);
 }
 
-void websocket_epoll_event_dump(const int events)
+void websocket_epoll_event_dump(const int32_t events)
 {
 #ifndef __APPLE__
     log_debug("epoll events: ");
