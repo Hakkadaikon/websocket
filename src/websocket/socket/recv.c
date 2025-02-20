@@ -6,7 +6,7 @@
 #define MSG_DONTWAIT 0x40
 #endif
 
-static int32_t get_recv_err(ssize_t bytes_read);
+static int32_t get_recv_err(const ssize_t bytes_read, const int32_t sock_fd);
 
 ssize_t websocket_recv(const int32_t sock_fd, const size_t capacity, char* restrict buffer)
 {
@@ -17,7 +17,7 @@ ssize_t websocket_recv(const int32_t sock_fd, const size_t capacity, char* restr
 
     int32_t errcode;
     ssize_t bytes_read = internal_recvfrom(sock_fd, buffer, capacity - 1, MSG_DONTWAIT, NULL, NULL);
-    if ((errcode = get_recv_err(bytes_read)) != WEBSOCKET_ERRORCODE_NONE) {
+    if ((errcode = get_recv_err(bytes_read, sock_fd)) != WEBSOCKET_ERRORCODE_NONE) {
         return errcode;
     }
 
@@ -25,7 +25,7 @@ ssize_t websocket_recv(const int32_t sock_fd, const size_t capacity, char* restr
     return bytes_read;
 }
 
-static int32_t get_recv_err(ssize_t bytes_read)
+static int32_t get_recv_err(const ssize_t bytes_read, const int32_t sock_fd)
 {
     if (bytes_read == 0) {
         var_info("Socket was disconnected. socket : ", sock_fd);
