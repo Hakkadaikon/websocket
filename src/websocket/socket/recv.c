@@ -6,7 +6,7 @@
 #define MSG_DONTWAIT 0x40
 #endif
 
-ssize_t websocket_recv(const int sock_fd, const size_t capacity, char* restrict buffer)
+ssize_t websocket_recv(const int32_t sock_fd, const size_t capacity, char* restrict buffer)
 {
     if (is_rise_signal()) {
         log_info("A signal was raised during recv(). The system will abort processing.\n");

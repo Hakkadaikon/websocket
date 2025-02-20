@@ -4,15 +4,15 @@
 #include "../../../websocket_local.h"
 #include "accept_handle.h"
 
-static inline int epoll_accept(
+static inline int32_t epoll_accept(
     const PWebSocketEpollLoopArgs epoll_args,
-    const int                     server_sock,
+    const int32_t                 server_sock,
     PWebSocketRawBuffer           buffer,
     const PWebSocketEpollEvent    register_event,
     PWebSocketCallbacks           callbacks)
 {
     log_debug("rise error check...\n");
-    int code = websocket_epoll_rise_error(epoll_args->event);
+    int32_t code = websocket_epoll_rise_error(epoll_args->event);
     if (code != WEBSOCKET_ERRORCODE_NONE) {
         return code;
     }

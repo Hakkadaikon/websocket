@@ -4,9 +4,9 @@
 #include "../../arch/optimize_socket.h"
 #include "../websocket_local.h"
 
-static inline int set_nonblocking(int fd)
+static inline int32_t set_nonblocking(int32_t fd)
 {
-    long flags = internal_fcntl(fd, F_GETFL, 0);
+    int32_t flags = internal_fcntl(fd, F_GETFL, 0);
     if (flags == WEBSOCKET_SYSCALL_ERROR) {
         return WEBSOCKET_SYSCALL_ERROR;  // Failed to get flags
     }
@@ -14,10 +14,10 @@ static inline int set_nonblocking(int fd)
     return internal_fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
 
-static inline int optimize_client_socket(int client_sock)
+static inline int32_t optimize_client_socket(int32_t client_sock)
 {
-    int rtn = WEBSOCKET_ERRORCODE_NONE;
-    int param;
+    int32_t rtn = WEBSOCKET_ERRORCODE_NONE;
+    int32_t param;
 
     param = 1;
     if (internal_setsockopt(client_sock, IPPROTO_TCP, TCP_NODELAY, &param, sizeof(param)) == WEBSOCKET_SYSCALL_ERROR) {
@@ -46,10 +46,10 @@ FINALIZE:
     return rtn;
 }
 
-static inline int optimize_server_socket(int server_sock)
+static inline int32_t optimize_server_socket(int32_t server_sock)
 {
-    int rtn   = WEBSOCKET_ERRORCODE_NONE;
-    int param = 1;
+    int32_t rtn   = WEBSOCKET_ERRORCODE_NONE;
+    int32_t param = 1;
 
     param = 1;
     if (internal_setsockopt(server_sock, IPPROTO_TCP, TCP_NODELAY, &param, sizeof(param)) == WEBSOCKET_SYSCALL_ERROR) {

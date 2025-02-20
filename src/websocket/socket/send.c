@@ -2,7 +2,7 @@
 
 #include "../websocket_local.h"
 
-int websocket_send(const int sock_fd, const size_t buffer_size, const char* restrict buffer)
+int32_t websocket_send(const int32_t sock_fd, const size_t buffer_size, const char* restrict buffer)
 {
     log_debug("WebSocket server send\n");
 

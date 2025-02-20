@@ -1,19 +1,19 @@
 #ifndef NOSTR_LINUX_SIGACTION_DEF_H_
 #define NOSTR_LINUX_SIGACTION_DEF_H_
 
-#include <stdint.h>
+#include "../../util/types.h"
 
-typedef unsigned long  sigset_t;
-typedef void           signalfunc_t(int);
+typedef uint64_t       sigset_t;
+typedef void           signalfunc_t(int32_t);
 typedef void           restorefunc_t(void);
 typedef signalfunc_t*  sighandler_t;
 typedef restorefunc_t* sigrestore_t;
 
 struct sigaction {
-    sighandler_t  sa_handler;
-    unsigned long sa_flags;
-    sigrestore_t  sa_restorer;
-    sigset_t      sa_mask;
+    sighandler_t sa_handler;
+    uint64_t     sa_flags;
+    sigrestore_t sa_restorer;
+    sigset_t     sa_mask;
 };
 
 #ifndef SA_RESTORER

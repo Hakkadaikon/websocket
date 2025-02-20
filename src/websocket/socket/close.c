@@ -2,7 +2,7 @@
 
 #include "../websocket_local.h"
 
-int websocket_close(const int sock_fd)
+int32_t websocket_close(const int32_t sock_fd)
 {
     var_info("WebSocket close...: ", sock_fd);
     if (sock_fd < 0) {

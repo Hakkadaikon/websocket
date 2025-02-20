@@ -13,7 +13,6 @@
 
 #include "sha1.h"
 
-#include <stdint.h>
 #include "../util/allocator.h"
 #include "sha1_def.h"
 
