@@ -11,7 +11,6 @@ RUN \
   cmake --build /opt/websocket/build && \
   make BUILD=release -C /opt/websocket/examples/echoback
 
-#FROM debian:bookworm-slim AS runtime
 FROM scratch AS runtime
 WORKDIR /opt/websocket
 
