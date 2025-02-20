@@ -12,14 +12,6 @@
 #include <stdint.h>
 #include <sys/types.h>
 #else
-#ifndef STDOUT_FILENO
-#define STDOUT_FILENO 1  // Standard output.
-#endif
-
-#ifndef STDERR_FILENO
-#define STDERR_FILENO 2  // Standard error output.
-#endif
-
 typedef uint64_t size_t;
 typedef int64_t  ssize_t;
 
@@ -38,6 +30,14 @@ typedef int64_t  ssize_t;
 #ifndef NULL
 #define NULL ((void*)0)
 #endif
+#endif
+
+#ifndef STDOUT_FILENO
+#define STDOUT_FILENO 1  // Standard output.
+#endif
+
+#ifndef STDERR_FILENO
+#define STDERR_FILENO 2  // Standard error output.
 #endif
 
 /**
