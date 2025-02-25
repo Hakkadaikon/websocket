@@ -10,15 +10,16 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-      in {
-        packages.wsserver = pkgs.stdenv.mkDerivation {
+        wsserver = pkgs.stdenv.mkDerivation {
           pname = "wsserver";
-          version = "2.1.3";
+          version = "2.1.4";
           src = self;
 
-          nativeBuildInputs = [ pkgs.cmake pkgs.make ];
+          nativeBuildInputs = [ pkgs.cmake pkgs.gnumake ];
 
           buildPhase = ''
+            rm -rf ./build
+            make clean -C examples/echoback
             cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
             cmake --build build
             make BUILD=release -C examples/echoback
@@ -35,9 +36,12 @@
             platforms = platforms.linux;
           };
         };
+      in {
+        packages.default = wsserver;
+        packages.wsserver = wsserver;
 
         devShell = pkgs.mkShell {
-          buildInputs = [ pkgs.cmake pkgs.make ];
+          buildInputs = [ pkgs.cmake pkgs.gnumake ];
         };
       }
     );
