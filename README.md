@@ -7,23 +7,40 @@
 
 Websocket server that complies with RFC6455.(The WebSocket Protocol)  
 
-![icon](https://github.com/user-attachments/assets/f4b92376-17db-4979-897a-b005ed421e22)
+![icon](https://github.com/user-attachments/assets/7f02a1de-a4cf-456f-b833-30b2e1c440d1)
 
 # Usage  
 ## Build  
 
 ```shell  
-# release build
+# library build (host/release)
+# output : build/lib/
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
-make BUILD=release -C examples/echoback 
 
-# debug build
+# library build (host/debug)
+# output : build/lib/
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
-make BUILD=debug -C examples/echoback 
 
-# musl build (release) (x86/64 & linux only)
+
+# library build (nix/release)
+# output : result/lib/
+nix build
+
+# library build (nix/debug)
+# output : result/lib/
+nix build .#debug
+
+# sample build (debug)
+# LDLIB : build/lib/
+make BUILD=debug -C examples/echoback
+
+# sample build (release)
+# LDLIB : build/lib/
+make BUILD=release -C examples/echoback
+
+# musl build with example/echoback (release & x86/64 & linux only)
 ./shell/musl_build.sh
 ```
 
