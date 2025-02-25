@@ -13,7 +13,7 @@
         wsserver = pkgs.stdenv.mkDerivation {
           pname = "wsserver";
           version = "2.1.4";
-          src = self;
+          src = ./.;
 
           nativeBuildInputs = [ pkgs.cmake pkgs.gnumake ];
 
