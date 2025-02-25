@@ -1,5 +1,5 @@
 {
-  description = "wsserver flake: build a WebSocket server with CMake";
+  description = "wsserver flake: build a WebSocket server library with CMake";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -10,35 +10,60 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        wsserver = pkgs.stdenv.mkDerivation {
-          pname = "wsserver";
-          version = "2.1.4";
-          src = ./.;
 
+        wsserverRelease = pkgs.stdenv.mkDerivation {
+          pname = "wsserver-release";
+          version = "2.1.3";
+          src = self;
           nativeBuildInputs = [ pkgs.cmake pkgs.gnumake ];
 
           buildPhase = ''
-            rm -rf ./build
-            make clean -C examples/echoback
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+            cd $TMPDIR
+            cmake -S $src -B build -DCMAKE_BUILD_TYPE=Release
             cmake --build build
-            make BUILD=release -C examples/echoback
           '';
 
           installPhase = ''
-            mkdir -p $out/bin
-            cp examples/echoback/bin/wsserver $out/bin/
+            mkdir -p $out/lib/ $out/include/
+            cp $TMPDIR/build/lib/libwsserver.a $out/lib/
+            cp $src/src/websocket/websocket.h $out/include/
           '';
 
           meta = with pkgs.lib; {
-            description = "WebSocket server built with CMake (static linking)";
+            description = "WebSocket server library";
+            license = licenses.mit;
+            platforms = platforms.linux;
+          };
+        };
+
+        wsserverDebug = pkgs.stdenv.mkDerivation {
+          pname = "wsserver-debug";
+          version = "2.1.3";
+          src = self;
+          nativeBuildInputs = [ pkgs.cmake pkgs.gnumake ];
+
+          buildPhase = ''
+            cd $TMPDIR
+            cmake -S $src -B build -DCMAKE_BUILD_TYPE=Debug
+            cmake --build build
+          '';
+
+          installPhase = ''
+            mkdir -p $out/lib/ $out/include/
+            cp $TMPDIR/build/lib/libwsserver.a $out/lib/
+            cp $src/src/websocket/websocket.h $out/include/
+          '';
+
+          meta = with pkgs.lib; {
+            description = "WebSocket server library (debug)";
             license = licenses.mit;
             platforms = platforms.linux;
           };
         };
       in {
-        packages.default = wsserver;
-        packages.wsserver = wsserver;
+        packages.release = wsserverRelease;
+        packages.debug = wsserverDebug;
+        packages.default = wsserverRelease;
 
         devShell = pkgs.mkShell {
           buildInputs = [ pkgs.cmake pkgs.gnumake ];

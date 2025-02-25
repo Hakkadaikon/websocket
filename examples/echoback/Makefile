@@ -26,6 +26,7 @@ endif
 SRCROOT  := .
 OBJROOT  := ./obj
 BINROOT  := ./bin
+LDLIBS   := -L../../build/lib
 
 #------------------------------------------------------------------------------
 # Files
@@ -45,7 +46,6 @@ CFLAGS := \
 	-g \
 	-DLOG_LEVEL_DEBUG
 
-LDLIBS  := -L../../build/lib
 LDFLAGS := -lwsserver
 else
 CFLAGS := \
@@ -56,7 +56,6 @@ CFLAGS := \
 	-fPIC \
 	-DLOG_LEVEL_DEBUG
 
-LDLIBS  := -L../../build/lib
 LDFLAGS := -lwsserver
 endif
 
@@ -73,7 +72,6 @@ CFLAGS := \
 	-falign-functions \
 	-DLOG_LEVEL_ERROR
 
-LDLIBS  := -L../../build/lib
 LDFLAGS := -flto -lwsserver
 else
 CFLAGS := \
@@ -88,7 +86,6 @@ CFLAGS := \
 	-DLOG_LEVEL_ERROR
 endif
 
-LDLIBS  := -L../../build/lib
 LDFLAGS := -lwsserver -static
 endif
 endif
@@ -113,7 +110,6 @@ all:
 
 clean:
 	rm -f $(BINROOT)/$(PROGRAM)
-	rm -rf $(OBJROOT)/*
 	rm -rf $(DEPENDFILES)
 
 ifneq "$(MAKECMDGOALS)" "clean"
