@@ -72,7 +72,7 @@ CFLAGS := \
 	-falign-functions \
 	-DLOG_LEVEL_ERROR
 
-LDFLAGS := -flto -lwsserver
+LDFLAGS := -lwsserver
 else
 CFLAGS := \
 	-I../../src \
@@ -86,7 +86,7 @@ CFLAGS := \
 	-DLOG_LEVEL_ERROR
 endif
 
-LDFLAGS := -lwsserver -static
+LDFLAGS := -lwsserver
 endif
 endif
 

@@ -70,6 +70,7 @@ test
 ws-server
 result
 tmp/
+.cache/
 native/src
 native/lib
 native/obj
