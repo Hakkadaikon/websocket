@@ -7,7 +7,7 @@
 
 Websocket server that complies with RFC6455.(The WebSocket Protocol)  
 
-![icon](https://github.com/user-attachments/assets/6fb47999-84e3-4785-8187-7acee8042526)
+![icon](https://github.com/user-attachments/assets/2ed269e2-f209-4cd7-bb53-a52cbbfb7ca8)
 
 # Usage  
 ## Build  
