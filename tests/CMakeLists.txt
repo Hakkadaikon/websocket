@@ -19,6 +19,13 @@ enable_testing()
 add_executable(
   websocket-test
   crypto/base64.cpp
+  http/request.cpp
+   ../src/http/http.c
+)
+
+target_include_directories(
+  websocket-test PRIVATE
+  ${CMAKE_CURRENT_LIST_DIR}/../src
 )
 target_link_libraries(
   websocket-test
