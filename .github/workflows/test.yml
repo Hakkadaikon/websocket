@@ -14,40 +14,74 @@ jobs:
         include:
           - os: ubuntu
             version: 20.04
+            gcc: 9.5
+            c_std: 11
+            cpp_std: 17
           - os: ubuntu
             version: 22.04
+            gcc: 11
+            c_std: 17
+            cpp_std: 20
+          - os: ubuntu
+            version: 24.04
+            gcc: 13
+            c_std: 23
+            cpp_std: 23
           - os: macos
             version: 13
+            c_std: 11
+            cpp_std: 17
           - os: macos
             version: 15
+            c_std: 17
+            cpp_std: 20
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Install dependencies on ubuntu
+      - name: Install dependencies on ubuntu (CC ${{ matrix.gcc }})
         if: matrix.os == 'ubuntu'
         run: |
           sudo apt-get update
-          sudo apt-get --reinstall install -y build-essential gcc cmake
+          sudo apt-get install -y cmake build-essential gcc-${{ matrix.gcc }} g++-${{ matrix.gcc }}
+          echo "CC=gcc-${{ matrix.gcc }}" >> $GITHUB_ENV
+          echo "CXX=g++-${{ matrix.gcc }}" >> $GITHUB_ENV
+          echo "C_STD=${{ matrix.c_std }}" >> $GITHUB_ENV
+          echo "CPP_STD=${{ matrix.cpp_std }}" >> $GITHUB_ENV
 
       - name: Install dependencies on macos
         if: matrix.os == 'macos'
         run: |
           brew update
           brew reinstall gcc cmake
-
-      #- name: Install Nix
-      #  uses: DeterminateSystems/nix-installer-action@main
-      #  with:
-      #    github-token: ${{ secrets.GH_TOKEN }}
+          echo "C_STD=${{ matrix.c_std }}" >> $GITHUB_ENV
+          echo "CPP_STD=${{ matrix.cpp_std }}" >> $GITHUB_ENV
 
       - name: Build project
+        shell: bash
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+          if [ -n "${CC:-}" ]; then
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DC_STANDARD=${C_STD}" -DCMAKE_C_COMPILER="${CC}"
+          else
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DC_STANDARD="${C_STD}"
+          fi
+
           cmake --build build
-          make BUILD=debug -C examples/echoback
+
+          if [ -n "${CC:-}" ]; then
+            make BUILD=debug -C examples/echoback CC="${CC}"
+          else
+            make BUILD=debug -C examples/echoback
+          fi
 
       - name: Run tests
+        shell: bash
         run: |
-          cd tests && make test
+          if [ -n "${CXX:-}" ]; then
+            cmake -S tests -B tests/build -DCXX_STANDARD="${CPP_STD}" -DCMAKE_CXX_COMPILER="${CXX}"
+          else
+            cmake -S tests -B tests/build -DCXX_STANDARD="${CPP_STD}"
+          fi
+          cmake --build tests/build
+          ctest --test-dir tests/build
