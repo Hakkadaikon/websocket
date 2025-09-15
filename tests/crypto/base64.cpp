@@ -65,7 +65,8 @@ TEST(Base64Test, EncodeInsufficientCapacityFailsForMin)
 {
     const uint8_t data[1] = {0x61};  // 'a' -> YQ==
     // Capacity <= 4 should fail per implementation precondition
-    char out4[4] = {0} EXPECT_FALSE(base64_encode(data, 1, out4, sizeof(out4)));
+    char out4[4] = {0};
+    EXPECT_FALSE(base64_encode(data, 1, out4, sizeof(out4)));
 
     char out5[5] = {0};
     EXPECT_TRUE(base64_encode(data, 1, out5, sizeof(out5)));
