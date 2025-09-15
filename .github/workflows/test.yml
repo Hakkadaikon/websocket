@@ -62,7 +62,7 @@ jobs:
         shell: bash
         run: |
           if [ -n "${CC:-}" ]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DC_STANDARD=${C_STD}" -DCMAKE_C_COMPILER="${CC}"
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DC_STANDARD="${C_STD}" -DCMAKE_C_COMPILER="${CC}"
           else
             cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DC_STANDARD="${C_STD}"
           fi
