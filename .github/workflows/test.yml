@@ -62,9 +62,9 @@ jobs:
         shell: bash
         run: |
           if [ -n "${CC:-}" ]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DC_STANDARD="${C_STD}" -DCMAKE_C_COMPILER="${CC}"
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_STANDARD="${C_STD}" -DCMAKE_C_COMPILER="${CC}"
           else
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DC_STANDARD="${C_STD}"
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_STANDARD="${C_STD}"
           fi
 
           cmake --build build
@@ -79,9 +79,9 @@ jobs:
         shell: bash
         run: |
           if [ -n "${CXX:-}" ]; then
-            cmake -S tests -B tests/build -DCXX_STANDARD="${CPP_STD}" -DCMAKE_CXX_COMPILER="${CXX}"
+            cmake -S tests -B tests/build -DCMAKE_CXX_STANDARD="${CPP_STD}" -DCMAKE_CXX_COMPILER="${CXX}"
           else
-            cmake -S tests -B tests/build -DCXX_STANDARD="${CPP_STD}"
+            cmake -S tests -B tests/build -DCMAKE_CXX_STANDARD="${CPP_STD}"
           fi
           cmake --build tests/build
           ctest --test-dir tests/build
