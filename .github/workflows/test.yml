@@ -14,17 +14,17 @@ jobs:
         include:
           - os: ubuntu
             version: 20.04
-            gcc: 9.5
+            gcc: 9
             c_std: 11
-            cpp_std: 20
+            cpp_std: 17
           - os: ubuntu
             version: 22.04
             gcc: 11
-            c_std: 17
+            c_std: 11
             cpp_std: 20
           - os: ubuntu
             version: 24.04
-            gcc: 13
+            gcc: 14
             c_std: 23
             cpp_std: 23
           - os: macos
@@ -33,7 +33,7 @@ jobs:
             cpp_std: 20
           - os: macos
             version: 15
-            c_std: 17
+            c_std: 11
             cpp_std: 20
 
     steps:
