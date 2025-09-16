@@ -70,12 +70,14 @@ jobs:
             make BUILD=debug -C examples/echoback
           fi
 
-      - name: Check ldd
+      - name: Check link
         if: matrix.os == 'ubuntu'
         shell: bash
         run: |
-          echo "Check ldd for examples/echoback"
+          echo "Check ldd"
           ldd examples/echoback/bin/wsserver
+          echo "Check readelf"
+          readelf --dyn-syms -W examples/echoback/bin/wsserver
 
       - name: Run tests
         shell: bash
