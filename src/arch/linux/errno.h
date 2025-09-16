@@ -2,6 +2,8 @@
 #define NOSTR_LINUX_ERRNO_H_
 
 #include "../../util/types.h"
+
+#ifndef __cplusplus
 #define errno (*__errno_location())
 
 static int32_t* __errno_location(void)
@@ -9,6 +11,7 @@ static int32_t* __errno_location(void)
     static thread_local int32_t my_errno = 0;
     return &my_errno;
 }
+#endif
 
 #define EPERM 1             // Operation not permitted
 #define ENOENT 2            // No such file or directory
