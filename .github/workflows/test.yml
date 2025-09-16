@@ -70,6 +70,13 @@ jobs:
             make BUILD=debug -C examples/echoback
           fi
 
+      - name: Check ldd
+        if: matrix.os == 'ubuntu'
+        shell: bash
+        run: |
+          echo "Check ldd for examples/echoback"
+          ldd examples/echoback/bin/wsserver
+
       - name: Run tests
         shell: bash
         run: |
