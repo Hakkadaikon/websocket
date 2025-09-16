@@ -4,7 +4,7 @@
 #include "../../util/types.h"
 #define errno (*__errno_location())
 
-static inline int32_t* __errno_location(void)
+extern int32_t* __errno_location(void)
 {
     static int32_t my_errno = 0;
     return &my_errno;
