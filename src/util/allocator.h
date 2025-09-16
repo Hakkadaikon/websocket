@@ -10,10 +10,10 @@
 #include <string.h>  // for memset
 #else
 #include "../arch/linux/errno.h"
-//extern void* alloca(size_t __size);
-#undef  alloca
-#undef  __alloca
-#define alloca(size)   __alloca(size)
+// extern void* alloca(size_t __size);
+#undef alloca
+#undef __alloca
+#define alloca(size) __alloca(size)
 #define __alloca(size) __builtin_alloca(size)
 #endif
 #include "../arch/memory.h"

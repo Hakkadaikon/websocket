@@ -180,9 +180,9 @@ static inline char* select_websocket_client_key(PHTTPRequest restrict request)
 
 static inline bool build_response_frame(
     const char* restrict accept_key,
-    const int32_t        accept_key_capacity,
-    char* restrict       buffer,
-    const size_t         capacity)
+    const int32_t accept_key_capacity,
+    char* restrict buffer,
+    const size_t capacity)
 {
     const char OK_MESSAGE[] =
         "HTTP/1.1 101 Switching Protocols\r\n"
@@ -211,9 +211,9 @@ static inline bool build_response_frame(
 }
 
 bool client_handshake(
-    const int32_t         client_sock,
-    const size_t          bytes_read,
-    PWebSocketRawBuffer   buffer,
+    const int32_t       client_sock,
+    const size_t        bytes_read,
+    PWebSocketRawBuffer buffer,
     PHTTPRequest restrict request)
 {
     bool has_error = false;
