@@ -15,12 +15,12 @@ jobs:
           - os: ubuntu
             version: 20.04
             gcc: 9
-            c_std: 11
+            c_std: 17
             cpp_std: 17
           - os: ubuntu
             version: 22.04
             gcc: 11
-            c_std: 11
+            c_std: 17
             cpp_std: 20
           - os: ubuntu
             version: 24.04
@@ -29,11 +29,11 @@ jobs:
             cpp_std: 23
           - os: macos
             version: 13
-            c_std: 11
+            c_std: 17
             cpp_std: 20
           - os: macos
             version: 15
-            c_std: 11
+            c_std: 17
             cpp_std: 20
 
     steps:
