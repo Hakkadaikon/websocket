@@ -13,11 +13,6 @@ jobs:
       matrix:
         include:
           - os: ubuntu
-            version: 20.04
-            gcc: 9
-            c_std: 17
-            cpp_std: 17
-          - os: ubuntu
             version: 22.04
             gcc: 11
             c_std: 17

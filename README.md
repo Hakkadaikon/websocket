@@ -147,6 +147,7 @@ int main()
 ```
 
 # Support  
+## Features
 - opcode  
   - 0x0 (continuation)   : No  
   - 0x1 (text)           : Yes (Interpret with user callbacks)  
@@ -158,6 +159,10 @@ int main()
 - Sub protocol           : No (Sec-WebSocket-Protocol)  
 - Extensions             : No (Sec-WebSocket-Extensions)  
 - Compression / Decode   : No  
+
+## Platform
+- Linux : Ubuntu (22.04, 24.04)
+- MacOS : 13(Ventura), 14(Sonoma), 15(Sequoia)
 
 # Dependencies  
 ## Develop
