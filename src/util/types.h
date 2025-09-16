@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <sys/types.h>
 #else
-
+#ifndef __cplusplus
 #ifndef _INT8_T
 #define _INT8_T
 typedef char int8_t;
@@ -67,6 +67,7 @@ typedef int64_t  ssize_t;
 
 #ifndef false
 #define false 0
+#endif
 #endif
 
 #ifndef NULL

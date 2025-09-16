@@ -7,12 +7,11 @@
  * @see RFC6455 (https://datatracker.ietf.org/doc/html/rfc6455)
  */
 #ifdef __APPLE__
-#include <stdint.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <sys/types.h>
 #else
-
+#ifndef __cplusplus
 #ifndef _INT8_T
 #define _INT8_T
 typedef char int8_t;
@@ -74,11 +73,11 @@ typedef int64_t  ssize_t;
 #ifndef false
 #define false 0
 #endif
+#endif
 
 #ifndef NULL
 #define NULL ((void*)0)
 #endif
-
 #endif
 
 #ifndef STDOUT_FILENO
