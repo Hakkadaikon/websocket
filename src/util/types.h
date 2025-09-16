@@ -34,4 +34,12 @@ typedef int64_t  ssize_t;
 #define STDERR_FILENO 2  // Standard error output.
 #endif
 
+#ifndef thread_local
+# if __STDC_VERSION__ >= 201112L && !defined(__STDC_NO_THREADS__)
+#  define thread_local _Thread_local
+# else
+#  define thread_local __thread
+# endif
+#endif
+
 #endif
