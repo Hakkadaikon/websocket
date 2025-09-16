@@ -3,16 +3,6 @@
 
 #include "../../util/types.h"
 
-#ifndef __cplusplus
-#define errno (*__errno_location())
-
-static int32_t* __errno_location(void)
-{
-    static thread_local int32_t my_errno = 0;
-    return &my_errno;
-}
-#endif
-
 #define EPERM 1             // Operation not permitted
 #define ENOENT 2            // No such file or directory
 #define ESRCH 3             // No such process
@@ -146,6 +136,15 @@ static int32_t* __errno_location(void)
 #define ENOTRECOVERABLE 131  // State not recoverable
 #define ERFKILL 132          // Operation not possible due to RF-kill
 #define EHWPOISON 133        // Memory page has hardware error
+
+#ifndef __cplusplus
+#define errno (*__errno_location())
+
+static int32_t* __errno_location(void)
+{
+    static thread_local int32_t my_errno = 0;
+    return &my_errno;
+}
 
 static inline const char* strerror(const int errnum)
 {
@@ -416,5 +415,6 @@ static inline const char* strerror(const int errnum)
             return "Unknown error";
     }
 }
+#endif
 
 #endif
