@@ -57,17 +57,17 @@ jobs:
         shell: bash
         run: |
           if [ -n "${CC:-}" ]; then
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_STANDARD="${C_STD}" -DCMAKE_C_COMPILER="${CC}"
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_STANDARD="${C_STD}" -DCMAKE_C_COMPILER="${CC}"
           else
-            cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_STANDARD="${C_STD}"
+            cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_STANDARD="${C_STD}"
           fi
 
           cmake --build build
 
           if [ -n "${CC:-}" ]; then
-            make BUILD=debug -C examples/echoback CC="${CC}"
+            make BUILD=release -C examples/echoback CC="${CC}"
           else
-            make BUILD=debug -C examples/echoback
+            make BUILD=release -C examples/echoback
           fi
 
       - name: Check link
