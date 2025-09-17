@@ -15,7 +15,7 @@ else()
   file(GLOB_RECURSE SRC_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
   file(GLOB_RECURSE ASM_FILES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.S")
   set(DEBUG_COMPILE_OPTIONS "-O0" "-static-libasan" "-fno-builtin" "-g")
-  set(RELEASE_COMPILE_OPTIONS "-O3" "-mtune=native" "-ffast-math" "-fno-math-errno" "-fno-builtin", "-falign-functions")
+  set(RELEASE_COMPILE_OPTIONS "-O3" "-mtune=native" "-ffast-math" "-fno-math-errno" "-fno-builtin" "-falign-functions")
 endif()
 
 # Create the static library target including C and assembly files
