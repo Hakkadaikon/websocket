@@ -23,7 +23,7 @@ jobs:
             c_std: 23
             cpp_std: 23
           - os: macos
-            version: 13
+            version: 14
             c_std: 11
             cpp_std: 17
           - os: macos
