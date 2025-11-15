@@ -2,8 +2,6 @@ name: WebSocket Tests
 
 on:
   push:
-    branches:
-      - main
   pull_request:
 
 jobs:

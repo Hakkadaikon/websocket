@@ -1,0 +1,22 @@
+name: Lint
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+
+    env:
+      CC: gcc
+      DEBIAN_FRONTEND: noninteractive
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Lint markdown
+        uses: akiomik/mado@v0.3.0
