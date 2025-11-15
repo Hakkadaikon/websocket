@@ -1,18 +1,17 @@
-# websocket  
-![Tests](https://github.com/Hakkadaikon/websocket/actions/workflows/test.yml/badge.svg)  
-<a href="https://scan.coverity.com/projects/hakkadaikon-websocket">
-  <img alt="Coverity Scan Build Status"
-       src="https://scan.coverity.com/projects/31257/badge.svg"/>
-</a>
+# websocket
 
-Websocket server that complies with RFC6455.(The WebSocket Protocol)  
+![Test](https://github.com/Hakkadaikon/websocket/actions/workflows/test.yml/badge.svg)
+![Coverity](https://scan.coverity.com/projects/31257/badge.svg)
+
+Websocket server that complies with RFC6455.(The WebSocket Protocol)
 
 ![icon](https://github.com/user-attachments/assets/6747414b-d35f-4e1e-80ca-be8c039a4055)
 
-# Usage  
-## Build  
+## Usage
 
-```shell  
+### Build
+
+```shell
 # library build (host/release)
 # output : build/lib/
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -44,32 +43,32 @@ make BUILD=release -C examples/echoback
 ./shell/musl_build.sh
 ```
 
-## Install  
+### Install
 
-```shell  
+```shell
 # default install dir:
 # - /usr/local/lib/libwsserver.a
 # - /usr/local/include/websocket.h
 sudo cmake --install build
 ```
 
-## Format  
+### Format
 
-```shell  
+```shell
 # Formatting source code (use clang-format)
 ./format.sh
 ```
 
-## Test  
+### Test
 
-```shell  
+```shell
 cd tests
 make test
 ```
 
-## Run  
+### Run
 
-```shell  
+```shell
 # Example: echoback server
 docker compose build --no-cache
 docker compose up
@@ -78,8 +77,9 @@ docker compose up
 ./shell/static_analysis.sh
 ```
 
-## Examples  
-### Echo back  
+### Examples
+
+#### Echo back
 
 ```c
 #include <stddef.h>
@@ -146,31 +146,33 @@ int main()
 }
 ```
 
-# Support  
-## Features
-- opcode  
-  - 0x0 (continuation)   : No  
-  - 0x1 (text)           : Yes (Interpret with user callbacks)  
-  - 0x2 (binary)         : Yes (Interpret with user callbacks)  
-  - 0x8 (close)          : Yes  
-  - 0x9 (ping)           : No  
-  - 0xA (pong)           : Yes (When a ping is received, a pong is sent back.)  
-- TLS Support            : No  
-- Sub protocol           : No (Sec-WebSocket-Protocol)  
-- Extensions             : No (Sec-WebSocket-Extensions)  
-- Compression / Decode   : No  
+## Support
 
-## Platform
+### Features
+
+- opcode
+    - 0x0 (continuation)   : No
+    - 0x1 (text)           : Yes (Interpret with user callbacks)
+    - 0x2 (binary)         : Yes (Interpret with user callbacks)
+    - 0x8 (close)          : Yes
+    - 0x9 (ping)           : No
+    - 0xA (pong)           : Yes (When a ping is received, a pong is sent back.)
+- TLS Support            : No
+- Sub protocol           : No (Sec-WebSocket-Protocol)
+- Extensions             : No (Sec-WebSocket-Extensions)
+- Compression / Decode   : No
+
+### Platform
+
 - Linux : Ubuntu (22.04, 24.04)
 - MacOS : 13(Ventura), 14(Sonoma), 15(Sequoia)
 
-# Dependencies  
-## Develop
-[clang-format](https://github.com/llvm/llvm-project/tree/main/clang/tools/clang-format) - Formatter  
-[cmake](https://github.com/Kitware/CMake) - Build tool  
+## Dependencies
 
-## Test  
-[googletest](https://github.com/google/googletest) - Google Testing and Mocking Framework  
+- [clang-format](https://github.com/llvm/llvm-project/tree/main/clang/tools/clang-format)
+- [cmake](https://github.com/Kitware/CMake)
+- [googletest](https://github.com/google/googletest)
 
-# Author
+## Author
+
 Hakkadaikon
