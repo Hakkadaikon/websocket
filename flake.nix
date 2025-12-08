@@ -13,7 +13,7 @@
 
         wsserverRelease = pkgs.stdenv.mkDerivation {
           pname = "wsserver-release";
-          version = "2.1.3";
+          version = "2.1.6";
           src = self;
           nativeBuildInputs = [ pkgs.cmake pkgs.gnumake ];
 
@@ -38,7 +38,7 @@
 
         wsserverDebug = pkgs.stdenv.mkDerivation {
           pname = "wsserver-debug";
-          version = "2.1.3";
+          version = "2.1.6";
           src = self;
           nativeBuildInputs = [ pkgs.cmake pkgs.gnumake ];
 
