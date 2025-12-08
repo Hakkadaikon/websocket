@@ -7,7 +7,7 @@
 
 static inline int32_t darwin_accept(const int32_t sock_fd, struct sockaddr* addr, socklen_t* addrlen, const int32_t flags)
 {
-    return accept(sock_fd, addr, addrlen);
+  return accept(sock_fd, addr, addrlen);
 }
 
 #endif

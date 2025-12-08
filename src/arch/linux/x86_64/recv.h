@@ -7,27 +7,27 @@
 #include "./asm.h"
 
 static inline ssize_t linux_x8664_recvfrom(
-    const int32_t    sock_fd,
-    void*            buf,
-    const size_t     len,
-    const int32_t    flags,
-    struct sockaddr* src_addr,
-    socklen_t*       addrlen)
+  const int32_t    sock_fd,
+  void*            buf,
+  const size_t     len,
+  const int32_t    flags,
+  struct sockaddr* src_addr,
+  socklen_t*       addrlen)
 {
-    int32_t ret = linux_x8664_asm_syscall6(
-        __NR_recvfrom,
-        sock_fd,
-        buf,
-        len,
-        flags,
-        src_addr,
-        addrlen);
+  int32_t ret = linux_x8664_asm_syscall6(
+    __NR_recvfrom,
+    sock_fd,
+    buf,
+    len,
+    flags,
+    src_addr,
+    addrlen);
 
-    if ((uint64_t)ret >= (uint64_t)-4095) {
-        errno = -ret;
-        ret   = -1;
-    }
-    return ret;
+  if ((uint64_t)ret >= (uint64_t)-4095) {
+    errno = -ret;
+    ret   = -1;
+  }
+  return ret;
 }
 
 #endif

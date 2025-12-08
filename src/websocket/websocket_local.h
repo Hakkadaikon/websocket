@@ -19,18 +19,18 @@
 #include "websocket.h"
 
 typedef struct {
-    int32_t              epoll_fd;
-    PWebSocketEpollEvent event;
+  int32_t              epoll_fd;
+  PWebSocketEpollEvent event;
 } WebSocketEpollLoopArgs, *PWebSocketEpollLoopArgs;
 
 typedef struct {
-    size_t capacity;
-    char*  request;
-    char*  response;
+  size_t capacity;
+  char*  request;
+  char*  response;
 } WebSocketRawBuffer, *PWebSocketRawBuffer;
 
 typedef enum {
-    WEBSOCKET_SYSCALL_ERROR = -1
+  WEBSOCKET_SYSCALL_ERROR = -1
 } WebSocketSysCallErrorCode;
 
 /*----------------------------------------------------------------------------*/
@@ -38,10 +38,10 @@ typedef enum {
 /*----------------------------------------------------------------------------*/
 
 bool client_handshake(
-    const int32_t       client_sock,
-    const size_t        bytes_read,
-    PWebSocketRawBuffer buffer,
-    PHTTPRequest        request);
+  const int32_t       client_sock,
+  const size_t        bytes_read,
+  PWebSocketRawBuffer buffer,
+  PHTTPRequest        request);
 
 /*----------------------------------------------------------------------------*/
 /* websocket/crypto.c                                                         */

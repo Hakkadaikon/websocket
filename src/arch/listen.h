@@ -11,27 +11,27 @@
 static inline int32_t internal_socket(const int32_t domain, const int32_t type, const int32_t protocol)
 {
 #ifdef __APPLE__
-    return darwin_socket(domain, type, protocol);
+  return darwin_socket(domain, type, protocol);
 #else
-    return linux_x8664_socket(domain, type, protocol);
+  return linux_x8664_socket(domain, type, protocol);
 #endif
 }
 
 static inline int32_t internal_bind(const int32_t sockfd, const struct sockaddr* addr, const socklen_t addrlen)
 {
 #ifdef __APPLE__
-    return darwin_bind(sockfd, addr, addrlen);
+  return darwin_bind(sockfd, addr, addrlen);
 #else
-    return linux_x8664_bind(sockfd, addr, addrlen);
+  return linux_x8664_bind(sockfd, addr, addrlen);
 #endif
 }
 
 static inline int32_t internal_listen(const int32_t sockfd, const int32_t backlog)
 {
 #ifdef __APPLE__
-    return darwin_listen(sockfd, backlog);
+  return darwin_listen(sockfd, backlog);
 #else
-    return linux_x8664_listen(sockfd, backlog);
+  return linux_x8664_listen(sockfd, backlog);
 #endif
 }
 

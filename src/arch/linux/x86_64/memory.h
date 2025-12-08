@@ -6,33 +6,33 @@
 
 static inline void* linux_x8664_memcpy(void* dest, const void* src, size_t size)
 {
-    if (dest == NULL || src == NULL || size == 0) {
-        return NULL;
-    }
+  if (dest == NULL || src == NULL || size == 0) {
+    return NULL;
+  }
 
-    unsigned char*       d = (unsigned char*)dest;
-    const unsigned char* s = (const unsigned char*)src;
-    size_t               n = size;
+  unsigned char*       d = (unsigned char*)dest;
+  const unsigned char* s = (const unsigned char*)src;
+  size_t               n = size;
 
-    while (n--) {
-        *d++ = *s++;
-    }
-    return dest;
+  while (n--) {
+    *d++ = *s++;
+  }
+  return dest;
 }
 
 static inline void* linux_x8664_memset(void* s, const int c, const size_t size)
 {
-    if (s == NULL && size != 0) {
-        return NULL;
-    }
+  if (s == NULL && size != 0) {
+    return NULL;
+  }
 
-    unsigned char* p = (unsigned char*)s;
-    size_t         n = size;
-    while (n--) {
-        *p++ = (unsigned char)c;
-    }
+  unsigned char* p = (unsigned char*)s;
+  size_t         n = size;
+  while (n--) {
+    *p++ = (unsigned char)c;
+  }
 
-    return s;
+  return s;
 }
 
 /*
@@ -47,28 +47,28 @@ static inline void* linux_x8664_memset(void* s, const int c, const size_t size)
  */
 static inline int32_t linux_x8664_memset_s(void* s, const size_t smax, const int32_t c, const size_t n)
 {
-    if (s == NULL && n != 0) {
-        return EINVAL;
-    }
+  if (s == NULL && n != 0) {
+    return EINVAL;
+  }
 
-    // If n is greater than smax, clear the entire buffer (if possible) and return an error
-    if (n > smax) {
-        if (s != NULL && smax > 0) {
-            linux_x8664_memset(s, c, smax);
-            // Compiler barrier to prevent optimization removal
-            __asm__ volatile("" ::
-                                 : "memory");
-        }
-        return EINVAL;
-    }
-
-    // Set n bytes of memory to the value c
-    linux_x8664_memset(s, c, n);
-    // Compiler barrier to prevent optimization removal
-    __asm__ volatile("" ::
+  // If n is greater than smax, clear the entire buffer (if possible) and return an error
+  if (n > smax) {
+    if (s != NULL && smax > 0) {
+      linux_x8664_memset(s, c, smax);
+      // Compiler barrier to prevent optimization removal
+      __asm__ volatile("" ::
                          : "memory");
+    }
+    return EINVAL;
+  }
 
-    return 0;
+  // Set n bytes of memory to the value c
+  linux_x8664_memset(s, c, n);
+  // Compiler barrier to prevent optimization removal
+  __asm__ volatile("" ::
+                     : "memory");
+
+  return 0;
 }
 
 #endif

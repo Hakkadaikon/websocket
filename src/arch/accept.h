@@ -11,9 +11,9 @@
 static inline int32_t internal_accept(const int32_t sock_fd, struct sockaddr* addr, socklen_t* addrlen, const int32_t flags)
 {
 #ifdef __APPLE__
-    return darwin_accept(sock_fd, addr, addrlen, flags);
+  return darwin_accept(sock_fd, addr, addrlen, flags);
 #else
-    return linux_x8664_accept4(sock_fd, addr, addrlen, flags);
+  return linux_x8664_accept4(sock_fd, addr, addrlen, flags);
 #endif
 }
 

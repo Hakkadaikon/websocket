@@ -7,12 +7,12 @@
 
 static inline void* darwin_memcpy(void* dest, const void* src, size_t size)
 {
-    return memcpy(dest, src, size);
+  return memcpy(dest, src, size);
 }
 
 static inline void* darwin_memset(void* s, const int32_t c, const size_t size)
 {
-    return memset(s, c, size);
+  return memset(s, c, size);
 }
 
 /*
@@ -27,7 +27,7 @@ static inline void* darwin_memset(void* s, const int32_t c, const size_t size)
  */
 static inline int32_t darwin_memset_s(void* s, const size_t smax, const int32_t c, const size_t n)
 {
-    return memset_s(s, smax, c, n);
+  return memset_s(s, smax, c, n);
 }
 
 #endif

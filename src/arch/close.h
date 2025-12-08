@@ -11,9 +11,9 @@
 static inline int32_t internal_close(int32_t fd)
 {
 #ifdef __APPLE__
-    return darwin_close(fd);
+  return darwin_close(fd);
 #else
-    return linux_x8664_close(fd);
+  return linux_x8664_close(fd);
 #endif
 }
 

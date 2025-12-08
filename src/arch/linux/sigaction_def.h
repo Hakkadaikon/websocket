@@ -10,10 +10,10 @@ typedef signalfunc_t*  sighandler_t;
 typedef restorefunc_t* sigrestore_t;
 
 struct sigaction {
-    sighandler_t sa_handler;
-    uint64_t     sa_flags;
-    sigrestore_t sa_restorer;
-    sigset_t     sa_mask;
+  sighandler_t sa_handler;
+  uint64_t     sa_flags;
+  sigrestore_t sa_restorer;
+  sigset_t     sa_mask;
 };
 
 #ifndef SA_RESTORER

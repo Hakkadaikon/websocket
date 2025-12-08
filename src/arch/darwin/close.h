@@ -7,7 +7,7 @@
 
 static inline int32_t darwin_close(int32_t fd)
 {
-    return close(fd);
+  return close(fd);
 }
 
 #endif

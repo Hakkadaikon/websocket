@@ -7,12 +7,12 @@
 
 static inline int32_t darwin_sigaction(const int32_t signum, struct sigaction* act, struct sigaction* oldact)
 {
-    return sigaction(signum, act, oldact);
+  return sigaction(signum, act, oldact);
 }
 
 static inline int32_t darwin_sigemptyset(sigset_t* set)
 {
-    return sigemptyset(set);
+  return sigemptyset(set);
 }
 
 #endif
