@@ -39,12 +39,12 @@ typedef unsigned int   uint32_t;
 
 #ifndef _INT64_T
 #define _INT64_T
-typedef long long      int64_t;
+typedef long long int64_t;
 #endif
 
 #ifndef _UINT64_T
 #define _UINT64_T
-typedef unsigned int   uint64_t;
+typedef unsigned long long uint64_t;
 #endif
 
 #ifndef _SIZE_T
