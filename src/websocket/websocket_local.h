@@ -20,13 +20,15 @@
 
 typedef struct {
   int32_t              epoll_fd;
+  uint8_t              dummy[4];
   PWebSocketEpollEvent event;
 } WebSocketEpollLoopArgs, *PWebSocketEpollLoopArgs;
 
 typedef struct {
-  size_t capacity;
-  char*  request;
-  char*  response;
+  size_t  capacity;
+  char*   request;
+  char*   response;
+  uint8_t dummy[6];
 } WebSocketRawBuffer, *PWebSocketRawBuffer;
 
 typedef enum {
