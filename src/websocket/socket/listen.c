@@ -56,7 +56,7 @@ static void set_sockaddr(const int port_num, struct sockaddr_in* server_addr)
 {
 #ifndef __APPLE__
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define htons(x) ((((x)&0x00ff) << 8) | (((x)&0xff00) >> 8))
+#define htons(x) ((((x) & 0x00ff) << 8) | (((x) & 0xff00) >> 8))
 #elif defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
 #define htons(x) (x)
 #else

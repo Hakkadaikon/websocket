@@ -9,17 +9,17 @@
 #ifndef __cplusplus
 #ifndef _INT8_T
 #define _INT8_T
-typedef char           int8_t;
+typedef char int8_t;
 #endif
 
 #ifndef _UINT8_T
 #define _UINT8_T
-typedef unsigned char  uint8_t;
+typedef unsigned char uint8_t;
 #endif
 
 #ifndef _INT16_T
 #define _INT16_T
-typedef short          int16_t;
+typedef short int16_t;
 #endif
 
 #ifndef _UINT16_T
@@ -29,12 +29,12 @@ typedef unsigned short uint16_t;
 
 #ifndef _INT32_T
 #define _INT32_T
-typedef int            int32_t;
+typedef int int32_t;
 #endif
 
 #ifndef _UINT32_T
 #define _UINT32_T
-typedef unsigned int   uint32_t;
+typedef unsigned int uint32_t;
 #endif
 
 #ifndef _INT64_T
@@ -49,12 +49,12 @@ typedef unsigned long long uint64_t;
 
 #ifndef _SIZE_T
 #define _SIZE_T
-typedef uint64_t       size_t;
+typedef uint64_t size_t;
 #endif
 
 #ifndef _SSIZE_T
 #define _SSIZE_T
-typedef int64_t        ssize_t;
+typedef int64_t ssize_t;
 #endif
 
 #ifndef bool
