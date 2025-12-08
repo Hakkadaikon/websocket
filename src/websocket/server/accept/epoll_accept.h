@@ -1,7 +1,7 @@
 #ifndef NOSTR_SERVER_LOOP_EPOLL_ACCEPT_H_
 #define NOSTR_SERVER_LOOP_EPOLL_ACCEPT_H_
 
-#include "../../../websocket_local.h"
+#include "../../websocket_local.h"
 #include "accept_handle.h"
 
 static inline int32_t epoll_accept(

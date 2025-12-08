@@ -1,5 +1,5 @@
-#include "../../../util/allocator.h"
-#include "../../websocket_local.h"
+#include "../../util/allocator.h"
+#include "../websocket_local.h"
 #include "accept/epoll_accept.h"
 #include "receive/epoll_receive.h"
 
@@ -77,17 +77,29 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
 
       int32_t ret = epoll_receive(&epoll_args, &buffer, &args->callbacks);
 
-      if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR || ret == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
+      if (ret == WEBSOCKET_ERRORCODE_SOCKET_CLOSE_ERROR) {
+        log_debug("socket close...\n");
+
         websocket_epoll_del(epoll_fd, client_sock);
         websocket_close(client_sock);
 
         if (!is_null(args->callbacks.disconnect_callback)) {
           args->callbacks.disconnect_callback(client_sock);
         }
+
+        continue;
       }
 
       if (ret == WEBSOCKET_ERRORCODE_FATAL_ERROR) {
         log_debug("receive error. go to finalize...\n");
+
+        websocket_epoll_del(epoll_fd, client_sock);
+        websocket_close(client_sock);
+
+        if (!is_null(args->callbacks.disconnect_callback)) {
+          args->callbacks.disconnect_callback(client_sock);
+        }
+
         goto FINALIZE;
       }
     }

@@ -1,8 +1,8 @@
 #ifndef NOSTR_SERVER_LOOP_OPCODE_HANDLE_H_
 #define NOSTR_SERVER_LOOP_OPCODE_HANDLE_H_
 
-#include "../../../../util/allocator.h"
-#include "../../../websocket_local.h"
+#include "../../../util/allocator.h"
+#include "../../websocket_local.h"
 
 static inline int32_t opcode_handle(
   const int32_t       client_sock,
