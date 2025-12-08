@@ -2,7 +2,9 @@ BasedOnStyle: Google
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: true
 ColumnLimit: 0
-IndentWidth: 4
+IndentWidth: 2
+TabWidth: 2
+ContinuationIndentWidth: 2
 AllowShortFunctionsOnASingleLine: None
 AllowShortLoopsOnASingleLine: false
 BreakBeforeBraces: Linux
