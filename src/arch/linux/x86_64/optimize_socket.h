@@ -15,10 +15,7 @@ static inline int32_t linux_x8664_fcntl(const int32_t fd, const int32_t cmd, con
     cmd,
     arg);
 
-  if ((uint64_t)ret >= (uint64_t)-4095) {
-    errno = -ret;
-    ret   = -1;
-  }
+  SYSCALL_EARLY_RETURN(ret);
   return ret;
 }
 
@@ -37,10 +34,7 @@ static inline int32_t linux_x8664_setsockopt(
     optval,
     optlen);
 
-  if ((uint64_t)ret >= (uint64_t)-4095) {
-    errno = -ret;
-    ret   = -1;
-  }
+  SYSCALL_EARLY_RETURN(ret);
   return ret;
 }
 

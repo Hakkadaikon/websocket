@@ -13,10 +13,7 @@ static inline ssize_t linux_x8664_write(const int32_t fd, const void* buf, const
     buf,
     count);
 
-  if ((uint64_t)ret >= (uint64_t)-4095) {
-    errno = -ret;
-    ret   = -1;
-  }
+  SYSCALL_SIZE_EARLY_RETURN(ret);
   return (ssize_t)ret;
 }
 

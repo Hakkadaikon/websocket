@@ -11,10 +11,7 @@ static inline int32_t linux_x8664_socket(const int32_t domain, const int32_t typ
     type,
     protocol);
 
-  if ((uint64_t)ret >= (uint64_t)-4095) {
-    errno = -ret;
-    ret   = -1;
-  }
+  SYSCALL_EARLY_RETURN(ret);
   return ret;
 }
 
@@ -26,10 +23,7 @@ static inline int32_t linux_x8664_bind(const int32_t sockfd, const struct sockad
     addr,
     addrlen);
 
-  if ((uint64_t)ret >= (uint64_t)-4095) {
-    errno = -ret;
-    ret   = -1;
-  }
+  SYSCALL_EARLY_RETURN(ret);
   return ret;
 }
 
@@ -40,10 +34,7 @@ static inline int32_t linux_x8664_listen(const int32_t sockfd, const int32_t bac
     sockfd,
     backlog);
 
-  if ((uint64_t)ret >= (uint64_t)-4095) {
-    errno = -ret;
-    ret   = -1;
-  }
+  SYSCALL_EARLY_RETURN(ret);
   return ret;
 }
 

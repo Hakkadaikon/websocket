@@ -23,10 +23,7 @@ static inline ssize_t linux_x8664_recvfrom(
     src_addr,
     addrlen);
 
-  if ((uint64_t)ret >= (uint64_t)-4095) {
-    errno = -ret;
-    ret   = -1;
-  }
+  SYSCALL_SIZE_EARLY_RETURN(ret);
   return ret;
 }
 

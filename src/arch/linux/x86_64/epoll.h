@@ -18,10 +18,7 @@ static inline int32_t linux_x8664_epoll_ctl(
     fd,
     event);
 
-  if ((uint64_t)ret >= (uint64_t)-4095) {
-    errno = -ret;
-    ret   = -1;
-  }
+  SYSCALL_EARLY_RETURN(ret);
   return ret;
 }
 
@@ -31,10 +28,7 @@ static inline int32_t linux_x8664_epoll_create1(const int32_t flags)
     __NR_epoll_create1,
     flags);
 
-  if ((uint64_t)ret >= (uint64_t)-4095) {
-    errno = -ret;
-    ret   = -1;
-  }
+  SYSCALL_EARLY_RETURN(ret);
   return ret;
 }
 
@@ -51,10 +45,7 @@ static inline int32_t linux_x8664_epoll_wait(
     maxevents,
     timeout);
 
-  if ((uint64_t)ret >= (uint64_t)-4095) {
-    errno = -ret;
-    ret   = -1;
-  }
+  SYSCALL_EARLY_RETURN(ret);
   return ret;
 }
 
