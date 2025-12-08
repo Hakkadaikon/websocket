@@ -35,6 +35,7 @@ typedef union {
 typedef struct
 {
   uint32_t           events;
+  int32_t            dummy;
   WebSocketEpollData data;
 } WebSocketEpollEvent, *PWebSocketEpollEvent;
 

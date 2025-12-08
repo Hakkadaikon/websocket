@@ -25,6 +25,7 @@ bool websocket_server_loop(PWebSocketLoopArgs args)
 
   var_debug("websocket server fd : ", args->server_sock);
   var_debug("websocket epoll  fd : ", epoll_fd);
+  var_debug("buffer capacity     : ", args->buffer_capacity);
 
   buffer.capacity = args->buffer_capacity;
   buffer.request  = websocket_alloc(buffer.capacity);
